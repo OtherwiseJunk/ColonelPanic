@@ -31,6 +31,26 @@ namespace ColonelPanic.Database.Contexts
                 db.SaveChanges();
             }
         }
+
+        public static void ChangeConfiguration<T>(string Field, T NewValue)
+        {
+            using (ConfigurationContext db = new ConfigurationContext())
+            {
+                Configuration config = db.Config.First();
+                switch (Field)
+                {
+                    case "gittoken":
+                        config.GithubToken = NewValue as string;
+                        break;
+                    case "bottoken":
+                        config.Token = NewValue as string;
+                        break;
+                    case "gitcommit":
+                        config.LastGirhubCommit = NewValue as string;
+                        break;
+                }
+            }
+        }
     }
     
 }
