@@ -46,6 +46,26 @@ namespace ColonelPanic
                 await client.LoginAsync(TokenType.Bot, token);
                 await client.StartAsync();
             }
+            else
+            {
+                token = "";
+                while (client.ConnectionState != ConnectionState.Connected)
+                {
+                    Console.WriteLine("Please enter the bot token:");
+                    token = Console.ReadLine();
+                    try
+                    {
+                        await client.LoginAsync(TokenType.Bot, token);
+                        await client.StartAsync();
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        Console.WriteLine("That looks like a bad token maybe? or something else went wrong.");
+                    }
+                }
+                ConfigurationHandler.CreateConfig(token, "", "");
+            }
             
 
             await Task.Delay(-1);
@@ -71,6 +91,7 @@ namespace ColonelPanic
             await commands.AddModulesAsync(Assembly.GetEntryAssembly());
             await commands.AddModuleAsync<ServerModule>();
             await commands.AddModuleAsync<HelpModule>();
+            await commands.AddModuleAsync<ConfigurationModule>();
         }
 
         public async Task HandleCommand(SocketMessage messageParam)
