@@ -49,6 +49,9 @@ namespace ColonelPanic.Database.Contexts
                         config.LastGirhubCommit = NewValue as string;
                         break;
                 }
+                db.Config.Attach(config);
+                db.Entry(config).State = EntityState.Modified;
+                db.SaveChanges();
             }
         }
     }

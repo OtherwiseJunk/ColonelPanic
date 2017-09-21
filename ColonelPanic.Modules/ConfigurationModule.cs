@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace ColonelPanic.Modules
 {
     [Group("config"), RequireOwner]
-    class ConfigurationModule : ModuleBase
+    public class ConfigurationModule : ModuleBase
     {
         [Command("change"), Summary("Changes the specified configuration field to the specified value. Can currently update:\ngittoken\nbottoken\ngitcommit\n")]
         public async Task Change([Summary("The field to update")] string field, [Summary("The new value")] string newValue)

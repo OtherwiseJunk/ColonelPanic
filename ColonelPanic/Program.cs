@@ -91,6 +91,7 @@ namespace ColonelPanic
             await commands.AddModulesAsync(Assembly.GetEntryAssembly());
             await commands.AddModuleAsync<ServerModule>();
             await commands.AddModuleAsync<HelpModule>();
+            await commands.AddModuleAsync<ConfigurationModule>();
         }
 
         public async Task HandleCommand(SocketMessage messageParam)
