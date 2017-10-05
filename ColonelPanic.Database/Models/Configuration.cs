@@ -16,7 +16,7 @@ namespace ColonelPanic.Database.Models
         public int ConfigID { get; set; }
         public string Token { get; set; }
         public string GithubToken { get; set; }
-        public string LastGirhubCommit { get; set; }
+        public string LastGithubCommit { get; set; }
 
         public Configuration()
         {
@@ -27,7 +27,7 @@ namespace ColonelPanic.Database.Models
         {
             Token = token;
             GithubToken = githubToken;
-            LastGirhubCommit = githubCommit;
+            LastGithubCommit = githubCommit;
         }
     }
 }

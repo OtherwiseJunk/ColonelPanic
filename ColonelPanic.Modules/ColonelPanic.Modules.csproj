@@ -90,6 +90,7 @@
   <ItemGroup>
     <Compile Include="ConfigurationModule.cs" />
     <Compile Include="HelpModule.cs" />
+    <Compile Include="ScrumModule.cs" />
     <Compile Include="ServerModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

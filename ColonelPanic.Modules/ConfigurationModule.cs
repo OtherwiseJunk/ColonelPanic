@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace ColonelPanic.Modules
 {
-    [Group("config"), RequireOwner]
+    [Group("config"), ]
     public class ConfigurationModule : ModuleBase
     {
-        [Command("change"), Summary("Changes the specified configuration field to the specified value. Can currently update:\ngittoken\nbottoken\ngitcommit\n")]
+        [Command("change"), RequireOwner,Summary("Changes the specified configuration field to the specified value. Can currently update:\ngittoken\nbottoken\ngitcommit\n")]
         public static async Task Change([Summary("The field to update")] string field, [Summary("The new value")] string newValue)
         {
             switch (field)
