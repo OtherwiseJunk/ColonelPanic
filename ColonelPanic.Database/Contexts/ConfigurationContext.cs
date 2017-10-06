@@ -154,6 +154,14 @@ namespace ColonelPanic.Database.Contexts
             }
         }
 
+        public static bool IsTrustedUser(string userId)
+        {
+            using (ConfigurationContext db = new ConfigurationContext())
+            {
+                return db.TrustedUsers.FirstOrDefault(u => u.UserId.ToString() == userId) != null;
+            }
+        }
+
         public static bool PermissionEnabled(string permission, string chnlId)
         {
             if (ConfigurationHandler.ChannelStateExists(chnlId))
