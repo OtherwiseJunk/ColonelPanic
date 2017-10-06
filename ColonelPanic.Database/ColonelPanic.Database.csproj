@@ -54,6 +54,7 @@
     <Compile Include="Models\Configuration.cs" />
     <Compile Include="Models\ScrumChannel.cs" />
     <Compile Include="Models\ScrumUser.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\ScrumUpdate.cs" />
     <Compile Include="Contexts\ScrumContext.cs" />

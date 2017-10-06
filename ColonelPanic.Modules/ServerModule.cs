@@ -15,7 +15,7 @@ namespace ColonelPanic.Modules
             await ReplyAsync(echo);
         }
 
-        [Command("trust"), RequireOwner, Summary("Adds the user's ID to the trusted user list")]
+        [Command("trust"), RequireOwner, Summary("Adds the user's ID to the trusted user list. Trusted users will be able to execute commands regardless of permissions.")]
         public async Task TrustUser([Remainder, Summary("User's ID")] string userId)
         {
             ulong userUlong;

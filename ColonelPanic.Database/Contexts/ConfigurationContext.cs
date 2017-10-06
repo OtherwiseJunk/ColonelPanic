@@ -15,6 +15,7 @@ namespace ColonelPanic.Database.Contexts
         }
         public DbSet<Configuration> Config { get; set; }
         public DbSet<ChannelState> ChannelStates { get; set; }
+        public DbSet<User> TrustedUsers { get; set; }
     }
 
     public class ConfigurationHandler
@@ -144,7 +145,13 @@ namespace ColonelPanic.Database.Contexts
     {
         public static void AddTrustedUser(string userId, string username)
         {
-            throw new NotImplementedException();
+            using (ConfigurationContext db = new ConfigurationContext())
+            {
+                if (db.TrustedUsers.FirstOrDefault(u=> u.UserId.ToString() == userId ) == null)
+                {
+                    db.TrustedUsers.Add(new User(userId, username));
+                }
+            }
         }
 
         public static bool PermissionEnabled(string permission, string chnlId)
