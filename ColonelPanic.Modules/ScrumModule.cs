@@ -100,6 +100,20 @@ namespace ColonelPanic.Modules
             
         }
 
+        [Command("listupdates"), Summary("Shows a list of updates for the specified user.")]
+        public async Task GetUpdateList([Remainder, Summary("The username to get the updates for.")]string username)
+        {
+            if (username != "*" && ScrumHandler.UserExists(Context.Channel.Id.ToString(), username))
+            {
+                string msgHeader = $"**{username}'s Updates:**" + Environment.NewLine;
+                await Context.User.GetOrCreateDMChannelAsync().Result.SendMessageAsync(msgHeader+ScrumHandler.BuildUserUpdateList(Context.Channel.Id.ToString(),username));
+            }
+            else
+            {
+                await Context.User.GetOrCreateDMChannelAsync().Result.SendMessageAsync(ScrumHandler.BuildAllUpdateLists(Context.Channel.Id.ToString(),Context.Channel.Name));
+            }
+        }
+
         
     }
 }

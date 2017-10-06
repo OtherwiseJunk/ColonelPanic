@@ -134,6 +134,63 @@ namespace ColonelPanic.Database.Contexts
             return users;
         }
 
+        public static bool UserExists(string channelId, string username)
+        {
+            using (ScrumContext db = new ScrumContext())
+            {
+                return db.Users.FirstOrDefault(u => u.Username.ToLower() == username.ToLower() && u.UserChannelId == channelId) != null;
+            }
+        }
+
+        public static string BuildAllUpdateLists(string channelId, string channelName)
+        {
+            string msg = "";
+            using (ScrumContext db = new ScrumContext())
+            {
+                List<ScrumUser> users = db.Users.Where(u => u.UserChannelId == channelId).ToList();
+                foreach (ScrumUser user in users)
+                {
+                    msg += $"**{user.Username}'s Updates:**" + Environment.NewLine;
+                    msg += BuildUserUpdateList(channelId, user.Username);
+                    msg += Environment.NewLine + Environment.NewLine;
+                }
+            }
+
+            return msg;
+
+        }
+
+        public static string BuildUserUpdateList(string channelId, string username)
+        {
+            string msg = "";
+            using(ScrumContext db = new ScrumContext())
+            {
+                List<ScrumUpdate> userUpdates = db.Updates.Where(u => u.ChannelID == channelId && u.Updater.ToLower() == username.ToLower()).ToList();
+                if(userUpdates.Count > 0)
+                {                    
+                    int loopCount = 0;
+                    DateTime lastDateTime = new DateTime();
+                    foreach (ScrumUpdate update in userUpdates)
+                    {
+                        msg += $"{update.UpdateID}) {update.Timestamp.ToString("yyyy-MM-dd")}: {update.UpdateText}";
+                        if (loopCount != 0)
+                        {
+                            msg += $" |Days since last update: {(int)(update.Timestamp - lastDateTime).TotalDays}";
+                        }
+                        msg += Environment.NewLine;
+                        lastDateTime = update.Timestamp;
+                        loopCount++;
+                    }
+                    msg = msg.Substring(0, msg.Length - 2); 
+                }
+                else
+                {
+                    msg = "This user has no updates.";
+                }
+            }
+            return msg;
+        }
+
         public static List<ScrumUser> GetUserList()
         {
             using (ScrumContext db = new ScrumContext())
