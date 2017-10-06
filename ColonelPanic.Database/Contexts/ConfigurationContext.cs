@@ -142,6 +142,11 @@ namespace ColonelPanic.Database.Contexts
 
     public class PermissionHandler
     {
+        public static void AddTrustedUser(string userId, string username)
+        {
+            throw new NotImplementedException();
+        }
+
         public static bool PermissionEnabled(string permission, string chnlId)
         {
             if (ConfigurationHandler.ChannelStateExists(chnlId))
