@@ -219,6 +219,19 @@ namespace ColonelPanic.Database.Contexts
             }
             else return false;
         }
+
+        public static void RemoveTrustedUser(string userId)
+        {
+            using (ConfigurationContext db = new ConfigurationContext())
+            {
+                User user = db.TrustedUsers.FirstOrDefault(u => u.UserId.ToString() == userId);
+                if (user != null)
+                {
+                    db.TrustedUsers.Remove(user);
+                    db.SaveChanges();
+                }
+            }
+        }
     }
     
 }
