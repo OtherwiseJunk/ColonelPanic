@@ -162,6 +162,68 @@ namespace ColonelPanic.Database.Contexts
             }
         }
 
+        public static bool CanExecute(string permissionName,string channelId,string userId)
+        {
+            bool permEnabled = false;
+            using (ConfigurationContext db = new ConfigurationContext())
+            {
+                ChannelState channel = db.ChannelStates.FirstOrDefault(cs => cs.ChannelID == channelId);
+                if (channel != null)
+                {
+                    if (channel.ChannelName.StartsWith("@"))
+                    {
+                        permEnabled = true;
+                    }
+                    else
+                    {
+                        switch (permissionName)
+                        {
+                            case "scrum":
+                                permEnabled = channel.ScrumEnabled;
+                                break;
+                            case "server":
+                                permEnabled = channel.ServerModuleEnabled;
+                                break;                            
+                        }
+                    }
+                }
+            }
+
+            return IsTrustedUser(userId) || permEnabled;
+        }
+
+        public static bool CanSpeak(string channelId)
+        {
+            using (ConfigurationContext db = new ConfigurationContext)
+            {
+                ChannelState channel = db.ChannelStates.FirstOrDefault(cs => cs.ChannelID == channelId);
+                if (channel != null)
+                {
+                    return channel.CanSpeak || channel.ChannelName.StartsWith("@");
+                }
+                else
+                {
+                    return false;
+                }
+                
+            }
+        }
+        public static bool CanListen(string channelId)
+        {
+            using (ConfigurationContext db = new ConfigurationContext)
+            {
+                ChannelState channel = db.ChannelStates.FirstOrDefault(cs => cs.ChannelID == channelId);
+                if (channel != null)
+                {
+                    return channel.CanListen || channel.ChannelName.StartsWith("@");
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+        }
         public static bool PermissionEnabled(string permission, string chnlId)
         {
             if (ConfigurationHandler.ChannelStateExists(chnlId))
