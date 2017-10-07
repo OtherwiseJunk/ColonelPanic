@@ -54,6 +54,10 @@
     <Compile Include="Migrations\201710070042369_UserTable.Designer.cs">
       <DependentUpon>201710070042369_UserTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710070141148_RemoveServerPerm.cs" />
+    <Compile Include="Migrations\201710070141148_RemoveServerPerm.Designer.cs">
+      <DependentUpon>201710070141148_RemoveServerPerm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ChannelState.cs" />
     <Compile Include="Models\Configuration.cs" />
@@ -71,6 +75,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710070042369_UserTable.resx">
       <DependentUpon>201710070042369_UserTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710070141148_RemoveServerPerm.resx">
+      <DependentUpon>201710070141148_RemoveServerPerm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
