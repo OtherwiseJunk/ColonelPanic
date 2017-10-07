@@ -86,5 +86,11 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ColonelPanic.Database\ColonelPanic.Database.csproj">
+      <Project>{6FC859B7-484C-4A9D-B29C-A6FF3B637C3A}</Project>
+      <Name>ColonelPanic.Database</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

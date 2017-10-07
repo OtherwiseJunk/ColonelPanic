@@ -1,7 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Discord.Commands;
-using ColonelPanic.Utilities
+using ColonelPanic.Utilities;
 using ColonelPanic.Database.Contexts;
+using ColonelPanic.Permissions;
 using System.Collections.Generic;
 
 namespace ColonelPanic.Modules
@@ -42,7 +43,7 @@ namespace ColonelPanic.Modules
             await Context.Guild.GetCurrentUserAsync().Result.ModifyAsync(b => b.Nickname = newNick);
         }
 
-        [Command("8ball"), Summary("Ask Colonel Panic a true or false question.")]
+        [Command("8ball"), RequireColPermission("speak"), Summary("Ask Colonel Panic a true or false question.")]
         public async Task Send8BallResponse()
         {
             await Context.Channel.SendMessageAsync(ResponseCollections._8BallResponses.GetRandom());

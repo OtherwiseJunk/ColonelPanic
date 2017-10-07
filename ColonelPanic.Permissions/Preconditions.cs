@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using ColonelPanic.Database.Contexts;
+using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
@@ -18,10 +19,29 @@ namespace ColonelPanic.Permissions
         public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
             
-            // If this command was executed by that user, return a success
+            
             if (context.Channel.Id.ToString() == ChannelId)
                 return PreconditionResult.FromSuccess();
-            // Since it wasn't, fail
+            
+            else
+                return PreconditionResult.FromError("That command is not available on this channel.");
+        }
+    }
+
+    public class RequireColPermissionAttribute : PreconditionAttribute
+    {
+        public string Permission;
+        public RequireColPermissionAttribute(string perm)
+        {
+            Permission = perm;
+        }
+        public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
+        {
+
+            
+            if (PermissionHandler.CanExecute(Permission,context.Channel.Id.ToString(),context.User.Id.ToString()))
+                return PreconditionResult.FromSuccess();
+            
             else
                 return PreconditionResult.FromError("That command is not available on this channel.");
         }
@@ -37,10 +57,10 @@ namespace ColonelPanic.Permissions
         public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
 
-            // If this command was executed by that user, return a success
+            
             if (context.Guild.Id.ToString() == GuildId)
                 return PreconditionResult.FromSuccess();
-            // Since it wasn't, fail
+            
             else
                 return PreconditionResult.FromError("That command is not available on this channel.");
         }
