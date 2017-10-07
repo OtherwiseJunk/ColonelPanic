@@ -60,4 +60,27 @@ namespace ColonelPanic.Modules
             await Context.Channel.SendMessageAsync("Ok, I've enabled the listen permission!");
         }
     }
+    [Group("disable"), Summary(" All \"disable\" commands require \"Manage Channel\" permissions. These commands disable the specified permission for the channel.")]
+    public class DisableModule : ModuleBase
+    {
+        [Command("scrum"), Summary("Disables SCRUM reminders for this channel."), RequireUserPermission(Discord.GuildPermission.ManageChannels)]
+        public async Task DisableScrum()
+        {
+            ConfigurationHandler.ChangePermission("chnl", "scrum", Context.Channel.Id.ToString(), false);
+            await Context.Channel.SendMessageAsync("Ok, I've disabled the scrum permission!");
+        }
+
+        [Command("speak"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
+        public async Task EnableSpeak()
+        {
+            ConfigurationHandler.ChangePermission("chnl", "speak", Context.Channel.Id.ToString(), false);
+            await Context.Channel.SendMessageAsync("Ok, I've disabled the speak permission!");
+        }
+        [Command("listen"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
+        public async Task EnableListen()
+        {
+            ConfigurationHandler.ChangePermission("chnl", "listen", Context.Channel.Id.ToString(), false);
+            await Context.Channel.SendMessageAsync("Ok, I've disabled the listen permission!");
+        }
+    }
 }
