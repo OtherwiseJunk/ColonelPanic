@@ -10,15 +10,26 @@ using Discord;
 
 namespace ColonelPanic.Modules
 {
-    [Group("geosus"),RequireGuild("177229913512738816"),Summary("A module all for Geosus!")]
+    [RequireGuild("177229913512738816"),Summary("A module all for Geosus!")]
     public class GeosusModule : ModuleBase
     {
         [Command("adventburger"), Summary("Selects a random Squaddie.")]
-        public async Task AdventBurger([Remainder, Summary("The number of squaddies. return 1 by default.")] string number)
+        public async Task AdventBurger([Remainder, Summary("The number of squaddies. return 1 by default.")] string number = "f")
         {
             int numberOfSquaddies;
-            
-            List<IGuildUser> squaddies = Context.Guild.GetUsersAsync().Result.ToList().Where(u=>u.RoleIds.FirstOrDefault(id=>id== 355954896048095232) != null).ToList();
+
+            List<IGuildUser> allUsers = Context.Guild.GetUsersAsync().Result.ToList();
+            List<IGuildUser> squaddies = new List<IGuildUser>();            
+            foreach (IGuildUser user in allUsers)
+            {
+                foreach (ulong role in user.RoleIds)
+                {
+                    if (role == 355954896048095232)
+                    {
+                        squaddies.Add(user);
+                    }
+                }
+            }
 
             if (Int32.TryParse(number, out numberOfSquaddies))
             {
