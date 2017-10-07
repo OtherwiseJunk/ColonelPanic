@@ -183,46 +183,19 @@ namespace ColonelPanic.Database.Contexts
                                 break;
                             case "server":
                                 permEnabled = channel.ServerModuleEnabled;
-                                break;                            
+                                break;
+                            case "speak":
+                                permEnabled = channel.CanSpeak;
+                                break;
+                            case "listen":
+                                permEnabled = channel.CanListen;
+                                break;
                         }
                     }
                 }
             }
 
             return IsTrustedUser(userId) || permEnabled;
-        }
-
-        public static bool CanSpeak(string channelId)
-        {
-            using (ConfigurationContext db = new ConfigurationContext)
-            {
-                ChannelState channel = db.ChannelStates.FirstOrDefault(cs => cs.ChannelID == channelId);
-                if (channel != null)
-                {
-                    return channel.CanSpeak || channel.ChannelName.StartsWith("@");
-                }
-                else
-                {
-                    return false;
-                }
-                
-            }
-        }
-        public static bool CanListen(string channelId)
-        {
-            using (ConfigurationContext db = new ConfigurationContext)
-            {
-                ChannelState channel = db.ChannelStates.FirstOrDefault(cs => cs.ChannelID == channelId);
-                if (channel != null)
-                {
-                    return channel.CanListen || channel.ChannelName.StartsWith("@");
-                }
-                else
-                {
-                    return false;
-                }
-
-            }
         }
         public static bool PermissionEnabled(string permission, string chnlId)
         {
