@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace ColonelPanic.Modules
 {
-    [Group("enable")]
-    public class PermissionModule : ModuleBase
+    [Group("enable"), Summary(" All \"enable\" commands require \"Manage Channel\" permissions. These commands enable the specified permission for the channel.")]
+    public class EnableModule : ModuleBase
     {
-        [Command("scrum"), Summary("Enables SCRUM reminders for this channel. Requires \"Manage Channel\" permissions."), RequireUserPermission(Discord.GuildPermission.ManageChannels)]
-        public async Task Enable([Remainder, Summary("The datetime to start the weekly reminders.")] string Datetime)
+        [Command("scrum"), Summary("Enables SCRUM reminders for this channel."), RequireUserPermission(Discord.GuildPermission.ManageChannels)]
+        public async Task EnableScrum([Remainder, Summary("The datetime to start the weekly reminders.")] string Datetime)
         {
             DateTime dateTime;
             if (DateTime.TryParse(Datetime, out dateTime))
@@ -47,6 +47,17 @@ namespace ColonelPanic.Modules
             }
         }
 
-        []
+        [Command("speak"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
+        public async Task EnableSpeak()
+        {
+            ConfigurationHandler.ChangePermission("chnl", "speak", Context.Channel.Id.ToString(), true);
+            await Context.Channel.SendMessageAsync("Ok, I've enabled the speak permission!");
+        }
+        [Command("listen"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
+        public async Task EnableListen()
+        {
+            ConfigurationHandler.ChangePermission("chnl", "listen", Context.Channel.Id.ToString(), true);
+            await Context.Channel.SendMessageAsync("Ok, I've enabled the listen permission!");
+        }
     }
 }
