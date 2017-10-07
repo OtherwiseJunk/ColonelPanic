@@ -44,7 +44,17 @@ namespace ColonelPanic
             client.Log += WriteLog;
             client.MessageReceived += MessageReceived;
 
-            string token = ConfigurationHandler.GetToken();
+            string token = String.Empty;
+
+
+            try
+            {
+                token = ConfigurationHandler.GetToken();
+            }
+            catch (Exception ex)
+            {
+
+            }
 
             if (token != String.Empty)
             {
@@ -62,6 +72,7 @@ namespace ColonelPanic
                     {
                         await client.LoginAsync(TokenType.Bot, token);
                         await client.StartAsync();
+                        ConfigurationHandler.CreateConfig(token, "", "");
                     }
                     catch (Exception ex)
                     {
@@ -69,34 +80,34 @@ namespace ColonelPanic
                         Console.WriteLine("That looks like a bad token maybe? or something else went wrong.");
                     }
                 }
-                ConfigurationHandler.CreateConfig(token, "", "");
+                
             }
 
-            ScrumUpdateTimer = new System.Threading.Timer(ScrumCheckCallback,null,1000*60,1000*60*60);                                   
+            ScrumUpdateTimer = new System.Threading.Timer(ScrumCheckCallback, null, 1000 * 60, 1000 * 60 * 60);
 
             await Task.Delay(-1);
-        }       
+        }
 
         private async Task AddChannelStateIfMissing(string chnlId, string name)
         {
             if (!ConfigurationHandler.ChannelStateExists(chnlId))
             {
-                await ConfigurationHandler.AddChannelState(chnlId,name);
+                await ConfigurationHandler.AddChannelState(chnlId, name);
             }
         }
 
         public void ScrumCheckCallback(object state)
-        {            
-                List<ScrumUser> usersToHarass = ScrumHandler.GetUsersToHarass();
-                if (usersToHarass.Count > 0)
+        {
+            List<ScrumUser> usersToHarass = ScrumHandler.GetUsersToHarass();
+            if (usersToHarass.Count > 0)
+            {
+                foreach (ScrumUser user in usersToHarass)
                 {
-                    foreach (ScrumUser user in usersToHarass)
-                    {
-                        var usr = client.GetUser(ulong.Parse(user.UserId));
-                        var chnl = client.GetChannel(ulong.Parse(user.UserChannelId)) as SocketTextChannel;
-                        chnl.SendMessageAsync(usr.Mention + "! You haven't given me an update for this week!");
-                    }
-                }            
+                    var usr = client.GetUser(ulong.Parse(user.UserId));
+                    var chnl = client.GetChannel(ulong.Parse(user.UserChannelId)) as SocketTextChannel;
+                    chnl.SendMessageAsync(usr.Mention + "! You haven't given me an update for this week!");
+                }
+            }
         }
 
         private async Task MessageReceived(SocketMessage arg)

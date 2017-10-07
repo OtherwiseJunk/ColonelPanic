@@ -150,6 +150,7 @@ namespace ColonelPanic.Database.Contexts
                 if (db.TrustedUsers.FirstOrDefault(u=> u.UserId.ToString() == userId ) == null)
                 {
                     db.TrustedUsers.Add(new User(userId, username));
+                    db.SaveChanges();
                 }
             }
         }

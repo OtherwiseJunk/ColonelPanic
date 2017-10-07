@@ -10,9 +10,9 @@ namespace ColonelPanic.Database.Models
     public class User
     {
         [Key]
-        int UserNum;
-        public string UserId;
-        public string Username;
+        public int UserNum { get; set; }
+        public string UserId { get; set; }
+        public string Username { get; set; }
 
         public User()
         {

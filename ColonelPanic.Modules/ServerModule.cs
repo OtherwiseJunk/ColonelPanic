@@ -25,6 +25,30 @@ namespace ColonelPanic.Modules
                 if (Context.Guild.GetUserAsync(userUlong) != null)
                 {
                     PermissionHandler.AddTrustedUser(userId, Context.Guild.GetUserAsync(userUlong).Result.Username);
+                    await Context.Channel.SendMessageAsync("You really trust that one? Well, _you're_ the boss. :thumbsup:");
+                }
+                else
+                {
+                    await Context.Channel.SendMessageAsync(ResponseCollections.UserNotFoundResponses.GetRandom());
+                }
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync("That doesn't seem to be the right input...");
+            }
+        }
+
+        [Command("distrust"), RequireOwner, Summary("Removes the user's ID from the trusted user list.")]
+
+        public async Task DistrustUser([Remainder, Summary("User's ID")], string userId)
+        {
+            ulong userUlong;
+            if (ulong.TryParse(userId, out userUlong))
+            {
+                if (Context.Guild.GetUserAsync(userUlong) != null)
+                {
+                    PermissionHandler.AddTrustedUser(userId, Context.Guild.GetUserAsync(userUlong).Result.Username);
+                    await Context.Channel.SendMessageAsync("You really trust that one? Well, _you're_ the boss. :thumbsup:");
                 }
                 else
                 {
