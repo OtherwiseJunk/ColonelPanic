@@ -197,28 +197,7 @@ namespace ColonelPanic.Database.Contexts
             }
 
             return IsTrustedUser(userId) || permEnabled;
-        }
-        public static bool PermissionEnabled(string permission, string chnlId)
-        {
-            if (ConfigurationHandler.ChannelStateExists(chnlId))
-            {
-                using (ConfigurationContext db = new ConfigurationContext())
-                {
-                    switch (permission)
-                    {
-                        case "scrum":
-                            return db.ChannelStates.First(cs => cs.ChannelID == chnlId).ScrumEnabled;
-                        case "listen":
-                            return db.ChannelStates.First(cs => cs.ChannelID == chnlId).CanListen;
-                        case "speak":
-                            return db.ChannelStates.First(cs => cs.ChannelID == chnlId).CanSpeak;
-                        default:
-                            return false;
-                    }
-                }
-            }
-            else return false;
-        }
+        }        
 
         public static void RemoveTrustedUser(string userId)
         {
