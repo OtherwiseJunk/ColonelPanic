@@ -70,7 +70,7 @@ namespace ColonelPanic.Modules
         }
 
         [Command("8ball"), RequireColPermission("speak"), Summary("Ask Colonel Panic a true or false question.")]
-        public async Task Send8BallResponse()
+        public async Task Send8BallResponse([Remainder, Summary("The question!")] string question)
         {
             await Context.Channel.SendMessageAsync(ResponseCollections._8BallResponses.GetRandom());
         }

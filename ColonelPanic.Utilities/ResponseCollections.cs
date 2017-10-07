@@ -33,7 +33,7 @@ namespace ColonelPanic.Utilities
                 "NO - It may cause disease contraction",
                 "I mean like yeah, probably?",
                 "What are you stupid? Of course not.",
-                "You would ask that. No.",
+                "You _would_ ask that. No.",
                 "Maybe probably.",
                 "I mean. It's more likely than Geo playing Tf2, at least?",
                 "You know it!",               
