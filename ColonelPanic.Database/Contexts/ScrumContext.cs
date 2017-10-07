@@ -70,7 +70,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static string GetScrummers(ulong chnlId)
         {
-            string msg = "Here's who I'm tracking currently:" + Environment.NewLine+Environment.NewLine;
+            string msg = "Here's who I'm tracking currently:" + Environment.NewLine + Environment.NewLine;
 
             using (ScrumContext db = new ScrumContext())
             {
@@ -79,7 +79,7 @@ namespace ColonelPanic.Database.Contexts
                     List<ScrumUser> users = db.Users.ToList();
                     foreach (ScrumUser usr in users)
                     {
-                        msg += $"**Username**: {usr.Username+ Environment.NewLine} **Last Update:** {usr.LastUpdate.ToString("dddd, dd MMMM yyyy HH:mm:ss")+Environment.NewLine} **Update Count:** {usr.UpdateCount + Environment.NewLine}" + Environment.NewLine+Environment.NewLine;
+                        msg += $"**Username**: {usr.Username + Environment.NewLine} **Last Update:** {usr.LastUpdate.ToString("dddd, dd MMMM yyyy HH:mm:ss") + Environment.NewLine} **Update Count:** {usr.UpdateCount + Environment.NewLine}" + Environment.NewLine + Environment.NewLine;
                     }
                     msg = msg.Substring(0, msg.Length - 2);
                 }
@@ -111,7 +111,7 @@ namespace ColonelPanic.Database.Contexts
                                 {
                                     users.Add(usr);
                                 }
-                            }                            
+                            }
                         }
                         chnl.ScrumReminderDateTime = chnl.ScrumReminderDateTime.AddDays(7);
                         db.Channels.Attach(chnl);
@@ -128,7 +128,7 @@ namespace ColonelPanic.Database.Contexts
                         db.Entry(chnl).State = EntityState.Modified;
                         db.SaveChanges();
                     }
-                    
+
                 }
             }
             return users;
@@ -163,11 +163,11 @@ namespace ColonelPanic.Database.Contexts
         public static string BuildUserUpdateList(string channelId, string username)
         {
             string msg = "";
-            using(ScrumContext db = new ScrumContext())
+            using (ScrumContext db = new ScrumContext())
             {
                 List<ScrumUpdate> userUpdates = db.Updates.Where(u => u.ChannelID == channelId && u.Updater.ToLower() == username.ToLower()).ToList();
-                if(userUpdates.Count > 0)
-                {                    
+                if (userUpdates.Count > 0)
+                {
                     int loopCount = 0;
                     DateTime lastDateTime = new DateTime();
                     foreach (ScrumUpdate update in userUpdates)
@@ -181,7 +181,7 @@ namespace ColonelPanic.Database.Contexts
                         lastDateTime = update.Timestamp;
                         loopCount++;
                     }
-                    msg = msg.Substring(0, msg.Length - 2); 
+                    msg = msg.Substring(0, msg.Length - 2);
                 }
                 else
                 {
@@ -205,16 +205,12 @@ namespace ColonelPanic.Database.Contexts
                 return db.Channels.ToList();
             }
         }
-        public static bool UserIsRegistered(string channelId,string userId)
+        public static bool UserIsRegistered(string channelId, string userId)
         {
-            if (PermissionHandler.PermissionEnabled("scrum", channelId))
+            using (ScrumContext db = new ScrumContext())
             {
-                using (ScrumContext db = new ScrumContext())
-                {                    
-                    return db.Users.FirstOrDefault(u => u.UserChannelId == channelId && u.UserId == userId) != null;
-                }
+                return db.Users.FirstOrDefault(u => u.UserChannelId == channelId && u.UserId == userId) != null;
             }
-            else return false;
         }
     }
 

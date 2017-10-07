@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ColonelPanic.Modules
 {
-    [Group("scrum"), RequireContext(ContextType.Guild), Summary("A module which provides weekly reminders to users who haven't submitted an update.")]
+    [Group("scrum"), RequireContext(ContextType.Guild), RequireColPermission("scrum"), Summary("A module which provides weekly reminders to users who haven't submitted an update.")]
     public class ScrumModule : ModuleBase
     {                
         [Command("adduser"), RequireColPermission("scrum"),Summary("Adds the specified user to the scrum users list"), RequireUserPermission(Discord.ChannelPermission.ManageChannel)]
@@ -37,13 +37,13 @@ namespace ColonelPanic.Modules
 
 
 
-        [Command("scrummers"), RequireColPermission("scrum"), Alias("scrumers"), Summary("Returns a list of all registered user's Username, last update date, and update count.")]
+        [Command("scrummers"), Alias("scrumers"), Summary("Returns a list of all registered user's Username, last update date, and update count.")]
         public async Task GetScrummers()
         {
             await ReplyAsync(ScrumHandler.GetScrummers(Context.Channel.Id));
         }
 
-        [Command("update"), RequireColPermission("scrum"), Summary("Submit an update.")]
+        [Command("update"), Summary("Submit an update.")]
         public async Task SubmitUpdate([Remainder, Summary("The update text.")]string updateMsg)
         {
             if (ScrumHandler.UserIsRegistered(Context.Channel.Id.ToString(), Context.User.Id.ToString()))
@@ -58,7 +58,7 @@ namespace ColonelPanic.Modules
             
         }
 
-        [Command("listupdates"), RequireColPermission("scrum"), Summary("Shows a list of updates for the specified user.")]
+        [Command("listupdates"), Summary("Shows a list of updates for the specified user.")]
         public async Task GetUpdateList([Remainder, Summary("The username to get the updates for.")]string username)
         {
             if (username != "*" && ScrumHandler.UserExists(Context.Channel.Id.ToString(), username))
