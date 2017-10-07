@@ -11,7 +11,7 @@ using Discord;
 namespace ColonelPanic.Modules
 {
     [Group("geosus"),RequireGuild("177229913512738816"),Summary("A module all for Geosus!")]
-    class GeosusModule : ModuleBase
+    public class GeosusModule : ModuleBase
     {
         [Command("adventburger"), Summary("Selects a random Squaddie.")]
         public async Task AdventBurger([Remainder, Summary("The number of squaddies. return 1 by default.")] string number)

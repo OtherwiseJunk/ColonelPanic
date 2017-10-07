@@ -181,10 +181,7 @@ namespace ColonelPanic.Database.Contexts
                         {
                             case "scrum":
                                 permEnabled = channel.ScrumEnabled;
-                                break;
-                            case "server":
-                                permEnabled = channel.ServerModuleEnabled;
-                                break;
+                                break;                            
                             case "speak":
                                 permEnabled = channel.CanSpeak;
                                 break;

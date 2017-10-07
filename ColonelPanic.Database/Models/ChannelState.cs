@@ -14,7 +14,6 @@ namespace ColonelPanic.Database.Models
         public string ChannelID { set; get; }
         public string ChannelName { get; set; }
         public bool ScrumEnabled { get; set; }
-        public bool ServerModuleEnabled { get; set; }
         public bool CanSpeak { get; set; }
         public bool CanListen { get; set; }
 
@@ -27,8 +26,7 @@ namespace ColonelPanic.Database.Models
         {
             ChannelID = channelId;
             ChannelName = channelName;
-            ScrumEnabled = false;
-            ServerModuleEnabled = true;
+            ScrumEnabled = false;            
             CanSpeak = false;
             CanListen = false;
         }
