@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contexts\ConfigurationContext.cs" />
+    <Compile Include="Contexts\NoteContext.cs" />
     <Compile Include="Migrations\201710070042369_UserTable.cs" />
     <Compile Include="Migrations\201710070042369_UserTable.Designer.cs">
       <DependentUpon>201710070042369_UserTable.cs</DependentUpon>
@@ -58,9 +59,14 @@
     <Compile Include="Migrations\201710070141148_RemoveServerPerm.Designer.cs">
       <DependentUpon>201710070141148_RemoveServerPerm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710080529030_Notes.cs" />
+    <Compile Include="Migrations\201710080529030_Notes.Designer.cs">
+      <DependentUpon>201710080529030_Notes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ChannelState.cs" />
     <Compile Include="Models\Configuration.cs" />
+    <Compile Include="Models\Note.cs" />
     <Compile Include="Models\ScrumChannel.cs" />
     <Compile Include="Models\ScrumUser.cs" />
     <Compile Include="Models\User.cs" />
@@ -78,6 +84,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201710070141148_RemoveServerPerm.resx">
       <DependentUpon>201710070141148_RemoveServerPerm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710080529030_Notes.resx">
+      <DependentUpon>201710080529030_Notes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

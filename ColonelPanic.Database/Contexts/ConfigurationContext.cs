@@ -68,6 +68,9 @@ namespace ColonelPanic.Database.Contexts
                     case "listen":
                         channelState.CanListen = newState;
                         break;
+                    case "note":
+                        channelState.NoteEnabled = newState;
+                        break;
                 }
                 db.ChannelStates.Attach(channelState);
                 db.Entry(channelState).State = EntityState.Modified;
@@ -187,6 +190,9 @@ namespace ColonelPanic.Database.Contexts
                                 break;
                             case "listen":
                                 permEnabled = channel.CanListen;
+                                break;
+                            case "note":
+                                permEnabled = channel.NoteEnabled;
                                 break;
                         }
                     }

@@ -14,6 +14,7 @@ namespace ColonelPanic.Database.Models
         public string ChannelID { set; get; }
         public string ChannelName { get; set; }
         public bool ScrumEnabled { get; set; }
+        public bool NoteEnabled { get; set; }
         public bool CanSpeak { get; set; }
         public bool CanListen { get; set; }
 

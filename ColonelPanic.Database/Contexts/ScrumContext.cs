@@ -17,10 +17,10 @@ namespace ColonelPanic.Database.Contexts
                 db.Updates.Add(new ScrumUpdate(update, updater, channelId));
                 string usrId = userId.ToString();
                 string chnlId = channelId.ToString();
-                ScrumUser usr = db.Users.FirstOrDefault(u => u.UserId == usrId && u.UserChannelId == chnlId);
+                ScrumUser usr = db.ScrumUsers.FirstOrDefault(u => u.UserId == usrId && u.UserChannelId == chnlId);
                 usr.UpdateCount++;
                 usr.LastUpdate = DateTime.Now;
-                db.Users.Attach(usr);
+                db.ScrumUsers.Attach(usr);
                 db.Entry(usr).State = EntityState.Modified;
                 db.SaveChanges();
             }
@@ -39,9 +39,9 @@ namespace ColonelPanic.Database.Contexts
             using (ScrumContext db = new ScrumContext())
             {
                 string usrId = userId.ToString();
-                if (db.Users.FirstOrDefault(u => u.UserId == usrId) == null)
+                if (db.ScrumUsers.FirstOrDefault(u => u.UserId == usrId) == null)
                 {
-                    db.Users.Add(new ScrumUser(chnlId.ToString(), usrId, username));
+                    db.ScrumUsers.Add(new ScrumUser(chnlId.ToString(), usrId, username));
                     db.SaveChanges();
                 }
             }
@@ -74,9 +74,9 @@ namespace ColonelPanic.Database.Contexts
 
             using (ScrumContext db = new ScrumContext())
             {
-                if (db.Users.Count() > 0)
+                if (db.ScrumUsers.Count() > 0)
                 {
-                    List<ScrumUser> users = db.Users.ToList();
+                    List<ScrumUser> users = db.ScrumUsers.ToList();
                     foreach (ScrumUser usr in users)
                     {
                         msg += $"**Username**: {usr.Username + Environment.NewLine} **Last Update:** {usr.LastUpdate.ToString("dddd, dd MMMM yyyy HH:mm:ss") + Environment.NewLine} **Update Count:** {usr.UpdateCount + Environment.NewLine}" + Environment.NewLine + Environment.NewLine;
@@ -102,7 +102,7 @@ namespace ColonelPanic.Database.Contexts
                 {
                     if ((DateTime.Now > chnl.ScrumReminderDateTime) && DateTime.Now.AddHours(-1) < chnl.ScrumReminderDateTime)
                     {
-                        List<ScrumUser> scrumUsers = db.Users.ToList();
+                        List<ScrumUser> scrumUsers = db.ScrumUsers.ToList();
                         foreach (ScrumUser usr in scrumUsers)
                         {
                             if (usr.UserChannelId == chnl.ScrumChannelId)
@@ -138,7 +138,7 @@ namespace ColonelPanic.Database.Contexts
         {
             using (ScrumContext db = new ScrumContext())
             {
-                return db.Users.FirstOrDefault(u => u.Username.ToLower() == username.ToLower() && u.UserChannelId == channelId) != null;
+                return db.ScrumUsers.FirstOrDefault(u => u.Username.ToLower() == username.ToLower() && u.UserChannelId == channelId) != null;
             }
         }
 
@@ -147,7 +147,7 @@ namespace ColonelPanic.Database.Contexts
             string msg = "";
             using (ScrumContext db = new ScrumContext())
             {
-                List<ScrumUser> users = db.Users.Where(u => u.UserChannelId == channelId).ToList();
+                List<ScrumUser> users = db.ScrumUsers.Where(u => u.UserChannelId == channelId).ToList();
                 foreach (ScrumUser user in users)
                 {
                     msg += $"**{user.Username}'s Updates:**" + Environment.NewLine;
@@ -195,7 +195,7 @@ namespace ColonelPanic.Database.Contexts
         {
             using (ScrumContext db = new ScrumContext())
             {
-                return db.Users.ToList();
+                return db.ScrumUsers.ToList();
             }
         }
         public static List<ScrumChannel> GetChannelList()
@@ -209,7 +209,7 @@ namespace ColonelPanic.Database.Contexts
         {
             using (ScrumContext db = new ScrumContext())
             {
-                return db.Users.FirstOrDefault(u => u.UserChannelId == channelId && u.UserId == userId) != null;
+                return db.ScrumUsers.FirstOrDefault(u => u.UserChannelId == channelId && u.UserId == userId) != null;
             }
         }
     }
@@ -219,7 +219,7 @@ namespace ColonelPanic.Database.Contexts
         public ScrumContext() : base("name=BetaDB") { }
 
         public DbSet<ScrumUpdate> Updates { get; set; }
-        public DbSet<ScrumUser> Users { get; set; }
+        public DbSet<ScrumUser> ScrumUsers { get; set; }
         public DbSet<ScrumChannel> Channels { get; set; }
     }
 }
