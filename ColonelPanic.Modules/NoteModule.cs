@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ColonelPanic.Modules
 {
     [Group("note"),RequireColPermission("note")]
-    class NoteModule : ModuleBase
+    public class NoteModule : ModuleBase
     {
         [Command("list"), Summary("Gets a list of all note names and Id's")]
         public async Task ListNoteNames()

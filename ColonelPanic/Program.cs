@@ -136,6 +136,7 @@ namespace ColonelPanic
             await commands.AddModuleAsync<GeosusModule>();
             await commands.AddModuleAsync<EnableModule>();
             await commands.AddModuleAsync<DisableModule>();
+            await commands.AddModuleAsync<NoteModule>();
         }
 
         public async Task HandleCommand(SocketMessage messageParam)
