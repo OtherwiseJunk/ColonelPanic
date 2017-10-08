@@ -22,7 +22,7 @@ namespace ColonelPanic.Database.Contexts
             string msg = "Sorry, couldn't find that note. Maybe you did a bad?";
             using(NoteContext db = new NoteContext())
             {
-                if (db.Notes.FirstOrDefault(n=>n.Name == name ) != null)
+                if (db.Notes.FirstOrDefault(n=>n.Name == name && n.GuildId == guildId) != null)
                 {
                     msg = db.Notes.FirstOrDefault(n => n.Name == name).NoteText;
                 }
@@ -40,7 +40,7 @@ namespace ColonelPanic.Database.Contexts
                     msg = "";
                     foreach (Note note in db.Notes.Where(n => n.GuildId == guildId).ToList())
                     {
-                        msg += $"**{note.Name}**"+Environment.NewLine;
+                        msg += $"{note.NoteId}|**{note.Name}**"+Environment.NewLine;
                     }
                 }
             }
