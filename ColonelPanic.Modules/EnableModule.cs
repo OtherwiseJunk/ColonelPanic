@@ -53,10 +53,16 @@ namespace ColonelPanic.Modules
             ConfigurationHandler.ChangePermission("chnl", "speak", Context.Channel.Id.ToString(), true);
             await Context.Channel.SendMessageAsync("Ok, I've enabled the speak permission!");
         }
-        [Command("listen"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
+        [Command("listen"), Summary("Allows the user of commands requiring the \"Can Listen\" permissions.")]
         public async Task EnableListen()
         {
             ConfigurationHandler.ChangePermission("chnl", "listen", Context.Channel.Id.ToString(), true);
+            await Context.Channel.SendMessageAsync("Ok, I've enabled the listen permission!");
+        }
+        [Command("note"), Summary("Allows the user of commands requiring the \"Note\" permissions.")]
+        public async Task EnableNote()
+        {
+            ConfigurationHandler.ChangePermission("chnl", "note", Context.Channel.Id.ToString(), true);
             await Context.Channel.SendMessageAsync("Ok, I've enabled the listen permission!");
         }
     }
@@ -71,16 +77,22 @@ namespace ColonelPanic.Modules
         }
 
         [Command("speak"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
-        public async Task EnableSpeak()
+        public async Task DisableSpeak()
         {
             ConfigurationHandler.ChangePermission("chnl", "speak", Context.Channel.Id.ToString(), false);
             await Context.Channel.SendMessageAsync("Ok, I've disabled the speak permission!");
         }
         [Command("listen"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
-        public async Task EnableListen()
+        public async Task DisableListen()
         {
             ConfigurationHandler.ChangePermission("chnl", "listen", Context.Channel.Id.ToString(), false);
             await Context.Channel.SendMessageAsync("Ok, I've disabled the listen permission!");
+        }
+        [Command("note"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
+        public async Task DisableNote()
+        {
+            ConfigurationHandler.ChangePermission("chnl", "note", Context.Channel.Id.ToString(), false);
+            await Context.Channel.SendMessageAsync("Ok, I've disabled the note permission!");
         }
     }
 }

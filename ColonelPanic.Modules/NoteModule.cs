@@ -18,7 +18,7 @@ namespace ColonelPanic.Modules
             await Context.Channel.SendMessageAsync(NoteHandler.GetNoteNames(Context.Guild.Id.ToString()));
         }
 
-        [Command("get"), Summary("Gets the named note.")]
+        [Command("get"), Summary("Gets the named note. $note get name")]
         public async Task GetNote([Remainder, Summary("Note name.")] string name)
         {
             await Context.Channel.SendMessageAsync(NoteHandler.GetNote(name, Context.Guild.Id.ToString()));
@@ -30,7 +30,7 @@ namespace ColonelPanic.Modules
             await Context.Channel.SendMessageAsync(NoteHandler.GetAllNotes(Context.Guild.Id.ToString()));
         }
 
-        [Command("add"), Summary("Adds the specified note text for the note name.")]
+        [Command("add"), Summary("Adds the specified note text for the note name. $note add name all the text you wanna add.")]
         public async Task AddNote([Summary("The name of the note.")]string name, [Remainder, Summary("Note Content")]string noteText)
         {
             await Context.Channel.SendMessageAsync(NoteHandler.AddNote(name, Context.Guild.Id.ToString(), noteText));
