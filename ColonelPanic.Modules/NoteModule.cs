@@ -25,7 +25,7 @@ namespace ColonelPanic.Modules
         }
 
         [Command("all"), Summary("Gets the named note.")]
-        public async Task GetAllNote([Remainder, Summary("Note name.")] string name)
+        public async Task GetAllNote()
         {
             await Context.Channel.SendMessageAsync(NoteHandler.GetAllNotes(Context.Guild.Id.ToString()));
         }
