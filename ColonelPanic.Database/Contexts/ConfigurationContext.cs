@@ -171,6 +171,21 @@ namespace ColonelPanic.Database.Contexts
             }
         }
 
+        public static bool ChannelConfigured(string configurationType,string channelId)
+        {
+            bool channelConfigured = false;            
+            switch (configurationType)
+            {
+                case "scrum":
+                    using (ScrumContext db = new ScrumContext)
+                    {
+                        channelConfigured = db.Channels.FirstOrDefault(chnl => chnl.ScrumChannelId == channelId) != null;
+                    }
+                    break;
+            }            
+            return channelConfigured;
+        }
+
         public static bool CanExecute(string permissionName,string guildId,string userId)
         {
             bool permEnabled = false;
