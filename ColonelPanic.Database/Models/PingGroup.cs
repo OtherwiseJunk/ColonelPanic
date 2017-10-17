@@ -7,24 +7,24 @@ using System.Threading.Tasks;
 
 namespace ColonelPanic.Database.Models
 {
-    class Note
+    class PingGroup
     {
         [Key]
-        public int NoteId { get; set; }
+        public int PingGroupId { get; set; }
         public string GuildId { get; set; }
-        public string Name { get; set; }
-        public string NoteText { get; set; }
+        public string PingGroupName { get; set; }
 
-        public Note()
+        public virtual ICollection<PingGroupUser> Users { get; set; }
+
+        public PingGroup()
         {
 
         }
 
-        public Note(string guildId,string name, string noteText)
+        public PingGroup(string guildId, string groupName)
         {
             GuildId = guildId;
-            Name = name;
-            NoteText = noteText;
+            PingGroupName = groupName;
         }
     }
 }

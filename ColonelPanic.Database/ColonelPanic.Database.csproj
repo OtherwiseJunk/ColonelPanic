@@ -71,6 +71,8 @@
     <Compile Include="Models\GuildState.cs" />
     <Compile Include="Models\Configuration.cs" />
     <Compile Include="Models\Note.cs" />
+    <Compile Include="Models\PingGroup.cs" />
+    <Compile Include="Models\PingGroupUser.cs" />
     <Compile Include="Models\ScrumChannel.cs" />
     <Compile Include="Models\ScrumUser.cs" />
     <Compile Include="Models\User.cs" />

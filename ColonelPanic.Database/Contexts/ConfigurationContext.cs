@@ -173,7 +173,8 @@ namespace ColonelPanic.Database.Contexts
 
         public static bool ChannelConfigured(string configurationType,string channelId)
         {
-            bool channelConfigured = false;            
+            bool channelConfigured = false;         
+            
             switch (configurationType)
             {
                 case "scrum":

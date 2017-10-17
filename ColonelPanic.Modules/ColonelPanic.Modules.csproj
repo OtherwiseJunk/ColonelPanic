@@ -93,6 +93,7 @@
     <Compile Include="GeosusModule.cs" />
     <Compile Include="HelpModule.cs" />
     <Compile Include="NoteModule.cs" />
+    <Compile Include="PingGroupModule.cs" />
     <Compile Include="ScrumModule.cs" />
     <Compile Include="ServerModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
