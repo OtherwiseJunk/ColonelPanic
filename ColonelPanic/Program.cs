@@ -88,11 +88,11 @@ namespace ColonelPanic
             await Task.Delay(-1);
         }
 
-        private async Task AddChannelStateIfMissing(string chnlId, string name)
+        private async Task AddGuildStateIfMissing(string guildId, string name)
         {
-            if (!ConfigurationHandler.ChannelStateExists(chnlId))
+            if (!ConfigurationHandler.GuildStateExists(guildId))
             {
-                await ConfigurationHandler.AddChannelState(chnlId, name);
+                await ConfigurationHandler.AddGuildState(guildId, name);
             }
         }
 
@@ -112,7 +112,8 @@ namespace ColonelPanic
 
         private async Task MessageReceived(SocketMessage arg)
         {
-            await AddChannelStateIfMissing(arg.Channel.Id.ToString(), arg.Channel.Name);
+            SocketGuildChannel chnl = arg.Channel as SocketGuildChannel;
+            await AddGuildStateIfMissing(chnl.Guild.Id.ToString(), chnl.Guild.Name);
             Console.WriteLine($"{arg.Author.Username} on {arg.Channel.Name}: {arg.Content}");
             return;
         }

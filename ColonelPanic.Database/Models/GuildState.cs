@@ -7,26 +7,28 @@ using System.Threading.Tasks;
 
 namespace ColonelPanic.Database.Models
 {
-    public class ChannelState
+    public class GuildState
     {
         [Key]
-        public int ChannelNum { get; set; }
-        public string ChannelID { set; get; }
-        public string ChannelName { get; set; }
+        public int GuildNum { get; set; }
+        public string GuildId { set; get; }
+        public string GuildName { get; set; }
         public bool ScrumEnabled { get; set; }
         public bool NoteEnabled { get; set; }
+        public bool PingGroupEnabled { get; set; }
         public bool CanSpeak { get; set; }
         public bool CanListen { get; set; }
+        
 
-        public ChannelState()
+        public GuildState()
         {
 
         }        
 
-        public ChannelState(string channelId, string channelName)
+        public GuildState(string channelId, string channelName)
         {
-            ChannelID = channelId;
-            ChannelName = channelName;
+            GuildId = channelId;
+            GuildName = channelName;
             ScrumEnabled = false;            
             CanSpeak = false;
             CanListen = false;

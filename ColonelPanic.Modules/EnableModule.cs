@@ -22,14 +22,14 @@ namespace ColonelPanic.Modules
                 {
 
                     ScrumHandler.AddNewChannel(Context.Channel.Id, dateTime);
-                    if (ConfigurationHandler.ChannelStateExists(Context.Channel.Id.ToString()))
+                    if (ConfigurationHandler.GuildStateExists(Context.Channel.Id.ToString()))
                     {
-                        ConfigurationHandler.ChangePermission("chnl", "scrum", Context.Channel.Id.ToString(), true);
+                        ConfigurationHandler.ChangePermission("guild", "scrum", Context.Channel.Id.ToString(), true);
                     }
                     else
                     {
-                        ConfigurationHandler.AddChannelState(new ChannelState { ChannelID = Context.Channel.Id.ToString(), ChannelName = Context.Channel.Name, ScrumEnabled = true, CanListen = false, CanSpeak = false });
-                        ConfigurationHandler.ChangePermission("chnl", "scrum", Context.Channel.Id.ToString(), true);
+                        ConfigurationHandler.AddGuildState(new GuildState { GuildId = Context.Channel.Id.ToString(), GuildName = Context.Channel.Name, ScrumEnabled = true, CanListen = false, CanSpeak = false });
+                        ConfigurationHandler.ChangePermission("guild", "scrum", Context.Channel.Id.ToString(), true);
                     }
                     await Context.Channel.SendMessageAsync("Ok, I've enabled Scrum for this channel.");
 
@@ -37,7 +37,7 @@ namespace ColonelPanic.Modules
                 else
                 {
                     ScrumHandler.UpdateScrumDatetime(Context.Channel.Id.ToString(), dateTime);
-                    ConfigurationHandler.ChangePermission("chnl", "scrum", Context.Channel.Id.ToString(), true);
+                    ConfigurationHandler.ChangePermission("guild", "scrum", Context.Channel.Id.ToString(), true);
                     await ReplyAsync("Ok, I've updated the next scheduled reminder...");
                 }
             }
@@ -50,19 +50,19 @@ namespace ColonelPanic.Modules
         [Command("speak"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
         public async Task EnableSpeak()
         {
-            ConfigurationHandler.ChangePermission("chnl", "speak", Context.Channel.Id.ToString(), true);
+            ConfigurationHandler.ChangePermission("guild", "speak", Context.Channel.Id.ToString(), true);
             await Context.Channel.SendMessageAsync("Ok, I've enabled the speak permission!");
         }
         [Command("listen"), Summary("Allows the user of commands requiring the \"Can Listen\" permissions.")]
         public async Task EnableListen()
         {
-            ConfigurationHandler.ChangePermission("chnl", "listen", Context.Channel.Id.ToString(), true);
+            ConfigurationHandler.ChangePermission("guild", "listen", Context.Channel.Id.ToString(), true);
             await Context.Channel.SendMessageAsync("Ok, I've enabled the listen permission!");
         }
         [Command("note"), Summary("Allows the user of commands requiring the \"Note\" permissions.")]
         public async Task EnableNote()
         {
-            ConfigurationHandler.ChangePermission("chnl", "note", Context.Channel.Id.ToString(), true);
+            ConfigurationHandler.ChangePermission("guild", "note", Context.Channel.Id.ToString(), true);
             await Context.Channel.SendMessageAsync("Ok, I've enabled the listen permission!");
         }
     }
@@ -72,26 +72,26 @@ namespace ColonelPanic.Modules
         [Command("scrum"), Summary("Disables SCRUM reminders for this channel."), RequireUserPermission(Discord.GuildPermission.ManageChannels)]
         public async Task DisableScrum()
         {
-            ConfigurationHandler.ChangePermission("chnl", "scrum", Context.Channel.Id.ToString(), false);
+            ConfigurationHandler.ChangePermission("guild", "scrum", Context.Channel.Id.ToString(), false);
             await Context.Channel.SendMessageAsync("Ok, I've disabled the scrum permission!");
         }
 
         [Command("speak"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
         public async Task DisableSpeak()
         {
-            ConfigurationHandler.ChangePermission("chnl", "speak", Context.Channel.Id.ToString(), false);
+            ConfigurationHandler.ChangePermission("guild", "speak", Context.Channel.Id.ToString(), false);
             await Context.Channel.SendMessageAsync("Ok, I've disabled the speak permission!");
         }
         [Command("listen"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
         public async Task DisableListen()
         {
-            ConfigurationHandler.ChangePermission("chnl", "listen", Context.Channel.Id.ToString(), false);
+            ConfigurationHandler.ChangePermission("guild", "listen", Context.Channel.Id.ToString(), false);
             await Context.Channel.SendMessageAsync("Ok, I've disabled the listen permission!");
         }
         [Command("note"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
         public async Task DisableNote()
         {
-            ConfigurationHandler.ChangePermission("chnl", "note", Context.Channel.Id.ToString(), false);
+            ConfigurationHandler.ChangePermission("guild", "note", Context.Channel.Id.ToString(), false);
             await Context.Channel.SendMessageAsync("Ok, I've disabled the note permission!");
         }
     }

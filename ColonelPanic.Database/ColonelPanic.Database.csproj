@@ -63,8 +63,12 @@
     <Compile Include="Migrations\201710080529030_Notes.Designer.cs">
       <DependentUpon>201710080529030_Notes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710172143524_ModifyChannelStatesToGuildStates.cs" />
+    <Compile Include="Migrations\201710172143524_ModifyChannelStatesToGuildStates.Designer.cs">
+      <DependentUpon>201710172143524_ModifyChannelStatesToGuildStates.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\ChannelState.cs" />
+    <Compile Include="Models\GuildState.cs" />
     <Compile Include="Models\Configuration.cs" />
     <Compile Include="Models\Note.cs" />
     <Compile Include="Models\ScrumChannel.cs" />
@@ -87,6 +91,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201710080529030_Notes.resx">
       <DependentUpon>201710080529030_Notes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710172143524_ModifyChannelStatesToGuildStates.resx">
+      <DependentUpon>201710172143524_ModifyChannelStatesToGuildStates.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

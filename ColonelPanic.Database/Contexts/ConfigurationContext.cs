@@ -14,91 +14,93 @@ namespace ColonelPanic.Database.Contexts
         {
         }
         public DbSet<Configuration> Config { get; set; }
-        public DbSet<ChannelState> ChannelStates { get; set; }
+        public DbSet<GuildState> GuildStates { get; set; }
         public DbSet<User> TrustedUsers { get; set; }
     }
 
     public class ConfigurationHandler
     {
 
-        private static List<ChannelState> GetChannelStates()
+        private static List<GuildState> GetGuildStates()
         {
             using (ConfigurationContext db = new ConfigurationContext())
             {
-                return db.ChannelStates.ToList();
+                return db.GuildStates.ToList();
             }
         }
 
-        public static void AddChannelState(ChannelState channelState)
+        public static void AddGuildState(GuildState guildState)
         {
             using (ConfigurationContext db = new ConfigurationContext())
             {
-                if (!ChannelStateExists(channelState.ChannelID))
+                if (!GuildStateExists(guildState.GuildId))
                 {
-                    Console.WriteLine("Adding new ChannelState.");
-                    db.ChannelStates.Add(channelState);
+                    Console.WriteLine("Adding new Guild State.");
+                    db.GuildStates.Add(guildState);
                     db.SaveChanges();
                 }
             }
         }
 
-        public static void ChangePermission(string permissiongType, string permissionName, string channelId, bool newState)
+        public static void ChangePermission(string permissiongType, string permissionName, string guildId, bool newState)
         {
             switch (permissiongType)
             {
-                case "chnl":
-                    ChangeChannelPermission(permissionName, channelId, newState);
+                case "guild":
+                    ChangGuildPermissionState(permissionName, guildId, newState);
                     break;
             }
         }
 
-        private static void ChangeChannelPermission(string permissionName, string channelId,bool newState)
+        private static void ChangGuildPermissionState(string permissionName, string guildId,bool newState)
         {
             using (ConfigurationContext db = new ConfigurationContext())
             {
-                ChannelState channelState = db.ChannelStates.FirstOrDefault(cs => cs.ChannelID == channelId);                
+                GuildState guildStates = db.GuildStates.FirstOrDefault(gs => gs.GuildId == guildId);                
                 switch (permissionName)
                 {
                     case "scrum":
-                        channelState.ScrumEnabled = newState;
+                        guildStates.ScrumEnabled = newState;
                         break;
                     case "speak":
-                        channelState.CanSpeak = newState;
+                        guildStates.CanSpeak = newState;
                         break;
                     case "listen":
-                        channelState.CanListen = newState;
+                        guildStates.CanListen = newState;
                         break;
                     case "note":
-                        channelState.NoteEnabled = newState;
+                        guildStates.NoteEnabled = newState;
                         break;
                 }
-                db.ChannelStates.Attach(channelState);
-                db.Entry(channelState).State = EntityState.Modified;
+                db.GuildStates.Attach(guildStates);
+                db.Entry(guildStates).State = EntityState.Modified;
                 db.SaveChanges();
             }            
         }
 
-        public static bool ChannelStateExists(string channelId)
+        public static bool GuildStateExists(string guildId)
         {
             using (ConfigurationContext db = new ConfigurationContext())
             {                
-                return db.ChannelStates.FirstOrDefault(cs => cs.ChannelID == channelId) != null;
+                return db.GuildStates.FirstOrDefault(gs => gs.GuildId == guildId) != null;
             }
         }
 
-        public async static Task AddChannelState(string channelId, string channelName)
+        public async static Task AddGuildState(string guildId, string guildName)
         {
-            ChannelState chnlState = new ChannelState();
-            chnlState.ChannelID = channelId.ToString();
-            chnlState.ChannelName = channelName;
-            chnlState.ScrumEnabled = false;
-            chnlState.CanSpeak = false;
-            chnlState.CanListen = false;
+            GuildState guildState = new GuildState();
+            guildState.GuildId = guildId.ToString();
+            guildState.GuildName = guildName;
+            guildState.ScrumEnabled = false;
+            guildState.NoteEnabled = false;
+            guildState.PingGroupEnabled = false;
+            guildState.CanSpeak = false;
+            guildState.CanListen = false;
             using (ConfigurationContext db = new ConfigurationContext())
             {
-                if (!ChannelStateExists(channelId))
+                if (!GuildStateExists(guildId))
                 {
-                    db.ChannelStates.Add(chnlState);
+                    db.GuildStates.Add(guildState);
                     db.SaveChanges();
                 }
             }
@@ -166,15 +168,15 @@ namespace ColonelPanic.Database.Contexts
             }
         }
 
-        public static bool CanExecute(string permissionName,string channelId,string userId)
+        public static bool CanExecute(string permissionName,string guildId,string userId)
         {
             bool permEnabled = false;
             using (ConfigurationContext db = new ConfigurationContext())
             {
-                ChannelState channel = db.ChannelStates.FirstOrDefault(cs => cs.ChannelID == channelId);
-                if (channel != null)
+                GuildState guildState = db.GuildStates.FirstOrDefault(gs => gs.GuildId == guildId);
+                if (guildState != null)
                 {
-                    if (channel.ChannelName.StartsWith("@"))
+                    if (guildState.GuildName.StartsWith("@"))
                     {
                         permEnabled = true;
                     }
@@ -183,16 +185,16 @@ namespace ColonelPanic.Database.Contexts
                         switch (permissionName)
                         {
                             case "scrum":
-                                permEnabled = channel.ScrumEnabled;
+                                permEnabled = guildState.ScrumEnabled;
                                 break;                            
                             case "speak":
-                                permEnabled = channel.CanSpeak;
+                                permEnabled = guildState.CanSpeak;
                                 break;
                             case "listen":
-                                permEnabled = channel.CanListen;
+                                permEnabled = guildState.CanListen;
                                 break;
                             case "note":
-                                permEnabled = channel.NoteEnabled;
+                                permEnabled = guildState.NoteEnabled;
                                 break;
                         }
                     }
