@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ColonelPanic.Modules
 {
-    [Group("scrum"), RequireContext(ContextType.Guild), RequireColPermission("scrum"), Summary("A module which provides weekly reminders to users who haven't submitted an update.")]
+    [Group("scrum"), RequireContext(ContextType.Guild), RequireColPermission("scrum"), RequireChannelConfiguration("scrum"), Summary("A module which provides weekly reminders to users who haven't submitted an update.")]
     public class ScrumModule : ModuleBase
     {                
         [Command("adduser"), RequireColPermission("scrum"),Summary("Adds the specified user to the scrum users list"), RequireUserPermission(Discord.ChannelPermission.ManageChannel)]
