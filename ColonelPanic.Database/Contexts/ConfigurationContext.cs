@@ -177,7 +177,7 @@ namespace ColonelPanic.Database.Contexts
             switch (configurationType)
             {
                 case "scrum":
-                    using (ScrumContext db = new ScrumContext)
+                    using (ScrumContext db = new ScrumContext())
                     {
                         channelConfigured = db.Channels.FirstOrDefault(chnl => chnl.ScrumChannelId == channelId) != null;
                     }
