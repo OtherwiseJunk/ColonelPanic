@@ -71,6 +71,9 @@ namespace ColonelPanic.Database.Contexts
                     case "note":
                         guildStates.NoteEnabled = newState;
                         break;
+                    case "ping":
+                        guildStates.PingGroupEnabled = newState;
+                        break;
                 }
                 db.GuildStates.Attach(guildStates);
                 db.Entry(guildStates).State = EntityState.Modified;

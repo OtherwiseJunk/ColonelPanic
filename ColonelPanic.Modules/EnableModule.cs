@@ -47,25 +47,32 @@ namespace ColonelPanic.Modules
             }
         }
 
-        [Command("speak"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
+        [Command("speak"), Summary("Allows the use of commands requiring the \"Can Speak\" permissions.")]
         public async Task EnableSpeak()
         {
             ConfigurationHandler.ChangePermission("guild", "speak", Context.Channel.Id.ToString(), true);
             await Context.Channel.SendMessageAsync("Ok, I've enabled the speak permission!");
         }
-        [Command("listen"), Summary("Allows the user of commands requiring the \"Can Listen\" permissions.")]
+        [Command("listen"), Summary("Allows the use of commands requiring the \"Can Listen\" permissions.")]
         public async Task EnableListen()
         {
             ConfigurationHandler.ChangePermission("guild", "listen", Context.Channel.Id.ToString(), true);
             await Context.Channel.SendMessageAsync("Ok, I've enabled the listen permission!");
         }
-        [Command("note"), Summary("Allows the user of commands requiring the \"Note\" permissions.")]
+        [Command("note"), Summary("Allows the use of commands requiring the \"Note\" permissions.")]
         public async Task EnableNote()
         {
             ConfigurationHandler.ChangePermission("guild", "note", Context.Channel.Id.ToString(), true);
             await Context.Channel.SendMessageAsync("Ok, I've enabled the listen permission!");
         }
+        [Command("ping"), Summary("Allows the use of commands requiring the \"Ping Group\" permissions.")]
+        public async Task EnablePing()
+        {
+            ConfigurationHandler.ChangePermission("guild", "ping", Context.Channel.Id.ToString(), true);
+            await Context.Channel.SendMessageAsync("Ok, I've enabled the ping group permission!");
+        }
     }
+}
     [Group("disable"), Summary(" All \"disable\" commands require \"Manage Channel\" permissions. These commands disable the specified permission for the channel.")]
     public class DisableModule : ModuleBase
     {
@@ -76,23 +83,29 @@ namespace ColonelPanic.Modules
             await Context.Channel.SendMessageAsync("Ok, I've disabled the scrum permission!");
         }
 
-        [Command("speak"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
+        [Command("speak"), Summary("Disables the use of commands requiring the \"Can Speak\" permissions.")]
         public async Task DisableSpeak()
         {
             ConfigurationHandler.ChangePermission("guild", "speak", Context.Channel.Id.ToString(), false);
             await Context.Channel.SendMessageAsync("Ok, I've disabled the speak permission!");
         }
-        [Command("listen"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
+        [Command("listen"), Summary("Disables the use of commands requiring the \"Can Speak\" permissions.")]
         public async Task DisableListen()
         {
             ConfigurationHandler.ChangePermission("guild", "listen", Context.Channel.Id.ToString(), false);
             await Context.Channel.SendMessageAsync("Ok, I've disabled the listen permission!");
         }
-        [Command("note"), Summary("Allows the user of commands requiring the \"Can Speak\" permissions.")]
+        [Command("note"), Summary("Disables the use of commands requiring the \"Can Speak\" permissions.")]
         public async Task DisableNote()
         {
             ConfigurationHandler.ChangePermission("guild", "note", Context.Channel.Id.ToString(), false);
             await Context.Channel.SendMessageAsync("Ok, I've disabled the note permission!");
+        }
+        [Command("ping"), Summary("Disables the use of commands requiring the \"Ping Group\" permissions.")]
+        public async Task DisablePring()
+        {
+            ConfigurationHandler.ChangePermission("guild", "ping", Context.Channel.Id.ToString(), false);
+            await Context.Channel.SendMessageAsync("Ok, I've disabled the ping group permission!");
         }
     }
 }
