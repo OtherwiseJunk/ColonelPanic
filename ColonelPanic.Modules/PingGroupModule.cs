@@ -32,8 +32,16 @@ namespace ColonelPanic.Modules
                         {
                             IUser user = Context.Guild.GetUserAsync(ulong.Parse(userId)).Result;
                             msg += user.Mention + " ";
+                            while(msg.Length >= 2000)
+                            {
+                                IMessage tempMessage = ReplyAsync(msg).Result;
+                                await tempMessage.DeleteAsync();
+                                msg = "";
+                            }
                         }
-                        await ReplyAsync(msg);
+                        IMessage message = ReplyAsync(msg).Result;
+                        await message.DeleteAsync();
+                        await ReplyAsync($"Group {pingGroupName} Pinged");
                         break;
                 }
             }
@@ -74,7 +82,8 @@ namespace ColonelPanic.Modules
                     string msg = $"**Members of {pingGroupName}**:" + Environment.NewLine;
                     foreach (string user in users)
                     {
-                        msg += Context.Guild.GetUserAsync(ulong.Parse(user)).Result.Nickname+Environment.NewLine;
+                        msg += Context.Guild.GetUserAsync(ulong.Parse(user)).Result.Username;
+                        msg += Environment.NewLine;
                         
                     }
                     msg.TrimEnd(Environment.NewLine.ToCharArray());
@@ -115,7 +124,7 @@ namespace ColonelPanic.Modules
             }
         }
 
-        [Command("adduser"), Summary("Adds the specified user (by UserID) to the specified Ping Group. Example \"$group adduser 000000000000000 SomeGroup\"")]
+        [Command("adduser"), Summary("Adds the specified user (by UserID) to the specified Ping Group. Example \"$group adduser 000000000000000 SomeGroup\". Requires Manage Channel permission."), RequireUserPermission(ChannelPermission.ManageChannel)]
         public async Task AddUserToPingGroup([Summary("The userId")]string userId,[Remainder, Summary("The Ping Group to ass the user to")]string pingGroupName)
         {
             ulong uId;

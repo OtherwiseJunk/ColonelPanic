@@ -43,6 +43,7 @@ namespace ColonelPanic
 
             client.Log += WriteLog;
             client.MessageReceived += MessageReceived;
+            client.UserLeft += UserLeft;
 
             string token = String.Empty;
 
@@ -118,9 +119,9 @@ namespace ColonelPanic
             return;
         }
 
-        private async Task UserLeft(SocketGuildUser usr)
+        private async Task UserLeft(SocketGuildUser user)
         {
-            PingGroupHandler.PurgeUser(usr.Id.ToString(), usr.Guild.Id.ToString());
+            PingGroupHandler.PurgeUser(user.Id.ToString(), user.Guild.Id.ToString());
         }
 
         private async Task WriteLog(LogMessage message)

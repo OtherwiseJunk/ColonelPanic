@@ -215,6 +215,9 @@ namespace ColonelPanic.Database.Contexts
                             case "note":
                                 permEnabled = guildState.NoteEnabled;
                                 break;
+                            case "ping":
+                                permEnabled = guildState.PingGroupEnabled;
+                                break;
                         }
                     }
                 }
