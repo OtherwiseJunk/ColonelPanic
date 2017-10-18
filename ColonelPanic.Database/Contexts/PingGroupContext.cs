@@ -44,6 +44,7 @@ namespace ColonelPanic.Database.Contexts
             using (PingGroupContext db = new PingGroupContext())
             {
                 db.Groups.Add(new PingGroup(guildId, pingGroupName));
+                db.SaveChanges();
             }
         }
 
@@ -51,7 +52,7 @@ namespace ColonelPanic.Database.Contexts
         {
             using (PingGroupContext db = new PingGroupContext())
             {
-                return db.Groups.FirstOrDefault(group => group.GuildId == guildId && group.PingGroupName.ToLower() == pingGroupName) != null;
+                return db.Groups.FirstOrDefault(group => group.GuildId == guildId && group.PingGroupName.ToLower() == pingGroupName.ToLower()) != null;
             }
         }
 
@@ -65,7 +66,7 @@ namespace ColonelPanic.Database.Contexts
                 {
                     foreach (PingGroup group in db.Groups.Where(g => g.GuildId == guildId).ToList())
                     {
-                        msg += group + Environment.NewLine;
+                        msg += group.PingGroupName + Environment.NewLine;
                     }
                     msg.TrimEnd(Environment.NewLine.ToCharArray());
                 }
@@ -82,6 +83,7 @@ namespace ColonelPanic.Database.Contexts
             using(PingGroupContext db = new PingGroupContext())
             {
                 db.Users.Add(new PingGroupUser(guildId, userId, pingGroupId));
+                db.SaveChanges();
             }
         }
 

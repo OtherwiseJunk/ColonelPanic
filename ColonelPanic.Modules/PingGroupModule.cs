@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace ColonelPanic.Modules
 {
     [Group("group"), RequireColPermission("ping"), Summary("Commands for creating, managing, and pinging groups of users.")]
-    class PingGroupModule : ModuleBase
+    public class PingGroupModule : ModuleBase
     {
         [Command("ping"), Summary("Pings all users that belong to the specified Ping Group. Requires Manage Channel permission."), RequireUserPermission(ChannelPermission.ManageChannel)]
         public async Task PingUsers([Remainder, Summary("Name of the Ping Group to ping.")] string pingGroupName)
@@ -33,6 +33,7 @@ namespace ColonelPanic.Modules
                             IUser user = Context.Guild.GetUserAsync(ulong.Parse(userId)).Result;
                             msg += user.Mention + " ";
                         }
+                        await ReplyAsync(msg);
                         break;
                 }
             }
@@ -73,9 +74,11 @@ namespace ColonelPanic.Modules
                     string msg = $"**Members of {pingGroupName}**:" + Environment.NewLine;
                     foreach (string user in users)
                     {
-                        msg += Context.Guild.GetUserAsync(ulong.Parse(user)).Result.Nickname;
+                        msg += Context.Guild.GetUserAsync(ulong.Parse(user)).Result.Nickname+Environment.NewLine;
                         
                     }
+                    msg.TrimEnd(Environment.NewLine.ToCharArray());
+                    await ReplyAsync(msg);
                 }
                 else
                 {
@@ -96,7 +99,7 @@ namespace ColonelPanic.Modules
             if (PingGroupHandler.PingGroupExists(pingGroupName, Context.Guild.Id.ToString()))
             {
                 int pingGroupId = PingGroupHandler.GetPingGroupId(pingGroupName, Context.Guild.Id.ToString());
-                if(PingGroupHandler.PingGroupUserExists(pingGroupId, Context.User.Id.ToString(), Context.Guild.Id.ToString()))
+                if(!PingGroupHandler.PingGroupUserExists(pingGroupId, Context.User.Id.ToString(), Context.Guild.Id.ToString()))
                 {
                     PingGroupHandler.AddPingGroupUser(pingGroupId, Context.User.Id.ToString(), Context.Guild.Id.ToString());
                     await ReplyAsync($"Ok, I've added you to that {pingGroupName}.");
@@ -123,19 +126,19 @@ namespace ColonelPanic.Modules
                     if (PingGroupHandler.PingGroupExists(pingGroupName, Context.Guild.Id.ToString()))
                     {
                         int groupId = PingGroupHandler.GetPingGroupId(pingGroupName, Context.Guild.Id.ToString());
-                        if (PingGroupHandler.PingGroupUserExists(groupId, uId.ToString(), Context.Guild.Id.ToString()))
+                        if (!PingGroupHandler.PingGroupUserExists(groupId, uId.ToString(), Context.Guild.Id.ToString()))
                         {
                             PingGroupHandler.AddPingGroupUser(groupId, userId, Context.Guild.Id.ToString());
                             await ReplyAsync($"Ok, I've added that user to {pingGroupName}.");
                         }
                         else
                         {
-                            await ReplyAsync(ResponseCollections.PingGroupNotFound.GetRandom());
+                            await ReplyAsync("That user is already in there.");
                         }
                     }
                     else
                     {
-                        await ReplyAsync("That user is already in there."); ;
+                        await ReplyAsync(ResponseCollections.PingGroupNotFound.GetRandom()); ;
                     }
                 }
                 else

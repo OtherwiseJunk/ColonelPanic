@@ -143,6 +143,7 @@ namespace ColonelPanic
             await commands.AddModuleAsync<EnableModule>();
             await commands.AddModuleAsync<DisableModule>();
             await commands.AddModuleAsync<NoteModule>();
+            await commands.AddModuleAsync<PingGroupModule>();
         }
 
         public async Task HandleCommand(SocketMessage messageParam)
