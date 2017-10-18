@@ -118,6 +118,11 @@ namespace ColonelPanic
             return;
         }
 
+        private async Task UserLeft(SocketGuildUser usr)
+        {
+            PingGroupHandler.PurgeUser(usr.Id.ToString(), usr.Guild.Id.ToString());
+        }
+
         private async Task WriteLog(LogMessage message)
         {
             Console.WriteLine($"{message.Source}: {message.Message} ");

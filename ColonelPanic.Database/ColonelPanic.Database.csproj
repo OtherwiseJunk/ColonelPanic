@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Contexts\ConfigurationContext.cs" />
     <Compile Include="Contexts\NoteContext.cs" />
+    <Compile Include="Contexts\PingGroupContext.cs" />
     <Compile Include="Migrations\201710070042369_UserTable.cs" />
     <Compile Include="Migrations\201710070042369_UserTable.Designer.cs">
       <DependentUpon>201710070042369_UserTable.cs</DependentUpon>

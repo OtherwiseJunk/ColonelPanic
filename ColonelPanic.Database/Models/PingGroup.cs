@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ColonelPanic.Database.Models
 {
-    class PingGroup
+    public class PingGroup
     {
         [Key]
         public int PingGroupId { get; set; }

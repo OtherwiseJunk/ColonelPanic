@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ColonelPanic.Utilities
 {
     public class ResponseCollections
-    {        
+    {
         public static List<string> _8BallResponses = new List<string>
         {
                 "Most definitely yes",
@@ -36,7 +36,7 @@ namespace ColonelPanic.Utilities
                 "You _would_ ask that. No.",
                 "Maybe probably.",
                 "I mean. It's more likely than Geo playing Tf2, at least?",
-                "You know it!",               
+                "You know it!",
         };
 
         public static List<string> UserNotFoundResponses = new List<string>
@@ -47,6 +47,24 @@ namespace ColonelPanic.Utilities
             "You'll have to introduce me later, I have no idea who you're talking about.",
             "USER NOT FOUND! ERROR ERR- no but seriously, who?",
             "IDK dude. Don't recognize them."
+        };
+
+        public static List<string> PingGroupNotFound = new List<string>
+        {
+            "Sorry, I don't see that Ping Group.",
+            "Huh. You sure you typed that Ping Group right?",
+            "Something's wrong, I have no idea what group you're talking about.",
+            "No idea which group you're talking about."
+        };
+
+        public static List<string> PingGroupEmpty = new List<string>
+        {
+            "No one has joined that group. I guess it's not very popular.",
+            "Uh. This is awkard. That group is empty.",
+            "404: Users Not Found",
+            "Sorry, there's no one in that user group.",
+            "Bwhahahahaha... wait. Were you serious? Oh no one likes that group, I guess.",
+            "Sorry, there's no users configured for that ping group"
         };
     }
 }
