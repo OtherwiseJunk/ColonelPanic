@@ -2,7 +2,7 @@
 using ColonelPanic.Database.Models;
 using ColonelPanic.Modules;
 using Discord;
-
+using Quobject.SocketIoClientDotNet.Client;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +11,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography;
+using System.Text;
+using Org.BouncyCastle.Crypto;
+using System.IO;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Encodings;
+using Org.BouncyCastle.OpenSsl;
 
 namespace ColonelPanic
 {
@@ -19,22 +27,24 @@ namespace ColonelPanic
         DiscordSocketClient client;
         CommandService commands;
         IServiceProvider services;
+        
         static void Main(string[] args) => new Program().Start().GetAwaiter().GetResult();
 
         Timer ScrumUpdateTimer { get; set; }
-
+        
 
         private async Task Start()
         {
             LogSeverity logLevel = LogSeverity.Verbose;
 #if DEBUG
             logLevel = LogSeverity.Debug;
-#endif
+#endif                      
             client = new DiscordSocketClient(new DiscordSocketConfig
             {
                 LogLevel = logLevel
 
             });
+
             commands = new CommandService();
 
             services = new ServiceCollection().BuildServiceProvider();
@@ -87,7 +97,7 @@ namespace ColonelPanic
             ScrumUpdateTimer = new System.Threading.Timer(ScrumCheckCallback, null, 1000 * 60, 1000 * 60 * 60);
 
             await Task.Delay(-1);
-        }
+        }        
 
         private async Task AddGuildStateIfMissing(string guildId, string name)
         {

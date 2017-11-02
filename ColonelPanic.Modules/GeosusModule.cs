@@ -51,6 +51,12 @@ namespace ColonelPanic.Modules
             
         }
 
+        [Command("bird2"),Summary("Outputs the bird2 emoji")]
+        public async Task Bird2()
+        {
+            Context.Channel.SendFileAsync("./bird2.png");
+        }
+
         public string GetRandomSquaddie(List<IGuildUser> users)
         {
             return users.GetRandom().Username;
