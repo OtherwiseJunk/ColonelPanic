@@ -173,6 +173,11 @@ namespace ColonelPanic
                 var msg = arg.Channel.GetMessageAsync(arg.Id).Result as IUserMessage;
                 await msg.AddReactionAsync(new Emoji("💩"));
             }
+            if (arg.Content.ToLower().Contains("communism"))
+            {
+                var msg = arg.Channel.GetMessageAsync(arg.Id).Result as IUserMessage;
+                await msg.AddReactionAsync(new Emoji("💩"));
+            }
             return;
         }
 
