@@ -13,6 +13,24 @@ namespace ColonelPanic.Modules
     [RequireGuild("177229913512738816"),Summary("A module all for Geosus!")]
     public class GeosusModule : ModuleBase
     {
+        [Command("geo"), Summary("`Applies the 'Big if True'`")]
+        public async Task Geo([Remainder, Summary("MsgId")]string msgId)
+        {
+            if (ulong.TryParse(msgId, out var mId))
+            {
+                var msg = Context.Channel.GetMessageAsync(mId).Result as IUserMessage;
+                var emoji =new Emoji("\U0001f46c");
+                await msg.AddReactionAsync(emoji);
+
+                var emote = Emote.Parse("<:GeoFace:289105502216912897>");
+                await msg.AddReactionAsync(emote);
+
+                emoji = new Emoji("\U0001f46d");
+                await msg.AddReactionAsync(emoji);
+
+
+            }
+        }
         [Command("adventburger"), Summary("Selects a random Squaddie.")]
         public async Task AdventBurger([Remainder, Summary("The number of squaddies. return 1 by default.")] string number = "f")
         {
@@ -46,7 +64,13 @@ namespace ColonelPanic.Modules
             }
             else
             {
-                await Context.Channel.SendMessageAsync(GetRandomSquaddie(squaddies));
+                string msg = "";
+                squaddies.Shuffle();
+                foreach (var squaddie in squaddies)
+                {
+                    msg += squaddie.Username + Environment.NewLine;
+                }
+                await Context.Channel.SendMessageAsync(msg);
             }
             
         }

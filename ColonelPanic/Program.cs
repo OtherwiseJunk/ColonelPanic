@@ -19,18 +19,25 @@ using System.IO;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.OpenSsl;
+using TextMarkovChains;
+
+using System.Xml;
 
 namespace ColonelPanic
 {
     class Program
-    {
+    {        
+        string MarkovChainFileName = "MarkovChain.xml";
         DiscordSocketClient client;
         CommandService commands;
         IServiceProvider services;
         
         static void Main(string[] args) => new Program().Start().GetAwaiter().GetResult();
 
+        public MultiDeepMarkovChain MarkovChainRepository { get; private set; }
+
         Timer ScrumUpdateTimer { get; set; }
+        Timer MarkovSaveTimer { get; set; }
         
 
         private async Task Start()
@@ -44,6 +51,19 @@ namespace ColonelPanic
                 LogLevel = logLevel
 
             });
+
+            if (File.Exists(MarkovChainFileName))
+            {
+                var XML = new XmlDocument();
+                XML.Load(MarkovChainFileName);
+                MarkovChainRepository = new MultiDeepMarkovChain(4);
+                MarkovChainRepository.feed(XML);
+            }
+            else
+            {
+                MarkovChainRepository = new MultiDeepMarkovChain(4);
+                MarkovChainRepository.save(MarkovChainFileName);
+            }
 
             commands = new CommandService();
 
@@ -95,6 +115,7 @@ namespace ColonelPanic
             }
 
             ScrumUpdateTimer = new System.Threading.Timer(ScrumCheckCallback, null, 1000 * 60, 1000 * 60 * 60);
+            MarkovSaveTimer = new Timer(MarkovSaveTimerCallback, null, 1000 * 60, 1000 * 60 * 15);
 
             await Task.Delay(-1);
         }        
@@ -121,12 +142,66 @@ namespace ColonelPanic
             }
         }
 
+        public void MarkovSaveTimerCallback(object state)
+        {
+            MarkovChainRepository.save(MarkovChainFileName);
+        }
+
         private async Task MessageReceived(SocketMessage arg)
         {
+            string chnlId = arg.Channel.Id.ToString();
+            string userId = arg.Author.Id.ToString();
             SocketGuildChannel chnl = arg.Channel as SocketGuildChannel;
             await AddGuildStateIfMissing(chnl.Guild.Id.ToString(), chnl.Guild.Name);
             Console.WriteLine($"{arg.Author.Username} on {arg.Channel.Name}: {arg.Content}");
+            if (!arg.Author.IsBot && !arg.Content.Contains("$") && !arg.Content.Contains("http"))
+            {
+                string msg = arg.Content.Replace("💩", ":poop:");
+                MarkovChainRepository.feed(arg.Content);
+            }
+            if (arg.Author.Id == 94545463906144256 && arg.Content.Length % 8 == 0)
+            {
+                await arg.Channel.SendMessageAsync(GetMarkovSentence());
+            }
+            if (UserDataHandler.IsEggplantUser(chnlId,userId))
+            {
+                var msg = arg.Channel.GetMessageAsync(arg.Id).Result as IUserMessage;
+                await msg.AddReactionAsync(new Emoji("🍆"));
+            }
+            if (UserDataHandler.IsShitlistUser(chnlId, userId))
+            {
+                var msg = arg.Channel.GetMessageAsync(arg.Id).Result as IUserMessage;
+                await msg.AddReactionAsync(new Emoji("💩"));
+            }
             return;
+        }
+
+        private string GetMarkovSentence()
+        {
+            bool msgNotSet = true;
+            string msg = "";
+            int rerollAttempts = 0;
+            while (msgNotSet)
+            {                
+                try
+                {
+                    //Check For French server
+                        msg = MarkovChainRepository.generateSentence();
+                        msgNotSet = false;                    
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Failed to generate a sentence, trying again...");
+                    Console.WriteLine(ex.Message);
+                }
+                if (rerollAttempts > 10 && msgNotSet)
+                {
+                    msg = "I'm sorry, it looks like I'm unable to generate a sentence at this time.";
+                    msgNotSet = false;
+                }
+                rerollAttempts++;
+            }
+            return msg;
         }
 
         private async Task UserLeft(SocketGuildUser user)

@@ -14,5 +14,17 @@ namespace ColonelPanic.Utilities
         {
             return items[_random.Next(items.Count)];
         }
+
+        public static void Shuffle<T>(this IList<T> items)
+        {
+            int itemsCount = items.Count;
+            for (int i = 0; i < itemsCount; i++)
+            {
+                int r = i + _random.Next(itemsCount - i);
+                T tempItem = items[r];
+                items[r] = items[i];
+                items[i] = tempItem;
+            }
+        }
     }
 }

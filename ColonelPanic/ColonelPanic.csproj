@@ -134,6 +134,10 @@
       <Project>{2f367b5d-030d-4a3e-ad8b-530e74068068}</Project>
       <Name>ColonelPanic.Modules</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ColonelPanic.Utilities\ColonelPanic.Utilities.csproj">
+      <Project>{51ad9211-08e7-4ece-938e-5df8eaccbcc6}</Project>
+      <Name>ColonelPanic.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
