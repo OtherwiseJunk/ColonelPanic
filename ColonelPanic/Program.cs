@@ -1,6 +1,7 @@
 ﻿using ColonelPanic.Database.Contexts;
 using ColonelPanic.Database.Models;
 using ColonelPanic.Modules;
+using ColonelPanic.Utilities;
 using Discord;
 using Quobject.SocketIoClientDotNet.Client;
 using Discord.Commands;
@@ -21,7 +22,9 @@ using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.OpenSsl;
 using TextMarkovChains;
 
+
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace ColonelPanic
 {
@@ -31,6 +34,7 @@ namespace ColonelPanic
         DiscordSocketClient client;
         CommandService commands;
         IServiceProvider services;
+        Random _rand = new Random();
         
         static void Main(string[] args) => new Program().Start().GetAwaiter().GetResult();
 
@@ -153,15 +157,19 @@ namespace ColonelPanic
             string userId = arg.Author.Id.ToString();
             SocketGuildChannel chnl = arg.Channel as SocketGuildChannel;
             await AddGuildStateIfMissing(chnl.Guild.Id.ToString(), chnl.Guild.Name);
+            if (!UserDataHandler.UserStateExists(arg.Author.Id.ToString()))
+            {
+                UserDataHandler.AddUserState(arg.Author.Id.ToString(), arg.Author.Username);
+            }
             Console.WriteLine($"{arg.Author.Username} on {arg.Channel.Name}: {arg.Content}");
             if (!arg.Author.IsBot && !arg.Content.Contains("$") && !arg.Content.Contains("http"))
             {
                 string msg = arg.Content.Replace("💩", ":poop:");
                 MarkovChainRepository.feed(arg.Content);
             }
-            if (arg.Author.Id == 94545463906144256 && arg.Content.Length % 8 == 0)
+            if (arg.Author.Id == 94545463906144256 && arg.Content.Length % 32 == 0)
             {
-                await arg.Channel.SendMessageAsync(GetMarkovSentence());
+                //await arg.Channel.SendMessageAsync(GetMarkovSentence());
             }
             if (UserDataHandler.IsEggplantUser(chnlId,userId))
             {
@@ -178,7 +186,58 @@ namespace ColonelPanic
                 var msg = arg.Channel.GetMessageAsync(arg.Id).Result as IUserMessage;
                 await msg.AddReactionAsync(new Emoji("💩"));
             }
+            if (_rand.Next(1000) == 777)
+            {
+                var msg = arg.Channel.GetMessageAsync(arg.Id).Result as IUserMessage;
+                await msg.AddReactionAsync(new Emoji("💩"));
+            }
+            if (_rand.Next(1000) == 777)
+            {
+                var msg = arg.Channel.GetMessageAsync(arg.Id).Result as IUserMessage;
+                await msg.AddReactionAsync(new Emoji("👍"));
+            }
+            if (_rand.Next(1000) == 777)
+            {
+                var msg = arg.Channel.GetMessageAsync(arg.Id).Result as IUserMessage;
+                //if Geo
+                if (arg.Author.Id == 140620251976040449)
+                {
+                    await msg.AddReactionAsync(new Emoji("🍠"));
+                }
+                //Everyone else
+                else
+                {
+                    await msg.AddReactionAsync(new Emoji("🍆"));
+                }
+
+            }
+            if (Regex.IsMatch(arg.Content, @"[)ʔ）][╯ノ┛].+┻━┻"))
+            {                                
+                await arg.Channel.SendMessageAsync("┬─┬  ノ( º _ ºノ) ");
+                await arg.Channel.SendMessageAsync(GetTableFlipResponse(arg.Author));
+            }
+            else if (arg.Content == "(ノಠ益ಠ)ノ彡┻━┻")
+            {                
+                await arg.Channel.SendMessageAsync("┬─┬  ノ(ಠ益ಠノ)");
+                await arg.Channel.SendMessageAsync(GetTableFlipResponse(arg.Author));
+            }
+            else if (arg.Content == "┻━┻ ︵ヽ(`Д´)ﾉ︵ ┻━┻")
+            {                
+                await arg.Channel.SendMessageAsync("┬─┬  ノ(`Д´ノ)");
+                await arg.Channel.SendMessageAsync("(/¯`Д´ )/¯ ┬─┬");
+                await arg.Channel.SendMessageAsync(GetTableFlipResponse(arg.Author));
+            }
             return;
+        }
+
+        private string GetTableFlipResponse(SocketUser author)
+        {
+            int points = UserDataHandler.IncrementTableFlipPoints(author.Id.ToString(), author.Username);
+            if (points >= 81) return String.Format(ResponseCollections.TableFlipResponses[4].GetRandom(), author.Username);
+            if (points >= 61) return String.Format(ResponseCollections.TableFlipResponses[3].GetRandom(), author.Username);
+            if (points >= 41) return String.Format(ResponseCollections.TableFlipResponses[2].GetRandom(), author.Username);
+            if (points >= 21) return String.Format(ResponseCollections.TableFlipResponses[1].GetRandom(), author.Username);
+            return String.Format(ResponseCollections.TableFlipResponses[0].GetRandom(), author.Username);
         }
 
         private string GetMarkovSentence()

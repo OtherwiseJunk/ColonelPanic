@@ -15,7 +15,7 @@ namespace ColonelPanic.Database.Contexts
         }
         public DbSet<Configuration> Config { get; set; }
         public DbSet<GuildState> GuildStates { get; set; }
-        public DbSet<User> TrustedUsers { get; set; }
+        public DbSet<TrustedUser> TrustedUsers { get; set; }
     }
 
     public class ConfigurationHandler
@@ -157,7 +157,7 @@ namespace ColonelPanic.Database.Contexts
             {
                 if (db.TrustedUsers.FirstOrDefault(u=> u.UserId.ToString() == userId ) == null)
                 {
-                    db.TrustedUsers.Add(new User(userId, username));
+                    db.TrustedUsers.Add(new TrustedUser(userId, username));
                     db.SaveChanges();
                 }
             }
@@ -230,7 +230,7 @@ namespace ColonelPanic.Database.Contexts
         {
             using (ConfigurationContext db = new ConfigurationContext())
             {
-                User user = db.TrustedUsers.FirstOrDefault(u => u.UserId.ToString() == userId);
+                TrustedUser user = db.TrustedUsers.FirstOrDefault(u => u.UserId.ToString() == userId);
                 if (user != null)
                 {
                     db.TrustedUsers.Remove(user);

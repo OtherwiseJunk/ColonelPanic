@@ -52,21 +52,13 @@
     <Compile Include="Contexts\ConfigurationContext.cs" />
     <Compile Include="Contexts\NoteContext.cs" />
     <Compile Include="Contexts\PingGroupContext.cs" />
-    <Compile Include="Migrations\201710070042369_UserTable.cs" />
-    <Compile Include="Migrations\201710070042369_UserTable.Designer.cs">
-      <DependentUpon>201710070042369_UserTable.cs</DependentUpon>
+    <Compile Include="Migrations\201711191941113_InitialCreate.cs" />
+    <Compile Include="Migrations\201711191941113_InitialCreate.Designer.cs">
+      <DependentUpon>201711191941113_InitialCreate.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201710070141148_RemoveServerPerm.cs" />
-    <Compile Include="Migrations\201710070141148_RemoveServerPerm.Designer.cs">
-      <DependentUpon>201710070141148_RemoveServerPerm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710080529030_Notes.cs" />
-    <Compile Include="Migrations\201710080529030_Notes.Designer.cs">
-      <DependentUpon>201710080529030_Notes.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710172143524_ModifyChannelStatesToGuildStates.cs" />
-    <Compile Include="Migrations\201710172143524_ModifyChannelStatesToGuildStates.Designer.cs">
-      <DependentUpon>201710172143524_ModifyChannelStatesToGuildStates.cs</DependentUpon>
+    <Compile Include="Migrations\201711192012068_UpdateUserStatsProperty.cs" />
+    <Compile Include="Migrations\201711192012068_UpdateUserStatsProperty.Designer.cs">
+      <DependentUpon>201711192012068_UpdateUserStatsProperty.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\GuildState.cs" />
@@ -76,7 +68,9 @@
     <Compile Include="Models\PingGroupUser.cs" />
     <Compile Include="Models\ScrumChannel.cs" />
     <Compile Include="Models\ScrumUser.cs" />
+    <Compile Include="Models\TrustedUser.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\UserState.cs" />
     <Compile Include="Models\UserXChannel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\ScrumUpdate.cs" />
@@ -88,17 +82,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201710070042369_UserTable.resx">
-      <DependentUpon>201710070042369_UserTable.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201711191941113_InitialCreate.resx">
+      <DependentUpon>201711191941113_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710070141148_RemoveServerPerm.resx">
-      <DependentUpon>201710070141148_RemoveServerPerm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710080529030_Notes.resx">
-      <DependentUpon>201710080529030_Notes.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710172143524_ModifyChannelStatesToGuildStates.resx">
-      <DependentUpon>201710172143524_ModifyChannelStatesToGuildStates.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201711192012068_UpdateUserStatsProperty.resx">
+      <DependentUpon>201711192012068_UpdateUserStatsProperty.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

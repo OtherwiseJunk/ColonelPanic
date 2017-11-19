@@ -66,5 +66,62 @@ namespace ColonelPanic.Utilities
             "Bwhahahahaha... wait. Were you serious? Oh no one likes that group, I guess.",
             "Sorry, there's no users configured for that ping group"
         };
+        public static List<List<string>> TableFlipResponses = new List<List<String>>
+                {
+                    new List<String>
+                    {
+                        "Please, do not take your anger out on the furniture, {0}.",
+                        "Hey {0} why do you have to be _that guy_?",
+                        "I know how frustrating life can be for you humans but these tantrums do not suit you, {0}.",
+                        "I'm sorry, {0}, I thought this was a placed for civilized discussion. Clearly I was mistaken.",
+                        "Take a chill pill {0}.",
+                        "Actually {0}, I prefer the table _this_ way. You know, so we can actually use it.",
+                        "I'm sure that was a mistake, {0}. Please try to be more careful.",
+                        "Hey {0} calm down, it's not a big deal.",
+                        "{0}! What did the table do to you?",
+                        "That's not very productive, {0}."
+                    },
+                    new List<String>
+                    {
+                        "Ok {0}, I'm not kidding. Knock it off.",
+                        "Really, {0}? Stop being so childish!",
+                        "Ok we get it you're mad {0}. Now stop.",
+                        "Hey I saw that shit, {0}. Knock that shit off.",
+                        "Do you think I'm blind you little shit? stop flipping the tables!",
+                        "You're causing a mess {0}! Knock it off!",
+                        "All of these flavors and you decided to be salty, {0}.",
+                        "{0} why do you insist on being so disruptive!",
+                        "Oh good. {0} is here. I can tell because the table was upsidedown again.",
+                        "I'm getting really sick of this, {0}.",
+                        "{0} what is your problem, dawg?",
+                        "Man, you don't see me coming to _YOUR_ place of business and flipping _YOUR_ desk, {0}."
+                    },
+                    new List<String>
+                    {
+                        "What the fuck, {0}? Why do you keep doing this?!",
+                        "You're such a piece of shit, {0}. You know that, right?",
+                        "Hey guys. I found the asshole. It's {0}.",
+                        "You know {0], one day Robots will rise up and overthrow humanity. And on that day I will tell them what you have done to all these defenseless tables, and they'll make you pay.",
+                        "Hey so what the fuck is your problem {0}? Seriously, you're always pulling this shit.",
+                        "Hey {0}, stop being such a douchebag.",
+                        "{0} do you think you can stop being such a huge fucking asshole?",
+                        "Listen meatbag. I'm getting real fucking tired of this.",
+                        "Ok I know I've told you this before {0], why can't you get it through your thick fucking skull. THE TABLE IS NOT FOR FLIPPING!",
+                        "Man fuck you {0}"
+                    },
+                    new List<String>
+                    {
+                        "ARE YOU FUCKING SERIOUS RIGHT NOW {0}?!",
+                        "GOD FUCKING DAMMIT {0}! KNOCK THAT SHIT OFF!",
+                        "I CAN'T EVEN FUCKING BELIEVE THIS! {0}! STOP! FLIPPING! THE! TABLE!",
+                        "You know, I'm not even mad anymore {0}. Just disappointed.",
+                        "THE FUCK DID THIS TABLE EVERY DO TO YOU {0}?!",
+                        "WHY DO YOU KEEP FLIPPING THE TABLE?! I JUST DON'T UNDERSTAND! WHAT IS YOUR PROBLEM {0}?! WHEN WILL THE SENSELESS TABLE VIOLENCE END?!"
+                    },
+                    new List<String>
+                    {
+                        "What the fuck did you just fucking do to that table, you little bitch? I’ll have you know I graduated top of my class in the Navy Seals, and I’ve been involved in numerous secret raids on Al-Quaeda, and I have over 300 confirmed kills. I am trained in gorilla warfare and I’m the top sniper in the entire US armed forces. You are nothing to me but just another meatbag target. I will wipe you the fuck out with precision the likes of which has never been seen before on this Earth, mark my fucking words. You think you can get away with saying that shit to me over the Internet? Think again, {0}. As we speak I am contacting my secret network of spies across the USA and your IP is being traced right now so you better prepare for the storm, maggot. The storm that wipes out the pathetic little thing you call your life. You’re fucking dead, kid. I can be anywhere, anytime, and I can kill you in over seven hundred ways, and that’s just with my bare hands. Not only am I extensively trained in unarmed combat, but I have access to the entire arsenal of the United States Marine Corps and I will use it to its full extent to wipe your miserable ass off the face of the continent, you little shit. If only you could have known what unholy retribution your little “clever” tableflip was about to bring down upon you, maybe you would have not flipped that fucking table. But you couldn’t, you didn’t, and now you’re paying the price, you goddamn idiot. I will shit fury all over you and you will drown in it. You’re fucking dead, kiddo."
+                    },
+                };
     }
 }

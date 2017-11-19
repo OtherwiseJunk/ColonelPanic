@@ -13,6 +13,7 @@ namespace ColonelPanic.Database.Models
         public int UserNum { get; set; }
         public string UserId { get; set; }
         public string Username { get; set; }
+        
 
         public User()
         {

@@ -21,14 +21,14 @@ namespace ColonelPanic.Modules
                 if (!ScrumHandler.ScrumChannelExists(Context.Channel.Id.ToString()))
                 {
 
-                    ScrumHandler.AddNewChannel(Context.Channel.Id, dateTime);
-                    if (ConfigurationHandler.GuildStateExists(Context.Channel.Id.ToString()))
+                    ScrumHandler.AddNewChannel(Context.Guild.Id, dateTime);
+                    if (ConfigurationHandler.GuildStateExists(Context.Guild.Id.ToString()))
                     {
                         ConfigurationHandler.ChangePermission("guild", "scrum", Context.Guild.Id.ToString(), true);
                     }
                     else
                     {
-                        ConfigurationHandler.AddGuildState(new GuildState { GuildId = Context.Channel.Id.ToString(), GuildName = Context.Channel.Name, ScrumEnabled = true, CanListen = false, CanSpeak = false });
+                        ConfigurationHandler.AddGuildState(new GuildState { GuildId = Context.Guild.Id.ToString(), GuildName = Context.Guild.Name, ScrumEnabled = true, CanListen = false, CanSpeak = false });
                         ConfigurationHandler.ChangePermission("guild", "scrum", Context.Guild.Id.ToString(), true);
                     }
                     await Context.Channel.SendMessageAsync("Ok, I've enabled Scrum for this channel.");

@@ -13,6 +13,7 @@ namespace ColonelPanic.Database.Contexts
         public UserDataContext() : base("name=BetaDB") { }
 
         public DbSet<UserXChannelFlags> UserFlags { get; set; }
+        public DbSet<UserState> UserStates { get; set; }
         
 
     }
@@ -35,9 +36,7 @@ namespace ColonelPanic.Database.Contexts
                     db.UserFlags.Add(uxcf);                                        
                 }
                 db.SaveChanges();
-            }
-
-            
+            }            
         }
         public static void RemoveShitlistUser(string channelId, string userId)
         {
@@ -48,7 +47,7 @@ namespace ColonelPanic.Database.Contexts
             }            
         }
         public static void AddEggplantUser(string channelId, string userId)
-        {            
+        {
             using (UserDataContext db = new UserDataContext())
             {
                 if (UserHasFlags(channelId, userId))
@@ -60,11 +59,52 @@ namespace ColonelPanic.Database.Contexts
                 {
                     var uxcf = new UserXChannelFlags(channelId, userId);
                     uxcf.EggplantList = true;
-                    db.UserFlags.Add(uxcf);                    
+                    db.UserFlags.Add(uxcf);
+                }
+                db.SaveChanges();
+            }
+        }
+        public static bool UserStateExists(string userId)
+        {
+            using (UserDataContext db = new UserDataContext())
+            {
+                return db.UserStates.FirstOrDefault(u => u.UserId == userId) != null;
+            }
+        }
+        public static void AddUserState(string userId, string username)
+        {
+            using (UserDataContext db = new UserDataContext())
+            {
+                db.UserStates.Add(new UserState(userId, username));
+                db.SaveChanges();
+            }
+        }
+
+        public static int IncrementTableFlipPoints(string userId,string username)
+        {
+            int points;
+            using (UserDataContext db = new UserDataContext())
+            {
+                var userState = db.UserStates.FirstOrDefault(u => u.UserId == userId);
+                if (userState != null)
+                {
+                    userState.TableFlipPoints++;
+                    points = userState.TableFlipPoints;
+                    db.UserStates.Attach(userState);
+                    db.Entry(userState).State = EntityState.Modified;
+                }
+                else
+                {
+                    var usrState = new UserState(userId, username);
+                    points = 1;
+                    usrState.TableFlipPoints = points;
+                    db.UserStates.Add(usrState);
                 }
                 db.SaveChanges();
             }            
+            return points;
         }
+
         public static void RemoveEggplantUser(string channelId, string userId)
         {            
             using (UserDataContext db = new UserDataContext())

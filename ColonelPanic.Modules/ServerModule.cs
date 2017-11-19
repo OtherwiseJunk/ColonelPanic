@@ -53,7 +53,7 @@ namespace ColonelPanic.Modules
             }
         }
 
-        [Command("poop"), RequireOwner]
+        [Command("poop"), RequireUserPermission(ChannelPermission.ManageChannel)]
         public async Task poop([Remainder] string userId)
         {
             string chnlId = Context.Channel.Id.ToString();
@@ -75,7 +75,7 @@ namespace ColonelPanic.Modules
             await Context.Channel.SendMessageAsync("K.");
         }
 
-        [Command("eggplant"), RequireOwner]
+        [Command("eggplant"), RequireUserPermission(ChannelPermission.ManageChannel)]
         public async Task eggplant([Remainder] string userId)
         {
             string chnlId = Context.Channel.Id.ToString();
