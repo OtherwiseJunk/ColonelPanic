@@ -57,7 +57,7 @@ namespace ColonelPanic.Modules
         public async Task poop([Remainder] string userId)
         {
             string chnlId = Context.Channel.Id.ToString();
-            if (UserDataHandler.UserHasFlags(chnlId,userId))
+            if (UserDataHandler.UserHasFlags(chnlId, userId))
             {
                 if (!UserDataHandler.IsShitlistUser(chnlId, userId))
                 {
@@ -69,9 +69,9 @@ namespace ColonelPanic.Modules
                 }
             }
             else
-            {                
-                UserDataHandler.AddShitlistUser(chnlId, userId);             
-            }            
+            {
+                UserDataHandler.AddShitlistUser(chnlId, userId);
+            }
             await Context.Channel.SendMessageAsync("K.");
         }
 
@@ -98,15 +98,173 @@ namespace ColonelPanic.Modules
             await Context.Channel.SendMessageAsync("K.");
         }
 
+        [Command("roll")]
+        public async Task Roll([Remainder] string rollString)
+        {
+
+            var arguments = new List<string>(rollString.Split('d'));
+            arguments.Remove("");
+            int sides, times, modifier;
+
+            if (arguments.Count == 1)
+            {
+                if (arguments[0].Contains("+"))
+                {
+                    arguments = new List<string>(arguments[0].Split('+'));
+                    if (int.TryParse(arguments[0], out sides))
+                    {
+                        var dice = new Dice(sides);
+                        var temp = dice.Roll();
+                        if (int.TryParse(arguments[1], out modifier))
+                        {
+                            await Context.Channel.SendMessageAsync(
+                                    string.Format("Rolled one d{0} plus {1} and got a total of {2}", sides,
+                                        modifier, temp + modifier));
+
+                        }
+                        else
+                        {
+                            await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+
+                        }
+                    }
+                    else
+                    {
+                        await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+
+                    }
+                }
+                else if (arguments[0].Contains("-"))
+                {
+                    arguments = new List<string>(arguments[0].Split('-'));
+                    if (int.TryParse(arguments[0], out sides))
+                    {
+                        var dice = new Dice(sides);
+                        var temp = dice.Roll();
+                        if (int.TryParse(arguments[1], out modifier))
+                        {
+                            await Context.Channel.SendMessageAsync(
+                                    string.Format("Rolled one d{0} minus {1} and got a total of {2}", sides,
+                                        modifier, temp - modifier));
+                        }
+                        else
+                        {
+                            await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+
+                        }
+                    }
+                    else
+                    {
+                        await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+
+                    }
+                }
+                else
+                {
+                    if (int.TryParse(arguments[0], out sides))
+                    {
+                        var dice = new Dice(sides);
+                        await Context.Channel.SendMessageAsync(string.Format("Rolled one d{0} and got a total of {1}",
+                                sides, dice.Roll()));
+                    }
+                    else
+                    {
+                        await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+
+                    }
+                }
+            }
+            else if (arguments.Count == 2)
+            {
+                if (int.TryParse(arguments[0], out times))
+                {
+                    if (arguments[1].Contains("+"))
+                    {
+                        arguments = new List<string>(arguments[1].Split('+'));
+                        if (int.TryParse(arguments[0], out sides))
+                        {
+                            var dice = new Dice(sides);
+                            var temp = dice.Roll(times);
+                            if (int.TryParse(arguments[1], out modifier))
+                            {
+                                await Context.Channel.SendMessageAsync(
+                                        string.Format("Rolled {0} d{1} plus {2} and got a total of {3}",
+                                            times, sides, modifier, temp.Total + modifier));
+                                await Context.Channel.SendMessageAsync(string.Format("Individual Rolls: {0}",
+                                        string.Join(",", temp.Rolls)));
+
+                            }
+                            else
+                            {
+                                await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+
+                            }
+                        }
+                        else
+                        {
+                            await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+
+                        }
+                    }
+                    else if (arguments[1].Contains("-"))
+                    {
+                        arguments = new List<string>(arguments[1].Split('-'));
+                        if (int.TryParse(arguments[0], out sides))
+                        {
+                            var dice = new Dice(sides);
+                            var temp = dice.Roll(times);
+                            if (int.TryParse(arguments[1], out modifier))
+                            {
+                                await Context.Channel.SendMessageAsync(
+                                        string.Format("Rolled {0} d{1} minus {2} and got a total of {3}", times, sides,
+                                            modifier, temp.Total-modifier));
+                                await Context.Channel.SendMessageAsync(string.Format("Individual Rolls: {0}",
+                                        string.Join(",", temp.Rolls)));
+
+                            }
+                            else
+                            {
+                                await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+
+                            }
+                        }
+                        else
+                        {
+                            await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+
+                        }
+                    }
+                    else
+                    {
+                        if (int.TryParse(arguments[1], out sides))
+                        {
+                            var dice = new Dice(sides);
+                            var temp = dice.Roll(times);
+                            await Context.Channel.SendMessageAsync(string.Format(
+                                    "Rolled {0} d{1} and got a total of {2}", times, sides, temp.Total));
+                            await Context.Channel.SendMessageAsync(string.Format("Individual Rolls: {0}",
+                                    string.Join(",", temp.Rolls)));
+
+                        }
+                        else
+                        {
+                            await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+
+                        }
+                    }
+                }
+            }
+        }
+
         [Command("emojilist")]
         public async Task EmojiList()
         {
             string msg = "";
             foreach (var guild in Context.Client.GetGuildsAsync().Result)
-            {                                
+            {
                 foreach (var emote in guild.Emotes)
                 {
-                    msg += emote.Name+ ": <:" + emote.Name + ":" + emote.Id + ">"+"\n";
+                    msg += emote.Name + ": <:" + emote.Name + ":" + emote.Id + ">" + "\n";
 
                 }
                 if (msg.Length >= 1950)
@@ -114,20 +272,19 @@ namespace ColonelPanic.Modules
                     await Context.User.SendMessageAsync(msg);
                     msg = "";
                 }
-                
+
             }
             if (msg != "")
             {
                 await Context.User.SendMessageAsync(msg);
             }
-            
+
         }
 
         [Command("emoji")]
         public async Task Emoji([Remainder, Summary("name")]string name = "none")
         {
-            bool brokeOut = false;
-            string emoji = "";
+            bool brokeOut = false;            
             foreach (var guild in Context.Client.GetGuildsAsync().Result)
             {
                 foreach (var emote in guild.Emotes)
