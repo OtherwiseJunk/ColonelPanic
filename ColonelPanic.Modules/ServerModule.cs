@@ -18,6 +18,12 @@ namespace ColonelPanic.Modules
             await ReplyAsync(echo);
         }
 
+        [Command("link"), Alias("install"), Summary("Provides a link for installing the bot on other servers. You must be an admin of the target server to use the provided link.")]
+        public async Task ProvideInstallLink()
+        {
+            Context.Channel.SendMessageAsync("https://discordapp.com/oauth2/authorize?&client_id=357910708316274688&scope=bot");
+        }
+
         [Command("big"), Summary("`Applies the 'Big if True'`")]
         public async Task BigIfTrue([Remainder, Summary("MsgId")]string msgId)
         {

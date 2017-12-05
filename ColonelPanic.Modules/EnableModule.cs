@@ -21,7 +21,7 @@ namespace ColonelPanic.Modules
                 if (!ScrumHandler.ScrumChannelExists(Context.Channel.Id.ToString()))
                 {
 
-                    ScrumHandler.AddNewChannel(Context.Guild.Id, dateTime);
+                    ScrumHandler.AddNewChannel(Context.Channel.Id, dateTime);
                     if (ConfigurationHandler.GuildStateExists(Context.Guild.Id.ToString()))
                     {
                         ConfigurationHandler.ChangePermission("guild", "scrum", Context.Guild.Id.ToString(), true);

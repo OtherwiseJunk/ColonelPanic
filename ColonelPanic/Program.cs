@@ -67,11 +67,12 @@ namespace ColonelPanic
             {
                 MarkovChainRepository = new MultiDeepMarkovChain(4);
                 MarkovChainRepository.save(MarkovChainFileName);
-            }
+            }            
 
             commands = new CommandService();
 
-            services = new ServiceCollection().BuildServiceProvider();
+            services = new ServiceCollection().AddSingleton<AudioService>().BuildServiceProvider();
+            
 
             await InstallCommands();
 
@@ -294,7 +295,8 @@ namespace ColonelPanic
             await commands.AddModuleAsync<DisableModule>();
             await commands.AddModuleAsync<NoteModule>();
             await commands.AddModuleAsync<PingGroupModule>();
-        }
+            await commands.AddModuleAsync<AudioModule>();
+        }        
 
         public async Task HandleCommand(SocketMessage messageParam)
         {
