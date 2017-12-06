@@ -52,6 +52,7 @@
     <Compile Include="Contexts\ConfigurationContext.cs" />
     <Compile Include="Contexts\NoteContext.cs" />
     <Compile Include="Contexts\PingGroupContext.cs" />
+    <Compile Include="Contexts\RedditContext.cs" />
     <Compile Include="Migrations\201711191941113_InitialCreate.cs" />
     <Compile Include="Migrations\201711191941113_InitialCreate.Designer.cs">
       <DependentUpon>201711191941113_InitialCreate.cs</DependentUpon>
@@ -68,6 +69,7 @@
     <Compile Include="Models\PingGroupUser.cs" />
     <Compile Include="Models\ScrumChannel.cs" />
     <Compile Include="Models\ScrumUser.cs" />
+    <Compile Include="Models\TopDaily.cs" />
     <Compile Include="Models\TrustedUser.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserState.cs" />
@@ -88,6 +90,12 @@
     <EmbeddedResource Include="Migrations\201711192012068_UpdateUserStatsProperty.resx">
       <DependentUpon>201711192012068_UpdateUserStatsProperty.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ColonelPanic.Utilities\ColonelPanic.Utilities.csproj">
+      <Project>{51ad9211-08e7-4ece-938e-5df8eaccbcc6}</Project>
+      <Name>ColonelPanic.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -40,8 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="APILinkFormats.cs" />
     <Compile Include="Dice.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="JSONClasses\RedditTopTwenty.cs" />
     <Compile Include="MultiDeepMarkovChain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseCollections.cs" />

@@ -25,6 +25,9 @@ using TextMarkovChains;
 
 using System.Xml;
 using System.Text.RegularExpressions;
+using System.Web;
+using ColonelPanic.Utilities.JSONClasses;
+using System.Net;
 
 namespace ColonelPanic
 {
@@ -41,6 +44,7 @@ namespace ColonelPanic
         public MultiDeepMarkovChain MarkovChainRepository { get; private set; }
 
         Timer ScrumUpdateTimer { get; set; }
+        Timer TopDailyTimer { get; set; }
         Timer MarkovSaveTimer { get; set; }
         
 
@@ -120,10 +124,43 @@ namespace ColonelPanic
             }
 
             ScrumUpdateTimer = new System.Threading.Timer(ScrumCheckCallback, null, 1000 * 60, 1000 * 60 * 60);
+            TopDailyTimer = new Timer(TopDailyCallback, null, 1000 * 60, 1000 * 60);
             MarkovSaveTimer = new Timer(MarkovSaveTimerCallback, null, 1000 * 60, 1000 * 60 * 15);
 
             await Task.Delay(-1);
-        }        
+        }
+
+        private void TopDailyCallback(object state)
+        {
+            List<TopDaily> topDailiesToExecute = RedditHandler.GetSubredditsToCheck();
+            if (topDailiesToExecute.Count > 0)
+            {
+                foreach (TopDaily td in topDailiesToExecute)
+                {
+                    var chnl = client.GetChannel(ulong.Parse(td.ChannelId)) as SocketTextChannel;
+                    chnl.SendMessageAsync(GetTopDailylink(td));
+                }
+            }
+            
+        }
+
+        private string GetTopDailylink(TopDaily td)
+        {
+            using(WebClient wClient = new WebClient())
+            {
+                string url = String.Format(Utilities.APILinkFormats.SubredditTopTwentyPosts, td.Subreddit);
+                RedditTopTwenty topTwenty = Newtonsoft.Json.JsonConvert.DeserializeObject<RedditTopTwenty>(wClient.DownloadString(url));
+                foreach (var child in topTwenty.data.children)
+                {
+                    if(child.data.url.Contains(".gif") || child.data.url.Contains(".jpg") || child.data.url.Contains(".png") || child.data.url.Contains(".mp4") || child.data.url.Contains(".gifv"))
+                    {
+                        return child.data.url;
+                    }
+                }
+            }
+            
+            return "No image posts in the top 20, sorry";
+        }
 
         private async Task AddGuildStateIfMissing(string guildId, string name)
         {
@@ -296,6 +333,7 @@ namespace ColonelPanic
             await commands.AddModuleAsync<NoteModule>();
             await commands.AddModuleAsync<PingGroupModule>();
             await commands.AddModuleAsync<AudioModule>();
+            await commands.AddModuleAsync<RedditModule>();
         }        
 
         public async Task HandleCommand(SocketMessage messageParam)

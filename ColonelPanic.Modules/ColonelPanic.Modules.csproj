@@ -89,6 +89,7 @@
       <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -107,6 +108,7 @@
     <Compile Include="HelpModule.cs" />
     <Compile Include="NoteModule.cs" />
     <Compile Include="PingGroupModule.cs" />
+    <Compile Include="RedditModule.cs" />
     <Compile Include="ScrumModule.cs" />
     <Compile Include="ServerModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

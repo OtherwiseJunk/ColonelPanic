@@ -105,6 +105,7 @@
       <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.Entity.Design" />
     <Reference Include="System.Xml.Linq" />
