@@ -14,7 +14,7 @@ namespace ColonelPanic.Modules
     public class RedditModule : ModuleBase
     {
 
-        [Command("top"), Summary(@"Will schedule a daily post at the specified time, taking the top image post from the provided subreddit.
+        [Command("top"), RequireUserPermission(Discord.GuildPermission.) Summary(@"Will schedule a daily post at the specified time, taking the top image post from the provided subreddit.
 
 Usage: $top ""birbs"" ""17:00"" 
 This command would cause the top image post from birbs to be posted at 5:00PM every day!
