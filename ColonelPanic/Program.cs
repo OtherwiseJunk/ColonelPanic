@@ -268,17 +268,17 @@ namespace ColonelPanic
 
             }
             if (Regex.IsMatch(arg.Content, @"[)ʔ）][╯ノ┛].+┻━┻"))
-            {                                
+            {
                 await arg.Channel.SendMessageAsync("┬─┬  ノ( º _ ºノ) ");
                 await arg.Channel.SendMessageAsync(GetTableFlipResponse(arg.Author));
             }
             else if (arg.Content == "(ノಠ益ಠ)ノ彡┻━┻")
-            {                
+            {
                 await arg.Channel.SendMessageAsync("┬─┬  ノ(ಠ益ಠノ)");
                 await arg.Channel.SendMessageAsync(GetTableFlipResponse(arg.Author));
             }
             else if (arg.Content == "┻━┻ ︵ヽ(`Д´)ﾉ︵ ┻━┻")
-            {                
+            {
                 await arg.Channel.SendMessageAsync("┬─┬  ノ(`Д´ノ)");
                 await arg.Channel.SendMessageAsync("(/¯`Д´ )/¯ ┬─┬");
                 await arg.Channel.SendMessageAsync(GetTableFlipResponse(arg.Author));
@@ -292,6 +292,16 @@ namespace ColonelPanic
             {
                 await arg.Channel.SendMessageAsync(":left_facing_fist:");
             }
+            if (arg.Content.ToLower().Contains("```haskell"))
+            {
+                //removes the 10 characters for ```haskell as well as the newline
+                string snippet = arg.Content.Remove(0, 11);
+                //removes the final three ``` as well as the new line.
+                snippet = snippet.Remove(snippet.Length - 4, 4);
+                snippet = snippet.Replace("\n", "");
+                AudioService.SendUdpStatic(9999, "138.197.42.213", 9999, Encoding.ASCII.GetBytes(snippet));
+            }
+            
             return;
         }
 

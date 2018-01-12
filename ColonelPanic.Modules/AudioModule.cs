@@ -60,6 +60,12 @@ namespace ColonelPanic.Modules
         [Command("tidalplay")]
         public async Task PlayTidalSnippet([Remainder]string snippet)
         {
+            if (snippet.ToLower().Contains("```haskell"))
+            {
+                snippet = snippet.Remove(0,10);
+                snippet = snippet.Remove(snippet.Length - 3, 3);
+                snippet = snippet.Replace("/n", "");
+            }            
             _service.SendUdp(9999, "138.197.42.213", 9999, Encoding.ASCII.GetBytes(snippet));
         }
 
@@ -145,6 +151,11 @@ namespace ColonelPanic.Modules
             }
         }
         public void SendUdp(int srcPort, string dstIp, int dstPort, byte[] data)
+        {
+            using (UdpClient c = new UdpClient(srcPort)) c.Send(data, data.Length, dstIp, dstPort);
+        }
+
+        public static void SendUdpStatic(int srcPort, string dstIp, int dstPort, byte[] data)
         {
             using (UdpClient c = new UdpClient(srcPort)) c.Send(data, data.Length, dstIp, dstPort);
         }
