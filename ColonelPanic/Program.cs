@@ -28,6 +28,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using ColonelPanic.Utilities.JSONClasses;
 using System.Net;
+using System.Linq;
 
 namespace ColonelPanic
 {
@@ -38,6 +39,7 @@ namespace ColonelPanic
         CommandService commands;
         IServiceProvider services;
         Random _rand = new Random();
+        SocketUser Me { get; set; } 
         
         static void Main(string[] args) => new Program().Start().GetAwaiter().GetResult();
 
@@ -83,6 +85,7 @@ namespace ColonelPanic
             client.Log += WriteLog;
             client.MessageReceived += MessageReceived;
             client.UserLeft += UserLeft;
+            
 
             string token = String.Empty;
 
@@ -126,6 +129,8 @@ namespace ColonelPanic
             ScrumUpdateTimer = new System.Threading.Timer(ScrumCheckCallback, null, 1000 * 60, 1000 * 60 * 60);
             TopDailyTimer = new Timer(TopDailyCallback, null, 1000 * 60, 1000 * 60);
             MarkovSaveTimer = new Timer(MarkovSaveTimerCallback, null, 1000 * 60, 1000 * 60 * 15);
+
+            
 
             await Task.Delay(-1);
         }
@@ -191,6 +196,12 @@ namespace ColonelPanic
 
         private async Task MessageReceived(SocketMessage arg)
         {
+            List<SocketUser> MentionedUsers = new List<SocketUser>();
+            foreach (SocketUser user in arg.MentionedUsers)
+            {
+                MentionedUsers.Add(user);
+            }
+            bool MentioningMe = MentionedUsers.FirstOrDefault(u => u.Id == 357910708316274688) != null;
             string chnlId = arg.Channel.Id.ToString();
             string userId = arg.Author.Id.ToString();
             SocketGuildChannel chnl = arg.Channel as SocketGuildChannel;
@@ -198,6 +209,12 @@ namespace ColonelPanic
             if (!UserDataHandler.UserStateExists(arg.Author.Id.ToString()))
             {
                 UserDataHandler.AddUserState(arg.Author.Id.ToString(), arg.Author.Username);
+            }
+            if(arg.Content == "image")
+            {
+                await client.CurrentUser.ModifyAsync(x => {
+                    x.Avatar = new Discord.Image("ColPan.jpg");
+                });
             }
             Console.WriteLine($"{arg.Author.Username} on {arg.Channel.Name}: {arg.Content}");
             if (!arg.Author.IsBot && !arg.Content.Contains("$") && !arg.Content.Contains("http"))
@@ -209,6 +226,7 @@ namespace ColonelPanic
             {
                 //await arg.Channel.SendMessageAsync(GetMarkovSentence());
             }
+            
             if (UserDataHandler.IsEggplantUser(chnlId,userId))
             {
                 var msg = arg.Channel.GetMessageAsync(arg.Id).Result as IUserMessage;
@@ -264,6 +282,15 @@ namespace ColonelPanic
                 await arg.Channel.SendMessageAsync("┬─┬  ノ(`Д´ノ)");
                 await arg.Channel.SendMessageAsync("(/¯`Д´ )/¯ ┬─┬");
                 await arg.Channel.SendMessageAsync(GetTableFlipResponse(arg.Author));
+            }
+            else if (arg.Content.Contains("🤛") && MentioningMe)
+            {
+                await arg.Channel.SendMessageAsync(":right_facing_fist:");
+
+            }
+            else if (arg.Content.Contains("🤜") && MentioningMe)
+            {
+                await arg.Channel.SendMessageAsync(":left_facing_fist:");
             }
             return;
         }
@@ -344,8 +371,8 @@ namespace ColonelPanic
             if (message == null) return;
             // Create a number to track where the prefix ends and the command begins
             int argPos = 0;
-            // Determine if the message is a command, based on if it starts with '!' or a mention prefix
-            if (!(message.HasCharPrefix('$', ref argPos) || message.HasMentionPrefix(client.CurrentUser, ref argPos))) return;
+            // Determine if the message is a command, based on if it starts with '$' or a mention prefix
+            if (!message.HasCharPrefix('$', ref argPos) && !false) return;
             // Create a Command Context
             var context = new CommandContext(client, message);
             // Execute the command. (result does not indicate a return value, 

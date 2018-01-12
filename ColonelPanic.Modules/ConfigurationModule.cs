@@ -13,7 +13,7 @@ namespace ColonelPanic.Modules
     {
         [Command("change"), RequireOwner,Summary("Changes the specified configuration field to the specified value. Can currently update:\ngittoken\nbottoken\ngitcommit\n")]
         public static async Task Change([Summary("The field to update")] string field, [Summary("The new value")] string newValue)
-        {
+        {            
             switch (field)
             {
                 case "gittoken":
@@ -26,6 +26,7 @@ namespace ColonelPanic.Modules
                     ConfigurationHandler.ChangeConfiguration(field, newValue);
                     break;                
             }
+            
         }
 
     }

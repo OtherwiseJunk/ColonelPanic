@@ -271,13 +271,13 @@ namespace ColonelPanic.Modules
                 foreach (var emote in guild.Emotes)
                 {
                     msg += emote.Name + ": <:" + emote.Name + ":" + emote.Id + ">" + "\n";
-
+                    if (msg.Length >= 1900)
+                    {
+                        await Context.User.SendMessageAsync(msg);
+                        msg = "";
+                    }
                 }
-                if (msg.Length >= 1950)
-                {
-                    await Context.User.SendMessageAsync(msg);
-                    msg = "";
-                }
+                
 
             }
             if (msg != "")

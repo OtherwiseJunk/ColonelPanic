@@ -9,7 +9,7 @@ using Discord.Audio;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
-using Quobject.SocketIoClientDotNet.Client;
+using System.Net.Sockets;
 
 namespace ColonelPanic.Modules
 {
@@ -18,15 +18,13 @@ namespace ColonelPanic.Modules
         // Scroll down further for the AudioService.
         // Like, way down
         private readonly AudioService _service;
-        private Socket socket;
+        
 
         // Remember to add an instance of the AudioService
         // to your IServiceCollection when you initialize your bot
         public AudioModule(AudioService service)
         {
             _service = service;
-            socket = IO.Socket("https://foozstats.cacheblasters.com:443");
-            socket.Emit("hi");
         }
 
         // You *MUST* mark these commands with 'RunMode.Async'
@@ -61,8 +59,8 @@ namespace ColonelPanic.Modules
 
         [Command("tidalplay")]
         public async Task PlayTidalSnippet([Remainder]string snippet)
-        {           
-            socket.Emit("tidal", "testing123|$d1 $ sound \"bd\"");
+        {
+            _service.SendUdp(9999, "138.197.42.213", 9999, Encoding.ASCII.GetBytes(snippet));
         }
 
         [Command("tidalradio", RunMode = RunMode.Async)]
@@ -136,13 +134,19 @@ namespace ColonelPanic.Modules
             IAudioClient client;
             if (ConnectedChannels.TryGetValue(guild.Id, out client))
             {                
-                using (var output = CreateStream("http://foozstats.cacheblasters.com:8090/stream.mp3").StandardOutput.BaseStream)
-                using (var stream = client.CreatePCMStream(AudioApplication.Music))
+                using (var output = CreateStream("http://138.197.42.213:8090/stream.mp3").StandardOutput.BaseStream)
                 {
-                    try { await output.CopyToAsync(stream); }
-                    finally { await stream.FlushAsync(); }
-                }
+                    using (var stream = client.CreatePCMStream(AudioApplication.Music))
+                    {
+                        try { await output.CopyToAsync(stream); }
+                        finally { await stream.FlushAsync(); }
+                    }
+                }                
             }
+        }
+        public void SendUdp(int srcPort, string dstIp, int dstPort, byte[] data)
+        {
+            using (UdpClient c = new UdpClient(srcPort)) c.Send(data, data.Length, dstIp, dstPort);
         }
 
         public async Task SendAudioStreamAsync(IGuild guild, IMessageChannel channel, string path)

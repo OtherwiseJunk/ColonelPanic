@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ColonelPanic.Modules
 {
-    [Group("note"),RequireColPermission("note")]
+    [Group("note"), Alias("notes"),RequireColPermission("note")]
     public class NoteModule : ModuleBase
     {
         [Command("list"), Summary("Gets a list of all note names and Id's")]

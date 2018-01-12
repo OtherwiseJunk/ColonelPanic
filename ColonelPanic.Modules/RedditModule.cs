@@ -60,6 +60,33 @@ All posts will occur at that time in ET, sorry lesser timezones :-)")]
                 }
             }
         }
+
+        [Command("topnow"), Summary("Posts the top image from the provided subreddit.")]
+        public async Task GetTopNow([Summary("Subreddit to get top image from.")] string Subreddit)
+        {
+            using (var client = new WebClient())
+            {
+                string url = String.Format(Utilities.APILinkFormats.SubredditTopTwentyPosts, Subreddit);
+                string topTwentyJson = HttpUtility.HtmlDecode(client.DownloadString(url));
+                RedditTopTwenty topTwenty = Newtonsoft.Json.JsonConvert.DeserializeObject<RedditTopTwenty>(topTwentyJson);
+                if (topTwenty.data.children.Count() > 0)
+                {
+                    int count = 0;
+                    foreach (var child in topTwenty.data.children)
+                    {
+                        if (count == 0 && (child.data.url.Contains(".gif") || child.data.url.Contains(".jpg") || child.data.url.Contains(".png") || child.data.url.Contains(".mp4") || child.data.url.Contains(".gifv")))
+                        {
+                            count++;
+                            await Context.Channel.SendMessageAsync(child.data.url);
+                        }
+                    }
+                }
+                else
+                {
+                    await Context.Channel.SendMessageAsync("Well that's not a subreddit with posts, yanno?");
+                }
+            }
+        }
     }
     
 

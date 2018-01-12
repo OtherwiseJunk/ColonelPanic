@@ -42,7 +42,7 @@ namespace ColonelPanic.Database.Contexts
         {
             using (UserDataContext db = new UserDataContext())
             {
-                db.UserFlags.FirstOrDefault(u => u.ChannelId == channelId && u.UserId == userId).EggplantList = false;
+                db.UserFlags.FirstOrDefault(u => u.ChannelId == channelId && u.UserId == userId).Shitlist = false;
                 db.SaveChanges();
             }            
         }
