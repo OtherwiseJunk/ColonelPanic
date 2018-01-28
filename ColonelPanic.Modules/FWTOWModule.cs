@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
-using ColonelPanic.Permissions;
+using DartsDiscordBots.Permissions;
 using Discord;
 using Discord.WebSocket;
 

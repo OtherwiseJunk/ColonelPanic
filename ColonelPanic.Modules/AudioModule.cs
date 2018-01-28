@@ -63,8 +63,7 @@ namespace ColonelPanic.Modules
             if (snippet.ToLower().Contains("```haskell"))
             {
                 snippet = snippet.Remove(0,10);
-                snippet = snippet.Remove(snippet.Length - 3, 3);
-                snippet = snippet.Replace("/n", "");
+                snippet = snippet.Remove(snippet.Length - 3, 3);                
             }            
             _service.SendUdp(9999, "138.197.42.213", 9999, Encoding.ASCII.GetBytes(snippet));
         }
@@ -140,7 +139,7 @@ namespace ColonelPanic.Modules
             IAudioClient client;
             if (ConnectedChannels.TryGetValue(guild.Id, out client))
             {                
-                using (var output = CreateStream("http://138.197.42.213:8090/stream.mp3").StandardOutput.BaseStream)
+                using (var output = CreateStream("http://138.197.42.213:8091/stream.mp3").StandardOutput.BaseStream)
                 {
                     using (var stream = client.CreatePCMStream(AudioApplication.Music))
                     {

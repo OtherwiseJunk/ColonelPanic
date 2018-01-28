@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ColonelPanic.Modules</RootNamespace>
     <AssemblyName>ColonelPanic.Modules</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BungieNetPlatform, Version=2.1.3.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\BungieNetPlatform.2.1.3\lib\net45\BungieNetPlatform.dll</HintPath>
+    </Reference>
     <Reference Include="Discord.Net.Commands, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Discord.Net.Commands.1.0.2\lib\netstandard1.1\Discord.Net.Commands.dll</HintPath>
       <Private>True</Private>
@@ -65,7 +69,10 @@
       <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.1.1.1\lib\netstandard1.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=105.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.1.0\lib\net452\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="SocketIoClientDotNet, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SocketIoClientDotNet.1.0.3\lib\net45\SocketIoClientDotNet.dll</HintPath>
@@ -103,11 +110,13 @@
   <ItemGroup>
     <Compile Include="AudioModule.cs" />
     <Compile Include="ConfigurationModule.cs" />
+    <Compile Include="Destiny2Module.cs" />
     <Compile Include="EnableModule.cs" />
     <Compile Include="FWTOWModule.cs" />
     <Compile Include="GeosusModule.cs" />
     <Compile Include="HelpModule.cs" />
     <Compile Include="NoteModule.cs" />
+    <Compile Include="Permissions\Preconditions.cs" />
     <Compile Include="PingGroupModule.cs" />
     <Compile Include="RedditModule.cs" />
     <Compile Include="ScrumModule.cs" />
@@ -123,9 +132,9 @@
       <Project>{6fc859b7-484c-4a9d-b29c-a6ff3b637c3a}</Project>
       <Name>ColonelPanic.Database</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ColonelPanic.Permissions\ColonelPanic.Permissions.csproj">
+    <ProjectReference Include="..\DartsDiscordBots\DartsDiscordBots.csproj">
       <Project>{271aa655-fadc-46a3-8c37-e9a959b8f1d6}</Project>
-      <Name>ColonelPanic.Permissions</Name>
+      <Name>DartsDiscordBots</Name>
     </ProjectReference>
     <ProjectReference Include="..\ColonelPanic.Utilities\ColonelPanic.Utilities.csproj">
       <Project>{51ad9211-08e7-4ece-938e-5df8eaccbcc6}</Project>

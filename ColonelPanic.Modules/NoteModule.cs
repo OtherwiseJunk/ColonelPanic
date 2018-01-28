@@ -1,5 +1,5 @@
 ﻿using ColonelPanic.Database.Contexts;
-using ColonelPanic.Permissions;
+using ColonelPanic.Utilities.Permissions;
 using Discord.Commands;
 using System;
 using System.Collections.Generic;

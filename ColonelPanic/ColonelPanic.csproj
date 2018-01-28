@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ColonelPanic</RootNamespace>
     <AssemblyName>ColonelPanic</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -134,6 +135,10 @@
     <ProjectReference Include="..\ColonelPanic.Modules\ColonelPanic.Modules.csproj">
       <Project>{2f367b5d-030d-4a3e-ad8b-530e74068068}</Project>
       <Name>ColonelPanic.Modules</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DartsDiscordBots\DartsDiscordBots.csproj">
+      <Project>{271aa655-fadc-46a3-8c37-e9a959b8f1d6}</Project>
+      <Name>DartsDiscordBots</Name>
     </ProjectReference>
     <ProjectReference Include="..\ColonelPanic.Utilities\ColonelPanic.Utilities.csproj">
       <Project>{51ad9211-08e7-4ece-938e-5df8eaccbcc6}</Project>

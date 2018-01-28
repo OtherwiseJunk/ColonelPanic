@@ -60,6 +60,7 @@ namespace ColonelPanic.Modules
         public async Task HelpAsync([Summary("The command you would like more information on.")]string command)
         {
             var result = _service.Search(Context, command);
+            
 
             if (!result.IsSuccess)
             {

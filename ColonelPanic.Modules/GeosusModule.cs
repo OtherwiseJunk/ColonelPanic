@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ColonelPanic.Permissions;
-using ColonelPanic.Utilities;
+using DartsDiscordBots.Permissions;
+using DartsDiscordBots.Utilities;
 using Discord;
 
 namespace ColonelPanic.Modules

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ColonelPanic.Utilities
+namespace DartsDiscordBots.Utilities
 {
     public class ResponseCollections
     {
@@ -36,6 +36,7 @@ namespace ColonelPanic.Utilities
                 "You _would_ ask that. No.",
                 "Maybe probably.",
                 "I mean. It's more likely than Geo playing Tf2, at least?",
+                "I mean. It's more likely than Sizer adding the Venator, at least?",
                 "You know it!",
         };
 

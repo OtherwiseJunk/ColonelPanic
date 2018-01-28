@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Discord.Commands;
+using DartsDiscordBots.Utilities;
 using ColonelPanic.Utilities;
 using ColonelPanic.Database.Contexts;
-using ColonelPanic.Permissions;
+using ColonelPanic.Utilities.Permissions;
 using System.Collections.Generic;
 using Discord;
-using System.Threading;
 
 namespace ColonelPanic.Modules
 {

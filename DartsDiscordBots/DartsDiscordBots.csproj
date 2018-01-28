@@ -7,10 +7,11 @@
     <ProjectGuid>{271AA655-FADC-46A3-8C37-E9A959B8F1D6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ColonelPanic.Permissions</RootNamespace>
-    <AssemblyName>ColonelPanic.Permissions</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <RootNamespace>DartsDiscordBots</RootNamespace>
+    <AssemblyName>DartsDiscordBots</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -79,7 +80,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Preconditions.cs" />
+    <Compile Include="Utilities\ResponseCollections.cs" />
+    <Compile Include="Utilities\Dice.cs" />
+    <Compile Include="Utilities\ExtensionMethods.cs" />
+    <Compile Include="Permissions\Preconditions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

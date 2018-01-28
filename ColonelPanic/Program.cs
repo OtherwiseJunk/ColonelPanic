@@ -2,8 +2,10 @@
 using ColonelPanic.Database.Models;
 using ColonelPanic.Modules;
 using ColonelPanic.Utilities;
+using ColonelPanic.Utilities.JSONClasses;
+using DartsDiscordBots.Modules;
+using DartsDiscordBots.Utilities;
 using Discord;
-using Quobject.SocketIoClientDotNet.Client;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,21 +14,11 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Cryptography;
 using System.Text;
-using Org.BouncyCastle.Crypto;
 using System.IO;
-using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.Encodings;
-using Org.BouncyCastle.OpenSsl;
 using TextMarkovChains;
-
-
 using System.Xml;
 using System.Text.RegularExpressions;
-using System.Web;
-using ColonelPanic.Utilities.JSONClasses;
 using System.Net;
 using System.Linq;
 
@@ -298,7 +290,7 @@ namespace ColonelPanic
                 string snippet = arg.Content.Remove(0, 11);
                 //removes the final three ``` as well as the new line.
                 snippet = snippet.Remove(snippet.Length - 4, 4);
-                snippet = snippet.Replace("\n", "");
+
                 AudioService.SendUdpStatic(9999, "138.197.42.213", 9999, Encoding.ASCII.GetBytes(snippet));
             }
             
