@@ -141,6 +141,9 @@ namespace ColonelPanic.Database.Contexts
                     case "gitcommit":
                         config.LastGithubCommit = NewValue as string;
                         break;
+                    case "destinytoken":
+                        config.DestinyToken = NewValue as string;
+                        break;
                 }
                 db.Config.Attach(config);
                 db.Entry(config).State = EntityState.Modified;

@@ -24,7 +24,10 @@ namespace ColonelPanic.Modules
                     break;
                 case "gitcommit":
                     ConfigurationHandler.ChangeConfiguration(field, newValue);
-                    break;                
+                    break;
+                case "destinytoken":
+                    ConfigurationHandler.ChangeConfiguration(field, newValue);
+                    break;
             }
             
         }
