@@ -13,6 +13,6 @@ namespace ColonelPanic.Modules
     class Destiny2Module : ModuleBase
     {
         //Register your destiny 2 account. Will be used for other commands.
-        [Command("reg")]
+        //[Command("reg")]
     }
 }

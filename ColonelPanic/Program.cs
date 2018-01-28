@@ -3,7 +3,6 @@ using ColonelPanic.Database.Models;
 using ColonelPanic.Modules;
 using ColonelPanic.Utilities;
 using ColonelPanic.Utilities.JSONClasses;
-using DartsDiscordBots.Modules;
 using DartsDiscordBots.Utilities;
 using Discord;
 using Discord.Commands;

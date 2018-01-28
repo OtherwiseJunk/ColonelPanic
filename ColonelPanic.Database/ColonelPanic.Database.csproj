@@ -62,6 +62,10 @@
     <Compile Include="Migrations\201711192012068_UpdateUserStatsProperty.Designer.cs">
       <DependentUpon>201711192012068_UpdateUserStatsProperty.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201801281505543_DestinyToken.cs" />
+    <Compile Include="Migrations\201801281505543_DestinyToken.Designer.cs">
+      <DependentUpon>201801281505543_DestinyToken.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\GuildState.cs" />
     <Compile Include="Models\Configuration.cs" />
@@ -90,6 +94,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201711192012068_UpdateUserStatsProperty.resx">
       <DependentUpon>201711192012068_UpdateUserStatsProperty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801281505543_DestinyToken.resx">
+      <DependentUpon>201801281505543_DestinyToken.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
