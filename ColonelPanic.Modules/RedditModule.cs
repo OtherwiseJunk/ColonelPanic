@@ -49,15 +49,16 @@ All posts will occur at that time in ET, sorry lesser timezones :-)")]
                                 nextPostDate.AddDays(1);
                             }
                             RedditHandler.AddTopDaily(Context.Channel.Id.ToString(), Subreddit, nextPostDate);
+                            await Context.Channel.SendMessageAsync("You got it, my dude.");
                         }
                         else
                         {
-                            Context.Channel.SendMessageAsync("Iunno, that minute sure don't look right to me...");
+                            await Context.Channel.SendMessageAsync("Iunno, that minute sure don't look right to me...");
                         }
                     }
                     else
                     {
-                        Context.Channel.SendMessageAsync("Iunno, that hour looks funny to me... ");
+                        await Context.Channel.SendMessageAsync("Iunno, that hour looks funny to me... ");
                     }
 
                 }

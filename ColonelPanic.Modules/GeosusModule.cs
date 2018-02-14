@@ -22,7 +22,7 @@ namespace ColonelPanic.Modules
                 var emoji =new Emoji("\U0001f46c");
                 await msg.AddReactionAsync(emoji);
 
-                var emote = Emote.Parse("<:GeoFace:289105502216912897>");
+                var emote = Emote.Parse("<:GeoFace:400771246599438337>");
                 await msg.AddReactionAsync(emote);
 
                 emoji = new Emoji("\U0001f46d");
