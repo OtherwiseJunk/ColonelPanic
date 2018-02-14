@@ -60,5 +60,37 @@ namespace ColonelPanic.Database.Contexts
             }
             return topDailies;
         }
+
+        public static string GetTopDailies(string channelId)
+        {
+            string msg = @"Top Dailies
+==========="+Environment.NewLine;
+            Console.WriteLine(msg.Length);
+            using (RedditContext db = new RedditContext())
+            {
+                foreach (TopDaily td in db.TopDaily.Where(td => td.ChannelId == channelId))
+                {
+                    msg += $"{td.TopDailyNum}. {td.Subreddit} : {td.NextTimeToPost}" + Environment.NewLine;
+                }
+            }
+            if (msg.Length == 23) return "Sorry, there are no \"Top Dailies\" configured for this channel.";
+            else return msg;
+        }
+
+        public static string DeleteTopDaily(int topDailyId, string channelId)
+        {
+            using (RedditContext db = new RedditContext())
+            {
+                if (db.TopDaily.FirstOrDefault(td => td.ChannelId == channelId && td.TopDailyNum == topDailyId) != null)
+                {
+                    TopDaily topDaily = db.TopDaily.First(td => td.ChannelId == channelId && td.TopDailyNum == topDailyId);
+                    db.TopDaily.Attach(topDaily);
+                    db.TopDaily.Remove(topDaily);
+                    db.SaveChanges();
+                    return "Top Daily successfully deleted!";
+                }
+                else return "Sorry, I don't see that Top Daily in this channel...";
+            }
+        }
     }
 }

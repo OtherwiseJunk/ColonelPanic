@@ -11,10 +11,17 @@ using ColonelPanic.Database.Contexts;
 
 namespace ColonelPanic.Modules
 {
+    [Group("topdaily")]
     public class RedditModule : ModuleBase
     {
 
-        [Command("top"), RequireUserPermission(Discord.GuildPermission.ManageChannels), Summary(@"Will schedule a daily post at the specified time, taking the top image post from the provided subreddit.
+        [Command("list")]
+        public async Task ListTopDailies()
+        {
+            await Context.Channel.SendMessageAsync(RedditHandler.GetTopDailies(Context.Channel.Id.ToString()));
+        }
+
+        [Command("add"), RequireUserPermission(Discord.GuildPermission.ManageChannels), Summary(@"Will schedule a daily post at the specified time, taking the top image post from the provided subreddit.
 
 Usage: $top ""birbs"" ""17:00"" 
 This command would cause the top image post from birbs to be posted at 5:00PM every day!
@@ -36,12 +43,12 @@ All posts will occur at that time in ET, sorry lesser timezones :-)")]
                     {
                         if (Int32.TryParse(timeArgs[1], out minute) && minute >= 0 && minute < 60)
                         {
-                            DateTime nextPostDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hour, minute,0);
+                            DateTime nextPostDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hour, minute, 0);
                             if (nextPostDate < DateTime.Now)
                             {
                                 nextPostDate.AddDays(1);
                             }
-                            RedditHandler.AddTopDaily(Context.Channel.Id.ToString(), Subreddit,nextPostDate);
+                            RedditHandler.AddTopDaily(Context.Channel.Id.ToString(), Subreddit, nextPostDate);
                         }
                         else
                         {
@@ -52,7 +59,7 @@ All posts will occur at that time in ET, sorry lesser timezones :-)")]
                     {
                         Context.Channel.SendMessageAsync("Iunno, that hour looks funny to me... ");
                     }
-                    
+
                 }
                 else
                 {
@@ -61,7 +68,14 @@ All posts will occur at that time in ET, sorry lesser timezones :-)")]
             }
         }
 
-        [Command("topnow"), Summary("Posts the top image from the provided subreddit.")]
+        [Command("delete"), RequireUserPermission(Discord.GuildPermission.ManageChannels), Summary("Deletes the specified Top Daily (by id, obtained from $topdaily list.")]
+        public async Task DeleteTopDaily([Summary("Top Daily to delete. ID number taken from $topdaily list."),Remainder]int topDailyId)
+        {
+            await Context.Channel.SendMessageAsync(RedditHandler.DeleteTopDaily(topDailyId, Context.Channel.Id.ToString()));
+        }
+
+
+        [Command("now"), Summary("Posts the top image from the provided subreddit.")]
         public async Task GetTopNow([Summary("Subreddit to get top image from.")] string Subreddit)
         {
             using (var client = new WebClient())
@@ -88,6 +102,6 @@ All posts will occur at that time in ET, sorry lesser timezones :-)")]
             }
         }
     }
-    
+
 
 }

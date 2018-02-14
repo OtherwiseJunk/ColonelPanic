@@ -7,13 +7,13 @@ namespace ColonelPanic.Database.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class DestinyToken : IMigrationMetadata
+    public sealed partial class Initial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(DestinyToken));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Initial));
         
         string IMigrationMetadata.Id
         {
-            get { return "201801281505543_DestinyToken"; }
+            get { return "201801291317432_Initial"; }
         }
         
         string IMigrationMetadata.Source

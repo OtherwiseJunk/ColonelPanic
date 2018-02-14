@@ -142,7 +142,7 @@ namespace ColonelPanic.Database.Contexts
                         config.LastGithubCommit = NewValue as string;
                         break;
                     case "destinytoken":
-                        config.DestinyToken = NewValue as string;
+                        config.DestinyAPIToken = NewValue as string;
                         break;
                 }
                 db.Config.Attach(config);

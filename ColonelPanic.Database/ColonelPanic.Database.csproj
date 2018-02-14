@@ -54,17 +54,9 @@
     <Compile Include="Contexts\NoteContext.cs" />
     <Compile Include="Contexts\PingGroupContext.cs" />
     <Compile Include="Contexts\RedditContext.cs" />
-    <Compile Include="Migrations\201711191941113_InitialCreate.cs" />
-    <Compile Include="Migrations\201711191941113_InitialCreate.Designer.cs">
-      <DependentUpon>201711191941113_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201711192012068_UpdateUserStatsProperty.cs" />
-    <Compile Include="Migrations\201711192012068_UpdateUserStatsProperty.Designer.cs">
-      <DependentUpon>201711192012068_UpdateUserStatsProperty.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201801281505543_DestinyToken.cs" />
-    <Compile Include="Migrations\201801281505543_DestinyToken.Designer.cs">
-      <DependentUpon>201801281505543_DestinyToken.cs</DependentUpon>
+    <Compile Include="Migrations\201801291317432_Initial.cs" />
+    <Compile Include="Migrations\201801291317432_Initial.Designer.cs">
+      <DependentUpon>201801291317432_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\GuildState.cs" />
@@ -89,21 +81,15 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201711191941113_InitialCreate.resx">
-      <DependentUpon>201711191941113_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201711192012068_UpdateUserStatsProperty.resx">
-      <DependentUpon>201711192012068_UpdateUserStatsProperty.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201801281505543_DestinyToken.resx">
-      <DependentUpon>201801281505543_DestinyToken.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\ColonelPanic.Utilities\ColonelPanic.Utilities.csproj">
       <Project>{51ad9211-08e7-4ece-938e-5df8eaccbcc6}</Project>
       <Name>ColonelPanic.Utilities</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201801291317432_Initial.resx">
+      <DependentUpon>201801291317432_Initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

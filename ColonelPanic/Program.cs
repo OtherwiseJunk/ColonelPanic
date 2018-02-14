@@ -362,7 +362,7 @@ namespace ColonelPanic
             await commands.AddModuleAsync<PingGroupModule>();
             await commands.AddModuleAsync<AudioModule>();
             await commands.AddModuleAsync<RedditModule>();
-            await commands.AddModuleAsync<FWTOWModule>();
+            await commands.AddModuleAsync<FWTOWModule>();            
         }        
 
         public async Task HandleCommand(SocketMessage messageParam)

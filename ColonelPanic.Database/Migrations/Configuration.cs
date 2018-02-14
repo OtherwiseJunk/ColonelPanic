@@ -5,15 +5,14 @@ namespace ColonelPanic.Database.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<ColonelPanic.Database.Contexts.UserDataContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<ColonelPanic.Database.Contexts.ConfigurationContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
-            ContextKey = "ColonelPanic.Database.Contexts.UserDataContext";
         }
 
-        protected override void Seed(ColonelPanic.Database.Contexts.UserDataContext context)
+        protected override void Seed(ColonelPanic.Database.Contexts.ConfigurationContext context)
         {
             //  This method will be called after migrating to the latest version.
 
