@@ -8,6 +8,6 @@ namespace ColonelPanic.Utilities
 {
     public class APILinkFormats
     {
-        public static string SubredditTopTwentyPosts = "http://www.reddit.com/r/{0}/.json?count=20";
+        public static string SubredditTopOneHundredPosts = "http://www.reddit.com/r/{0}/.json?count=100";
     }
 }

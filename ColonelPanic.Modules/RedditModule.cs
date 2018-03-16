@@ -8,12 +8,44 @@ using ColonelPanic.Utilities.JSONClasses;
 using System.Net;
 using System.Web;
 using ColonelPanic.Database.Contexts;
+using DartsDiscordBots.Utilities;
 
 namespace ColonelPanic.Modules
 {
+    
     [Group("topdaily")]
     public class RedditModule : ModuleBase
     {
+        [Command("rand")]
+        public async Task GetRandomImage([Remainder] string Subreddit) 
+        {
+            using (var client = new WebClient())
+            {
+                string url = String.Format(Utilities.APILinkFormats.SubredditTopOneHundredPosts, Subreddit);
+                string topTwentyJson = HttpUtility.HtmlDecode(client.DownloadString(url));
+                List<string> imageUrls = new List<string>();
+                RedditTopTwenty topTwenty = Newtonsoft.Json.JsonConvert.DeserializeObject<RedditTopTwenty>(topTwentyJson);
+                if (topTwenty.data.children.Count() > 0)
+                {
+                    
+                    foreach (var child in topTwenty.data.children)
+                    {
+                        if ((child.data.url.Contains(".gif") || child.data.url.Contains(".jpg") || child.data.url.Contains(".png") || child.data.url.Contains(".mp4") || child.data.url.Contains(".gifv")))
+                        {
+                            imageUrls.Add(child.data.url);
+                        }
+                    }
+                    if (imageUrls.Count > 0)
+                    {
+                        await Context.Channel.SendMessageAsync(imageUrls.GetRandom());
+                    }
+                }
+                else
+                {
+                    await Context.Channel.SendMessageAsync("Well that's not a subreddit with posts, yanno?");
+                }
+            }
+        }
 
         [Command("list")]
         public async Task ListTopDailies()
@@ -31,7 +63,7 @@ All posts will occur at that time in ET, sorry lesser timezones :-)")]
         {
             using (var client = new WebClient())
             {
-                string url = String.Format(Utilities.APILinkFormats.SubredditTopTwentyPosts, Subreddit);
+                string url = String.Format(Utilities.APILinkFormats.SubredditTopOneHundredPosts, Subreddit);
                 string topTwentyJson = HttpUtility.HtmlDecode(client.DownloadString(url));
                 RedditTopTwenty topTwenty = Newtonsoft.Json.JsonConvert.DeserializeObject<RedditTopTwenty>(topTwentyJson);
                 if (topTwenty.data.children.Count() > 0)
@@ -81,7 +113,7 @@ All posts will occur at that time in ET, sorry lesser timezones :-)")]
         {
             using (var client = new WebClient())
             {
-                string url = String.Format(Utilities.APILinkFormats.SubredditTopTwentyPosts, Subreddit);
+                string url = String.Format(Utilities.APILinkFormats.SubredditTopOneHundredPosts, Subreddit);
                 string topTwentyJson = HttpUtility.HtmlDecode(client.DownloadString(url));
                 RedditTopTwenty topTwenty = Newtonsoft.Json.JsonConvert.DeserializeObject<RedditTopTwenty>(topTwentyJson);
                 if (topTwenty.data.children.Count() > 0)

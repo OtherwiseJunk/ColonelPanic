@@ -11,41 +11,7 @@ namespace ColonelPanic.Modules
 {
     [Group("enable"), Summary(" All \"enable\" commands require \"Manage Channel\" permissions. These commands enable the specified permission for the channel.")]
     public class EnableModule : ModuleBase
-    {
-        [Command("scrum"), Summary("Enables SCRUM reminders for this channel."), RequireUserPermission(Discord.GuildPermission.ManageChannels)]
-        public async Task EnableScrum([Remainder, Summary("The datetime to start the weekly reminders.")] string Datetime)
-        {
-            DateTime dateTime;
-            if (DateTime.TryParse(Datetime, out dateTime))
-            {
-                if (!ScrumHandler.ScrumChannelExists(Context.Channel.Id.ToString()))
-                {
-
-                    ScrumHandler.AddNewChannel(Context.Channel.Id, dateTime);
-                    if (ConfigurationHandler.GuildStateExists(Context.Guild.Id.ToString()))
-                    {
-                        ConfigurationHandler.ChangePermission("guild", "scrum", Context.Guild.Id.ToString(), true);
-                    }
-                    else
-                    {
-                        ConfigurationHandler.AddGuildState(new GuildState { GuildId = Context.Guild.Id.ToString(), GuildName = Context.Guild.Name, ScrumEnabled = true, CanListen = false, CanSpeak = false });
-                        ConfigurationHandler.ChangePermission("guild", "scrum", Context.Guild.Id.ToString(), true);
-                    }
-                    await Context.Channel.SendMessageAsync("Ok, I've enabled Scrum for this channel.");
-
-                }
-                else
-                {
-                    ScrumHandler.UpdateScrumDatetime(Context.Channel.Id.ToString(), dateTime);
-                    ConfigurationHandler.ChangePermission("guild", "scrum", Context.Guild.Id.ToString(), true);
-                    await ReplyAsync("Ok, I've updated the next scheduled reminder...");
-                }
-            }
-            else
-            {
-                await ReplyAsync("Sorry, I don't recognize that datetime...");
-            }
-        }
+    {        
 
         [Command("speak"), Summary("Allows the use of commands requiring the \"Can Speak\" permissions.")]
         public async Task EnableSpeak()

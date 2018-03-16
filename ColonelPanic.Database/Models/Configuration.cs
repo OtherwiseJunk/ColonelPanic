@@ -17,7 +17,7 @@ namespace ColonelPanic.Database.Models
         public string Token { get; set; }        
         public string GithubToken { get; set; }
         public string LastGithubCommit { get; set; }
-        public string DestinyAPIToken { get; set; }
+        public string DestinyAPIToken { get; set; }        
 
         public Configuration()
         {

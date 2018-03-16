@@ -6,11 +6,76 @@ using ColonelPanic.Database.Contexts;
 using ColonelPanic.Utilities.Permissions;
 using System.Collections.Generic;
 using Discord;
+using System;
+using System.IO;
+using Discord.WebSocket;
 
 namespace ColonelPanic.Modules
 {
     public class ServerModule : ModuleBase
     {
+        [Command("listchnl"), RequireOwner]
+        public async Task listChannels()
+        {
+            string msg = "I'm in these guilds/channels:" + Environment.NewLine + Environment.NewLine;
+            foreach (var guild in Context.Client.GetGuildsAsync().Result)
+            {
+                msg += "**" + guild.Name + "**" + Environment.NewLine;
+                foreach (var chnl in guild.GetChannelsAsync().Result)
+                {
+                    if (msg.Length > 1900)
+                    {
+                        await Context.Channel.SendMessageAsync(msg);
+                        msg = "";
+                    }
+                    msg += chnl.Name + Environment.NewLine;
+                }
+            }
+            await Context.Channel.SendMessageAsync(msg);
+        }
+
+        [Command("playing"), RequireTrustedUser]
+        public async Task setPlaying([Remainder]string playing)
+        {
+            var client = Context.Client as DiscordSocketClient;
+            await client.SetGameAsync(playing);                
+        }
+
+        [Command("download"), RequireOwner]
+        public async Task downloadChannelData(string chnlName)
+        {
+            IMessageChannel channel = null;
+            IGuild channelsGuild = null;
+            foreach (var guild in Context.Client.GetGuildsAsync().Result)
+            {
+                if (guild.Name != "good music geosus-chan")
+                {
+                    continue;
+                }
+                foreach (var chnl in guild.GetChannelsAsync().Result)
+                {
+                    if(chnl.Name.ToLower() == chnlName)
+                    {
+                        channel = chnl as IMessageChannel;
+                        channelsGuild = guild;
+                    }
+                }
+            }
+            if (channel != null)
+            {
+                string allMessages = "";
+                var msgsCollection = channel.GetMessagesAsync(1000).Flatten();
+                
+                foreach (var msg in msgsCollection.Result)
+                {
+                    allMessages += msg.Timestamp + "|" + msg.Author.Username + " on " + msg.Channel + ": " + msg.Content + Environment.NewLine;
+                }
+                File.WriteAllText(channelsGuild.Name + "." + channel.Name, allMessages);
+            }
+        }
+
+
+
         [Command("say"), Summary("Echos a message."), RequireOwner]
         public async Task Say([Remainder, Summary("The text to echo")] string echo)
         {

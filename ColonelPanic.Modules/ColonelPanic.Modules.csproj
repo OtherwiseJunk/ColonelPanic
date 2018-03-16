@@ -119,7 +119,6 @@
     <Compile Include="Permissions\Preconditions.cs" />
     <Compile Include="PingGroupModule.cs" />
     <Compile Include="RedditModule.cs" />
-    <Compile Include="ScrumModule.cs" />
     <Compile Include="ServerModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

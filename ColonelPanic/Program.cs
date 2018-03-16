@@ -24,13 +24,14 @@ using System.Linq;
 namespace ColonelPanic
 {
     class Program
-    {        
+    {
         string MarkovChainFileName = "MarkovChain.xml";
         DiscordSocketClient client;
         CommandService commands;
         IServiceProvider services;
         Random _rand = new Random();
-        SocketUser Me { get; set; } 
+        SocketUser Me { get; set; }
+        public static string NewsAPIKey {get;set;}
         
         static void Main(string[] args) => new Program().Start().GetAwaiter().GetResult();
 
@@ -116,8 +117,7 @@ namespace ColonelPanic
                 }
                 
             }
-
-            ScrumUpdateTimer = new System.Threading.Timer(ScrumCheckCallback, null, 1000 * 60, 1000 * 60 * 60);
+            
             TopDailyTimer = new Timer(TopDailyCallback, null, 1000 * 60, 1000 * 60);
             MarkovSaveTimer = new Timer(MarkovSaveTimerCallback, null, 1000 * 60, 1000 * 60 * 15);
 
@@ -144,7 +144,7 @@ namespace ColonelPanic
         {
             using(WebClient wClient = new WebClient())
             {
-                string url = String.Format(Utilities.APILinkFormats.SubredditTopTwentyPosts, td.Subreddit);
+                string url = String.Format(Utilities.APILinkFormats.SubredditTopOneHundredPosts, td.Subreddit);
                 RedditTopTwenty topTwenty = Newtonsoft.Json.JsonConvert.DeserializeObject<RedditTopTwenty>(wClient.DownloadString(url));
                 foreach (var child in topTwenty.data.children)
                 {
@@ -165,21 +165,7 @@ namespace ColonelPanic
                 await ConfigurationHandler.AddGuildState(guildId, name);
             }
         }
-
-        public void ScrumCheckCallback(object state)
-        {
-            List<ScrumUser> usersToHarass = ScrumHandler.GetUsersToHarass();
-            if (usersToHarass.Count > 0)
-            {
-                foreach (ScrumUser user in usersToHarass)
-                {
-                    var usr = client.GetUser(ulong.Parse(user.UserId));
-                    var chnl = client.GetChannel(ulong.Parse(user.UserChannelId)) as SocketTextChannel;
-                    chnl.SendMessageAsync(usr.Mention + "! You haven't given me an update for this week!");
-                }
-            }
-        }
-
+       
         public void MarkovSaveTimerCallback(object state)
         {
             MarkovChainRepository.save(MarkovChainFileName);
@@ -353,8 +339,7 @@ namespace ColonelPanic
             await commands.AddModulesAsync(Assembly.GetEntryAssembly());
             await commands.AddModuleAsync<ServerModule>();
             await commands.AddModuleAsync<HelpModule>();
-            await commands.AddModuleAsync<ConfigurationModule>();
-            await commands.AddModuleAsync<ScrumModule>();
+            await commands.AddModuleAsync<ConfigurationModule>();            
             await commands.AddModuleAsync<GeosusModule>();
             await commands.AddModuleAsync<EnableModule>();
             await commands.AddModuleAsync<DisableModule>();
