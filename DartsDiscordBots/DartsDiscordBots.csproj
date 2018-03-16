@@ -80,9 +80,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Utilities\ResponseCollections.cs" />
-    <Compile Include="Utilities\Dice.cs" />
-    <Compile Include="Utilities\ExtensionMethods.cs" />
     <Compile Include="Permissions\Preconditions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

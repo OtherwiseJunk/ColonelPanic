@@ -53,12 +53,14 @@
     <Compile Include="Contexts\ConfigurationContext.cs" />
     <Compile Include="Contexts\NoteContext.cs" />
     <Compile Include="Contexts\PingGroupContext.cs" />
+    <Compile Include="Contexts\QuoteContext.cs" />
     <Compile Include="Contexts\RedditContext.cs" />
     <Compile Include="Migrations\201801291317432_Initial.cs" />
     <Compile Include="Migrations\201801291317432_Initial.Designer.cs">
       <DependentUpon>201801291317432_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Quote.cs" />
     <Compile Include="Models\GuildState.cs" />
     <Compile Include="Models\Configuration.cs" />
     <Compile Include="Models\Note.cs" />
