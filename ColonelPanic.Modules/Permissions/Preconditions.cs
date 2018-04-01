@@ -40,11 +40,7 @@ namespace ColonelPanic.Utilities.Permissions
             }
 
             else
-            {
-                await (context.User as IGuildUser).ModifyAsync(x =>
-                {
-                    x.Nickname = "ACCESS DENIED";
-                });
+            {                
                 return PreconditionResult.FromError("Unauthorized user detected. This action has been logged.");
             }
         }
