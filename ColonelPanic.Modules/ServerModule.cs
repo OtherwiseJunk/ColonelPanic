@@ -431,5 +431,48 @@ namespace ColonelPanic.Modules
         {
             await Context.Channel.SendMessageAsync(ResponseCollections._8BallResponses.GetRandom());
         }
+
+        [Command("naughty"), RequireTrustedUserOrPermission(ChannelPermission.ManageChannel), Summary("Sets the specified user (by id) as being _NAUGHTY_")]
+        public async Task NaughtyUser([Remainder, Summary("User's ID")] string userId)
+        {
+            ulong userUlong;
+            if (ulong.TryParse(userId, out userUlong))
+            {
+                if (Context.Guild.GetUserAsync(userUlong) != null)
+                {
+                    PermissionHandler.RemoveTrustedUser(userId);
+                    await Context.Channel.SendMessageAsync("Oh yes, I see exactly what you mean. They're definitely _naughty_.");
+                }
+                else
+                {
+                    await Context.Channel.SendMessageAsync(ResponseCollections.UserNotFoundResponses.GetRandom());
+                }
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync("That doesn't seem to be the right input...");
+            }
+        }
+        [Command("notnaughty"), RequireTrustedUserOrPermission(ChannelPermission.ManageChannel), Summary("Sets the specified user (by id) as being _NAUGHTY_")]
+        public async Task NotNaughtyUser([Remainder, Summary("User's ID")] string userId)
+        {
+            ulong userUlong;
+            if (ulong.TryParse(userId, out userUlong))
+            {                
+                if (Context.Guild.GetUserAsync(userUlong) != null)
+                {
+                    UserDataHandler.SetUserNaughtyState(userId,false);
+                    await Context.Channel.SendMessageAsync("Ok, they're no longer on the naughty list.");
+                }
+                else
+                {
+                    await Context.Channel.SendMessageAsync(ResponseCollections.UserNotFoundResponses.GetRandom());
+                }
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync("That doesn't seem to be the right input...");
+            }
+        }
     }
 }

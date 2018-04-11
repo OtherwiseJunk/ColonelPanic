@@ -1,5 +1,6 @@
 ﻿using ColonelPanic.Database.Contexts;
 using ColonelPanic.Database.Models;
+using ColonelPanic.Utilities.Permissions;
 using Discord.Commands;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ColonelPanic.Modules
 {
-    [Group("enable"), Summary(" All \"enable\" commands require \"Manage Channel\" permissions. These commands enable the specified permission for the channel.")]
+    [Group("enable"), Summary(" All \"enable\" commands require \"Manage Channel\" permissions. These commands enable the specified permission for the channel."),RequireTrustedUserOrPermission(Discord.GuildPermission.Administrator)]
     public class EnableModule : ModuleBase
     {        
 
@@ -39,7 +40,7 @@ namespace ColonelPanic.Modules
         }
     }
 
-    [Group("disable"), Summary(" All \"disable\" commands require \"Manage Channel\" permissions. These commands disable the specified permission for the channel.")]
+    [Group("disable"), Summary(" All \"disable\" commands require \"Manage Channel\" permissions. These commands disable the specified permission for the channel."),RequireTrustedUserOrPermission(Discord.GuildPermission.Administrator)]
     public class DisableModule : ModuleBase
     {
         [Command("scrum"), Summary("Disables SCRUM reminders for this channel."), RequireUserPermission(Discord.GuildPermission.ManageChannels)]

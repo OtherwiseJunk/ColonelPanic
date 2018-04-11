@@ -55,9 +55,9 @@
     <Compile Include="Contexts\PingGroupContext.cs" />
     <Compile Include="Contexts\QuoteContext.cs" />
     <Compile Include="Contexts\RedditContext.cs" />
-    <Compile Include="Migrations\201801291317432_Initial.cs" />
-    <Compile Include="Migrations\201801291317432_Initial.Designer.cs">
-      <DependentUpon>201801291317432_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201804112255528_AddNaughtyreduxThree.cs" />
+    <Compile Include="Migrations\201804112255528_AddNaughtyreduxThree.Designer.cs">
+      <DependentUpon>201804112255528_AddNaughtyreduxThree.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Quote.cs" />
@@ -85,8 +85,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201801291317432_Initial.resx">
-      <DependentUpon>201801291317432_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201804112255528_AddNaughtyreduxThree.resx">
+      <DependentUpon>201804112255528_AddNaughtyreduxThree.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

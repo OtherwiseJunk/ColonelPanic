@@ -28,6 +28,23 @@ namespace ColonelPanic.Utilities.Permissions
         }
     }
 
+    public class RequireUserNotNaughty : PreconditionAttribute
+    {
+        public RequireUserNotNaughty() { }
+
+        public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
+        {
+            if (UserDataHandler.IsUserNaughty(context.Message.Author.Id.ToString()))
+            {
+                return PreconditionResult.FromError("Sorry, you've been naughty so that functionality isn't available.");
+            }
+            else
+            {
+                return PreconditionResult.FromSuccess();
+            }
+        }
+    }
+
     public class RequireTrustedUser : PreconditionAttribute
     {
         public RequireTrustedUser() { }
@@ -42,6 +59,37 @@ namespace ColonelPanic.Utilities.Permissions
             else
             {                
                 return PreconditionResult.FromError("Unauthorized user detected. This action has been logged.");
+            }
+        }
+    }
+
+    public class RequireTrustedUserOrPermission : PreconditionAttribute
+    {
+
+        RequireUserPermissionAttribute UserPermAttribute { get; set; }
+        RequireTrustedUser TrustedUserAttribute { get; set; }
+
+        public RequireTrustedUserOrPermission(ChannelPermission permission)
+        {
+            UserPermAttribute = new RequireUserPermissionAttribute(permission);
+            TrustedUserAttribute = new RequireTrustedUser();
+        }
+
+        public RequireTrustedUserOrPermission(GuildPermission permission)
+        {
+            UserPermAttribute = new RequireUserPermissionAttribute(permission);
+            TrustedUserAttribute = new RequireTrustedUser();
+        }
+
+        public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
+        {
+            if (UserPermAttribute.CheckPermissions(context,command,services).Result.IsSuccess)
+            {
+                return PreconditionResult.FromSuccess();
+            }
+            else
+            {
+                return TrustedUserAttribute.CheckPermissions(context, command, services).Result;
             }
         }
     }

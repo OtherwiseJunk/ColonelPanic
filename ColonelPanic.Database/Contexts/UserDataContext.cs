@@ -142,5 +142,41 @@ namespace ColonelPanic.Database.Contexts
                 return null != db.UserFlags.FirstOrDefault(u => u.ChannelId == channelId && u.UserId == userId);
             }
         }
+
+        public static bool IsUserNaughty(string userId)
+        {
+            using (UserDataContext db = new UserDataContext())
+            {
+                if (UserStateExists(userId))
+                {
+                    return db.UserStates.First(u => u.UserId == userId).IsNaughty;
+                }
+                else return false;
+            }
+        }
+
+        public static void SetUserNaughtyState(string userId, bool state)
+        {
+            using (UserDataContext db = new UserDataContext())
+            {
+                if (UserStateExists(userId))
+                {
+                    var userState = db.UserStates.First(u => u.UserId == userId);
+                    userState.IsNaughty = state;
+                    db.UserStates.Attach(userState);
+                    db.Entry(userState).State = EntityState.Modified;                    
+                }
+                else
+                {
+                    var newUserState = new UserState();
+                    newUserState.UserId = userId;
+                    newUserState.IsNaughty = state;
+                    db.UserStates.Add(newUserState);                    
+                }
+                db.SaveChanges();
+            }
+        }
+
+        
     }
 }

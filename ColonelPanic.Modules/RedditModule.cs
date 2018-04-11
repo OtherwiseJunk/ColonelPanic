@@ -9,6 +9,7 @@ using System.Net;
 using System.Web;
 using ColonelPanic.Database.Contexts;
 using DartsDiscordBots.Utilities;
+using ColonelPanic.Utilities.Permissions;
 
 namespace ColonelPanic.Modules
 {
@@ -53,7 +54,7 @@ namespace ColonelPanic.Modules
             await Context.Channel.SendMessageAsync(RedditHandler.GetTopDailies(Context.Channel.Id.ToString()));
         }
 
-        [Command("add"), RequireUserPermission(Discord.GuildPermission.ManageChannels), Summary(@"Will schedule a daily post at the specified time, taking the top image post from the provided subreddit.
+        [Command("add"), RequireTrustedUserOrPermission(Discord.GuildPermission.ManageChannels), Summary(@"Will schedule a daily post at the specified time, taking the top image post from the provided subreddit.
 
 Usage: $top ""birbs"" ""17:00"" 
 This command would cause the top image post from birbs to be posted at 5:00PM every day!
@@ -101,7 +102,7 @@ All posts will occur at that time in ET, sorry lesser timezones :-)")]
             }
         }
 
-        [Command("delete"), RequireUserPermission(Discord.GuildPermission.ManageChannels), Summary("Deletes the specified Top Daily (by id, obtained from $topdaily list.")]
+        [Command("delete"), RequireTrustedUserOrPermission(Discord.GuildPermission.ManageChannels), Summary("Deletes the specified Top Daily (by id, obtained from $topdaily list.")]
         public async Task DeleteTopDaily([Summary("Top Daily to delete. ID number taken from $topdaily list."),Remainder]int topDailyId)
         {
             await Context.Channel.SendMessageAsync(RedditHandler.DeleteTopDaily(topDailyId, Context.Channel.Id.ToString()));
