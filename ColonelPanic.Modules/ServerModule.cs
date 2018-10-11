@@ -64,9 +64,9 @@ namespace ColonelPanic.Modules
             if (channel != null)
             {
                 string allMessages = "";
-                var msgsCollection = channel.GetMessagesAsync(1000).Flatten();
+                var msgsCollection = channel.GetMessagesAsync(10000).Flatten().Result;
                 
-                foreach (var msg in msgsCollection.Result)
+                foreach (var msg in msgsCollection)
                 {
                     allMessages += msg.Timestamp + "|" + msg.Author.Username + " on " + msg.Channel + ": " + msg.Content + Environment.NewLine;
                 }
@@ -81,6 +81,7 @@ namespace ColonelPanic.Modules
         {
             // ReplyAsync is a method on ModuleBase
             await ReplyAsync(echo);
+            Context.Message.DeleteAsync();
         }
 
         [Command("link"), Alias("install"), Summary("Provides a link for installing the bot on other servers. You must be an admin of the target server to use the provided link.")]

@@ -14,9 +14,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Text;
-using System.IO;
-using TextMarkovChains;
-using System.Xml;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.Linq;
@@ -24,23 +21,21 @@ using System.Linq;
 namespace ColonelPanic
 {
     class Program
-    {
-        string MarkovChainFileName = "MarkovChain.xml";
+    {        
         DiscordSocketClient client;
         CommandService commands;
         IServiceProvider services;
         Random _rand = new Random();
         SocketUser Me { get; set; }
         public static string NewsAPIKey {get;set;}
-        
-        static void Main(string[] args) => new Program().Start().GetAwaiter().GetResult();
-
-        public MultiDeepMarkovChain MarkovChainRepository { get; private set; }
+        public DateTime MelaniasMissing = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local).AddSeconds(1525924800).AddHours(-4);
+        public int counter = 1;
+        static void Main(string[] args) => new Program().Start().GetAwaiter().GetResult();        
 
         Timer ScrumUpdateTimer { get; set; }
-        Timer TopDailyTimer { get; set; }
-        Timer MarkovSaveTimer { get; set; }
-        
+        Timer TopDailyTimer { get; set; }        
+        Timer MelanieWatchTimer { get; set; }
+
 
         private async Task Start()
         {
@@ -52,20 +47,7 @@ namespace ColonelPanic
             {
                 LogLevel = logLevel
 
-            });
-
-            if (File.Exists(MarkovChainFileName))
-            {
-                var XML = new XmlDocument();
-                XML.Load(MarkovChainFileName);
-                MarkovChainRepository = new MultiDeepMarkovChain(4);
-                MarkovChainRepository.feed(XML);
-            }
-            else
-            {
-                MarkovChainRepository = new MultiDeepMarkovChain(4);
-                MarkovChainRepository.save(MarkovChainFileName);
-            }            
+            });            
 
             commands = new CommandService();
 
@@ -88,7 +70,16 @@ namespace ColonelPanic
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine(ex.Message);
+                if(ex.InnerException != null)
+                {
+                    var innerException = ex.InnerException;
+                    while (innerException != null)
+                    {
+                        Console.WriteLine(innerException.Message);
+                        innerException = innerException.InnerException;
+                    }                    
+                }
             }
 
             if (token != String.Empty)
@@ -117,20 +108,38 @@ namespace ColonelPanic
                 }
                 
             }
-            
-            TopDailyTimer = new Timer(TopDailyCallback, null, 1000 * 60, 1000 * 60);
-            MarkovSaveTimer = new Timer(MarkovSaveTimerCallback, null, 1000 * 60, 1000 * 60 * 15);
 
-            
+#if DEBUG
+            TopDailyTimer = new Timer(TopDailyCallback, null, 1000, 1000 * 60);
+#else
+            TopDailyTimer = new Timer(TopDailyCallback, null, 1000 * 60, 1000 * 60);                        
+#endif
+
 
             await Task.Delay(-1);
         }
 
         private void TopDailyCallback(object state)
         {
-            List<TopDaily> topDailiesToExecute = RedditHandler.GetSubredditsToCheck();
+            List<TopDaily> topDailiesToExecute = new List<TopDaily>();
+            try
+            {
+                topDailiesToExecute = RedditHandler.GetSubredditsToCheck();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                while (ex.InnerException != null)
+                {
+                    Console.WriteLine(ex.InnerException.Message);
+                    ex = ex.InnerException;
+                }
+                Console.WriteLine("Looks like there was a hiccup saving a date change maybe?");
+            }
             if (topDailiesToExecute.Count > 0)
             {
+                List<String> topDailyLinks = new List<string>();
+
                 foreach (TopDaily td in topDailiesToExecute)
                 {
                     var chnl = client.GetChannel(ulong.Parse(td.ChannelId)) as SocketTextChannel;
@@ -164,12 +173,7 @@ namespace ColonelPanic
             {
                 await ConfigurationHandler.AddGuildState(guildId, name);
             }
-        }
-       
-        public void MarkovSaveTimerCallback(object state)
-        {
-            MarkovChainRepository.save(MarkovChainFileName);
-        }
+        }       
 
         private async Task MessageReceived(SocketMessage arg)
         {
@@ -187,22 +191,25 @@ namespace ColonelPanic
             {
                 UserDataHandler.AddUserState(arg.Author.Id.ToString(), arg.Author.Username);
             }
+            if(arg.Content.ToLower() == "*unzips*" || arg.Content.ToLower() == "*unfastens belt*")
+            {
+                Random rand = new Random();
+                if(rand.Next(0,100) % 2 == 0)
+                {
+                    await arg.Channel.SendMessageAsync("🍆");
+                }
+                else
+                {
+                    await arg.Channel.SendMessageAsync("🍄");
+                }
+            }
             if(arg.Content == "image")
             {
                 await client.CurrentUser.ModifyAsync(x => {
-                    x.Avatar = new Discord.Image("ColPan.jpg");
+                    x.Avatar = new Discord.Image("ColPan3.gif");
                 });
             }
-            Console.WriteLine($"{arg.Author.Username} on {arg.Channel.Name}: {arg.Content}");
-            if (!arg.Author.IsBot && !arg.Content.Contains("$") && !arg.Content.Contains("http"))
-            {
-                string msg = arg.Content.Replace("💩", ":poop:");
-                MarkovChainRepository.feed(arg.Content);
-            }
-            if (arg.Author.Id == 94545463906144256 && arg.Content.Length % 32 == 0)
-            {
-                //await arg.Channel.SendMessageAsync(GetMarkovSentence());
-            }
+            Console.WriteLine($"{arg.Author.Username} on {arg.Channel.Name}: {arg.Content}");           
             
             if (UserDataHandler.IsEggplantUser(chnlId,userId))
             {
@@ -260,15 +267,19 @@ namespace ColonelPanic
                 await arg.Channel.SendMessageAsync("(/¯`Д´ )/¯ ┬─┬");
                 await arg.Channel.SendMessageAsync(GetTableFlipResponse(arg.Author));
             }
-            else if (arg.Content.Contains("🤛") && MentioningMe)
+            if (MentioningMe)
             {
-                await arg.Channel.SendMessageAsync(":right_facing_fist:");
+                if (arg.Content.Contains("🤛"))
+                {
+                    await arg.Channel.SendMessageAsync(":right_facing_fist:");
 
+                }
+                else if (arg.Content.Contains("🤜"))
+                {
+                    await arg.Channel.SendMessageAsync(":left_facing_fist:");
+                }
             }
-            else if (arg.Content.Contains("🤜") && MentioningMe)
-            {
-                await arg.Channel.SendMessageAsync(":left_facing_fist:");
-            }
+            
             if (arg.Content.ToLower().Contains("```haskell"))
             {
                 //removes the 10 characters for ```haskell as well as the newline
@@ -290,34 +301,6 @@ namespace ColonelPanic
             if (points >= 41) return String.Format(ResponseCollections.TableFlipResponses[2].GetRandom(), author.Username);
             if (points >= 21) return String.Format(ResponseCollections.TableFlipResponses[1].GetRandom(), author.Username);
             return String.Format(ResponseCollections.TableFlipResponses[0].GetRandom(), author.Username);
-        }
-
-        private string GetMarkovSentence()
-        {
-            bool msgNotSet = true;
-            string msg = "";
-            int rerollAttempts = 0;
-            while (msgNotSet)
-            {                
-                try
-                {
-                    //Check For French server
-                        msg = MarkovChainRepository.generateSentence();
-                        msgNotSet = false;                    
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Failed to generate a sentence, trying again...");
-                    Console.WriteLine(ex.Message);
-                }
-                if (rerollAttempts > 10 && msgNotSet)
-                {
-                    msg = "I'm sorry, it looks like I'm unable to generate a sentence at this time.";
-                    msgNotSet = false;
-                }
-                rerollAttempts++;
-            }
-            return msg;
         }
 
         private async Task UserLeft(SocketGuildUser user)
@@ -346,8 +329,7 @@ namespace ColonelPanic
             await commands.AddModuleAsync<NoteModule>();
             await commands.AddModuleAsync<PingGroupModule>();
             await commands.AddModuleAsync<AudioModule>();
-            await commands.AddModuleAsync<RedditModule>();
-            await commands.AddModuleAsync<FWTOWModule>();
+            await commands.AddModuleAsync<RedditModule>();            
             await commands.AddModuleAsync<QuoteModule>();
         }        
 

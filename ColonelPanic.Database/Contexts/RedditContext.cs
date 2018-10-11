@@ -19,6 +19,9 @@ namespace ColonelPanic.Database.Contexts
 
     public class RedditHandler
     {
+
+        public static object GetSubredditsLock = new object();
+
         public static void AddTopDaily(string channelId, string subreddit, DateTime nextUpdateTime)
         {
             using(RedditContext db = new RedditContext())
@@ -31,34 +34,44 @@ namespace ColonelPanic.Database.Contexts
 
         public static List<TopDaily> GetSubredditsToCheck()
         {
-            List<TopDaily> topDailies = new List<TopDaily>();
-            using (var db = new RedditContext())
+            Boolean EntryChanged = false;
+            lock (GetSubredditsLock)
             {
-                var topDailiesFromDB = db.TopDaily.ToList();
-                foreach (TopDaily tdaily in topDailiesFromDB)
-                {                    
-                    if ((DateTime.Now > tdaily.NextTimeToPost) && DateTime.Now.AddMinutes(-1) < tdaily.NextTimeToPost)
+                List<TopDaily> topDailies = new List<TopDaily>();
+                using (var db = new RedditContext())
+                {
+                    var topDailiesFromDB = db.TopDaily.ToList();
+                    foreach (TopDaily tdaily in topDailiesFromDB)
                     {
-                        topDailies.Add(tdaily);
-                        tdaily.NextTimeToPost =  tdaily.NextTimeToPost.AddDays(1);
-                        db.TopDaily.Attach(tdaily);
-                        db.Entry(tdaily).State = EntityState.Modified;
-                        db.SaveChanges();
-                    }
-                    else
-                    {
-                        while (!(DateTime.Now.AddMinutes(-1) < tdaily.NextTimeToPost))
+                        if ((DateTime.Now > tdaily.NextTimeToPost) && DateTime.Now.AddMinutes(-1) < tdaily.NextTimeToPost)
                         {
+                            topDailies.Add(tdaily);
                             tdaily.NextTimeToPost = tdaily.NextTimeToPost.AddDays(1);
+                            db.TopDaily.Attach(tdaily);
+                            db.Entry(tdaily).State = EntityState.Modified;
+                            EntryChanged = true;
                         }
-                        db.TopDaily.Attach(tdaily);
-                        db.Entry(tdaily).State = EntityState.Modified;
-                        db.SaveChanges();
-                    }
+                        else
+                        {
+                            while (tdaily.NextTimeToPost < DateTime.Now)
+                            {
+                                tdaily.NextTimeToPost = tdaily.NextTimeToPost.AddDays(1);
+                                EntryChanged = true;
+                            }
+                            if (EntryChanged == true){
+                                db.TopDaily.Attach(tdaily);
+                                db.Entry(tdaily).State = EntityState.Modified;
+                            }                            
+                        }
 
+                    }
+                    if (EntryChanged == true)
+                    {
+                        db.SaveChanges();
+                    }                    
                 }
-            }
-            return topDailies;
+                return topDailies;
+            }            
         }
 
         public static string GetTopDailies(string channelId)
