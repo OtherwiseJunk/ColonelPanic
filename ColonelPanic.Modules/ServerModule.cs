@@ -9,11 +9,37 @@ using Discord;
 using System;
 using System.IO;
 using Discord.WebSocket;
+using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace ColonelPanic.Modules
 {
     public class ServerModule : ModuleBase
     {
+        public static Regex hexColorValidator = new Regex("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");
+        public static List<UserXGuild> RainbowUsers = new List<UserXGuild>();
+        public static Timer RainbowTimer = new Timer(ModifyRainbowUsersName,null,16000,16000);
+
+        private static void ModifyRainbowUsersName(object state)
+        {
+            Random r = new Random();
+            if(RainbowUsers.Capacity > 0)
+            {
+                foreach (UserXGuild userxguild in RainbowUsers)
+                {                    
+                    IGuildUser user = userxguild.Guild.GetUserAsync(userxguild.User.Id).Result;
+
+                    int R = r.Next(255);
+                    int G = r.Next(255);
+                    int B = r.Next(255);
+
+                    var role = ModifyUserRoleColor(R, G, B, user, userxguild.Guild).Result;
+
+                    user.AddRoleAsync(role);                    
+                }
+            }
+        }
+
         [Command("listchnl"), RequireOwner]
         public async Task listChannels()
         {
@@ -74,7 +100,43 @@ namespace ColonelPanic.Modules
             }
         }
 
+        [Command("rolecolor"), Summary("Creates a role with your name with the specified (in hex) color. Ex) `rolecolor #000000`"), RequireBotPermission(GuildPermission.ManageRoles)]
+        public async Task RoleColorChange([Remainder, Summary("The hexcode for your desired color.")] string hexText)
+        {
+            if (hexColorValidator.Match(hexText).Success && (hexText.Length == 7 || hexText.Length == 4)) {
+                var role = ModifyUserRoleColor(hexText, this.Context.User).Result;
+                await (this.Context.User as IGuildUser).AddRoleAsync(role);
+            }
+            else
+            {
+                await this.Context.Channel.SendMessageAsync("Sorry, I can't recognize that hexcode. Maybe I'm an idiot, iunno.");
+            }
+        }
 
+        [Command("rainbowrole"), Summary("Creates a role with your name with the specified (in hex) color. Ex) `rolecolor #000000`"), RequireBotPermission(GuildPermission.ManageRoles)]
+        public async Task RandomRoleColorChange()
+        {
+            if (UserIsRainbow(Context.User,Context.Guild))
+            {
+                await Context.Channel.SendMessageAsync("You're already in rainbow mode I think.");
+            }
+            else
+            {
+                RainbowUsers.Add(new UserXGuild(Context.User,Context.Guild));
+            }
+        }
+
+        private bool UserIsRainbow(IUser user, IGuild guild)
+        {
+            foreach (UserXGuild userxguild in RainbowUsers)
+            {
+                if(userxguild.User == user && userxguild.Guild == guild)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         [Command("say"), Summary("Echos a message."), RequireOwner]
         public async Task Say([Remainder, Summary("The text to echo")] string echo)
@@ -474,6 +536,96 @@ namespace ColonelPanic.Modules
             {
                 await Context.Channel.SendMessageAsync("That doesn't seem to be the right input...");
             }
+        }
+
+        private async Task<IRole> ModifyUserRoleColor(string hexText, IUser user)
+        {
+            Color roleColor = ParseDiscordColor(hexText);
+            IRole usernameRole;
+            int topPosition = Context.Guild.Roles.Count - 2;
+            if (RoleExists(Context.Guild.Roles, user.Username, out usernameRole))
+            {
+                await usernameRole.ModifyAsync(x =>
+                {
+                    x.Color = roleColor;
+                    x.Position = topPosition;
+                });
+            }
+            else
+            {
+                usernameRole = Context.Guild.CreateRoleAsync(name: user.Username, color: roleColor).Result;
+                await usernameRole.ModifyAsync(x => x.Position = topPosition);
+            }
+            return usernameRole;
+        }
+
+        private static async Task<IRole> ModifyUserRoleColor(int r,int g, int b, IUser user, IGuild guild)
+        {
+            Color roleColor = new Color(r, g, b);
+            IRole usernameRole;
+            int topPosition = guild.Roles.Count - 2;
+            if (RoleExists(guild.Roles, user.Username, out usernameRole))
+            {
+                await usernameRole.ModifyAsync(x =>
+                {
+                    x.Color = roleColor;
+                    x.Position = topPosition;
+                });
+            }
+            else
+            {
+                usernameRole = guild.CreateRoleAsync(name: user.Username, color: roleColor).Result;
+                await usernameRole.ModifyAsync(x => x.Position = topPosition);
+            }
+            return usernameRole;
+        }
+
+        private Color ParseDiscordColor(string hexText)
+        {
+            string Hex = hexText.Substring(1);
+            string B;
+            string G;
+            string R;
+            if (hexText.Length == 7)
+            {
+                R = Hex.Substring(0, 2);
+                G = Hex.Substring(2, 2);
+                B = Hex.Substring(4, 2);
+            }
+            else
+            {
+                R = Hex.Substring(0, 1) + Hex.Substring(0, 1);
+                G = Hex.Substring(1, 1) + Hex.Substring(1, 1);
+                B = Hex.Substring(2, 1) + Hex.Substring(2, 1);
+            }
+
+            return new Color(int.Parse(R, System.Globalization.NumberStyles.HexNumber), int.Parse(G, System.Globalization.NumberStyles.HexNumber), int.Parse(B, System.Globalization.NumberStyles.HexNumber));
+        }
+
+        private static bool RoleExists(IReadOnlyCollection<IRole> roles, string username, out IRole usernameRole)
+        {
+            foreach (IRole role in roles)
+            {
+                if (role.Name == username)
+                {
+                    usernameRole = role;
+                    return true;
+                }
+            }
+            usernameRole = null;
+            return false;
+        }
+    }
+
+    public class UserXGuild
+    {
+        public IUser User;
+        public IGuild Guild;
+
+        public UserXGuild(IUser user, IGuild guild)
+        {
+            User = user;
+            Guild = guild;
         }
     }
 }
