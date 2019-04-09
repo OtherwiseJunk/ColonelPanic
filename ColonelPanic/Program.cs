@@ -143,28 +143,55 @@ namespace ColonelPanic
                 foreach (TopDaily td in topDailiesToExecute)
                 {
                     var chnl = client.GetChannel(ulong.Parse(td.ChannelId)) as SocketTextChannel;
-                    chnl.SendMessageAsync(GetTopDailylink(td));
+                    var link = GetTopDailylink(td);
+                    if(link != null)
+                    {
+                        if(link is Embed)
+                        {
+                            chnl.SendMessageAsync("", false, link as Embed);
+                        }
+                        else if(link is RedditVideoLinkXMetadata)
+                        {
+                            RedditVideoLinkXMetadata videoLink = link as RedditVideoLinkXMetadata;
+                            chnl.SendMessageAsync(videoLink.MetadataMessage);
+                            chnl.SendMessageAsync(videoLink.URL);
+                        }
+                    }
+                    else
+                    {
+                        chnl.SendMessageAsync("Sorry, no images in the top 20 for " + td.Subreddit + ".");
+                    }
                 }
             }
             
         }
 
-        private string GetTopDailylink(TopDaily td)
+        private Object GetTopDailylink(TopDaily td)
         {
+            List<Object> urlsToPickFrom = new List<Object>();
             using(WebClient wClient = new WebClient())
             {
                 string url = String.Format(Utilities.APILinkFormats.SubredditTopOneHundredPosts, td.Subreddit);
                 RedditTopTwenty topTwenty = Newtonsoft.Json.JsonConvert.DeserializeObject<RedditTopTwenty>(wClient.DownloadString(url));
                 foreach (var child in topTwenty.data.children)
                 {
-                    if(child.data.url.Contains(".gif") || child.data.url.Contains(".jpg") || child.data.url.Contains(".png") || child.data.url.Contains(".mp4") || child.data.url.Contains(".gifv"))
+                    if (child.data.url.Contains(".mp4") || child.data.url.Contains(".gifv"))
                     {
-                        return child.data.url;
+                        urlsToPickFrom.Add(new RedditVideoLinkXMetadata(child.data.url, $"{child.data.subreddit}'s top image (Title: {child.data.title}):"));
                     }
+                    else if (child.data.url.Contains(".gif") || child.data.url.Contains(".jpg") || child.data.url.Contains(".png"))
+                    {
+                        urlsToPickFrom.Add(RedditModule.buildEmbedForImage(child));
+                    }
+
+                }
+                if (urlsToPickFrom.Count != 0)
+                {
+                    return urlsToPickFrom.GetRandom();
                 }
             }
-            
-            return "No image posts in the top 20, sorry";
+
+            return null;
         }
 
         private async Task AddGuildStateIfMissing(string guildId, string name)
@@ -349,6 +376,18 @@ namespace ColonelPanic
             var result = await commands.ExecuteAsync(context, argPos, services);
             if (!result.IsSuccess)
                 await context.Channel.SendMessageAsync(result.ErrorReason);
+        }
+    }
+
+    public class RedditVideoLinkXMetadata
+    {
+        public string URL;
+        public string MetadataMessage;
+        
+        public RedditVideoLinkXMetadata(string url, string metadataMessage)
+        {
+            URL = url;
+            MetadataMessage = metadataMessage;
         }
     }
 }

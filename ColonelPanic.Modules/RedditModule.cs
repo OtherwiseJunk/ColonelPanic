@@ -10,6 +10,7 @@ using System.Web;
 using ColonelPanic.Database.Contexts;
 using DartsDiscordBots.Utilities;
 using ColonelPanic.Utilities.Permissions;
+using Discord;
 
 namespace ColonelPanic.Modules
 {
@@ -122,11 +123,18 @@ All posts will occur at that time in ET, sorry lesser timezones :-)")]
                     int count = 0;
                     foreach (var child in topTwenty.data.children)
                     {
-                        if (count == 0 && (child.data.url.Contains(".gif") || child.data.url.Contains(".jpg") || child.data.url.Contains(".png") || child.data.url.Contains(".mp4") || child.data.url.Contains(".gifv")))
+                        if (count == 0 && (child.data.url.Contains(".mp4") || child.data.url.Contains(".gifv")))
                         {
                             count++;
+                            await Context.Channel.SendMessageAsync($"{child.data.subreddit}'s top image (Title: {child.data.title}):");
                             await Context.Channel.SendMessageAsync(child.data.url);
                         }
+                        else if (count == 0 && (child.data.url.Contains(".gif") || child.data.url.Contains(".jpg") || child.data.url.Contains(".png")))
+                        {
+                            count++;                            
+                            await Context.Channel.SendMessageAsync("", false, buildEmbedForImage(child));
+                        }
+
                     }
                 }
                 else
@@ -135,6 +143,19 @@ All posts will occur at that time in ET, sorry lesser timezones :-)")]
                 }
             }
         }
+
+        public static Embed buildEmbedForImage(Child redditPost)
+        {
+            EmbedBuilder builder = new EmbedBuilder();
+
+            builder.WithTitle(redditPost.data.title);
+            builder.AddField("Subreddit | Score", redditPost.data.subreddit + " | " + redditPost.data.score);
+            builder.WithImageUrl(redditPost.data.url);            
+            builder.WithColor(Color.DarkPurple);
+            return builder.Build();
+        }
+
+
     }
 
 
