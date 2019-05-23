@@ -17,28 +17,7 @@ namespace ColonelPanic.Modules
     public class ServerModule : ModuleBase
     {
         public static Regex hexColorValidator = new Regex("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");
-        public static List<UserXGuild> RainbowUsers = new List<UserXGuild>();
-        public static Timer RainbowTimer = new Timer(ModifyRainbowUsersName,null,16000,16000);
 
-        private static void ModifyRainbowUsersName(object state)
-        {
-            Random r = new Random();
-            if(RainbowUsers.Capacity > 0)
-            {
-                foreach (UserXGuild userxguild in RainbowUsers)
-                {                    
-                    IGuildUser user = userxguild.Guild.GetUserAsync(userxguild.User.Id).Result;
-
-                    int R = r.Next(255);
-                    int G = r.Next(255);
-                    int B = r.Next(255);
-
-                    var role = ModifyUserRoleColor(R, G, B, user, userxguild.Guild).Result;
-
-                    user.AddRoleAsync(role);                    
-                }
-            }
-        }
 
         [Command("listchnl"), RequireOwner]
         public async Task listChannels()
@@ -111,31 +90,6 @@ namespace ColonelPanic.Modules
             {
                 await this.Context.Channel.SendMessageAsync("Sorry, I can't recognize that hexcode. Maybe I'm an idiot, iunno.");
             }
-        }
-
-        [Command("rainbowrole"), Summary("Creates a role with your name with the specified (in hex) color. Ex) `rolecolor #000000`"), RequireBotPermission(GuildPermission.ManageRoles)]
-        public async Task RandomRoleColorChange()
-        {
-            if (UserIsRainbow(Context.User,Context.Guild))
-            {
-                await Context.Channel.SendMessageAsync("You're already in rainbow mode I think.");
-            }
-            else
-            {
-                RainbowUsers.Add(new UserXGuild(Context.User,Context.Guild));
-            }
-        }
-
-        private bool UserIsRainbow(IUser user, IGuild guild)
-        {
-            foreach (UserXGuild userxguild in RainbowUsers)
-            {
-                if(userxguild.User == user && userxguild.Guild == guild)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         [Command("say"), Summary("Echos a message."), RequireOwner]

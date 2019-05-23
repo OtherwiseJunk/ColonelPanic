@@ -27,17 +27,15 @@ namespace ColonelPanic
         IServiceProvider services;
         Random _rand = new Random();
         SocketUser Me { get; set; }
-        public static string NewsAPIKey {get;set;}
-        public DateTime MelaniasMissing = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local).AddSeconds(1525924800).AddHours(-4);
         public int counter = 1;
         static void Main(string[] args) => new Program().Start().GetAwaiter().GetResult();        
 
-        Timer ScrumUpdateTimer { get; set; }
-        Timer TopDailyTimer { get; set; }        
-        Timer MelanieWatchTimer { get; set; }
+        Timer TopDailyTimer { get; set; }
+		string isMentioningMeRegex = @"(Co?l?o?n?e?l?)(\.?|\s)*(Pa?o?n?i?c?)?";
 
 
-        private async Task Start()
+
+		private async Task Start()
         {
             LogSeverity logLevel = LogSeverity.Verbose;
 #if DEBUG
@@ -209,7 +207,7 @@ namespace ColonelPanic
             {
                 MentionedUsers.Add(user);
             }
-            bool MentioningMe = MentionedUsers.FirstOrDefault(u => u.Id == 357910708316274688) != null;
+            bool MentioningMe = isMentioningMe(arg, MentionedUsers);
             string chnlId = arg.Channel.Id.ToString();
             string userId = arg.Author.Id.ToString();
             SocketGuildChannel chnl = arg.Channel as SocketGuildChannel;
@@ -320,7 +318,13 @@ namespace ColonelPanic
             return;
         }
 
-        private string GetTableFlipResponse(SocketUser author)
+		private bool isMentioningMe(SocketMessage message, List<SocketUser> mentionedUsers)
+		{
+			Regex regex = new Regex(isMentioningMeRegex);
+			return regex.IsMatch(message.Content) || mentionedUsers.FirstOrDefault(u => u.Id == 357910708316274688) != null;
+		}
+
+		private string GetTableFlipResponse(SocketUser author)
         {
             int points = UserDataHandler.IncrementTableFlipPoints(author.Id.ToString(), author.Username);
             if (points >= 81) return String.Format(ResponseCollections.TableFlipResponses[4].GetRandom(), author.Username);
