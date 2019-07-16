@@ -17,6 +17,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.Linq;
+using ColonelPanic.Services;
 
 namespace ColonelPanic
 {
@@ -32,6 +33,7 @@ namespace ColonelPanic
 
         Timer TopDailyTimer { get; set; }
 		string isMentioningMeRegex = @"(Co?l?o?n?e?l?)(\.?|\s)*(Pa?o?n?i?c?)?";
+		
 
 
 
@@ -49,7 +51,7 @@ namespace ColonelPanic
 
             commands = new CommandService();
 
-            services = new ServiceCollection().AddSingleton<AudioService>().BuildServiceProvider();
+            services = new ServiceCollection().AddSingleton<AudioService>().AddSingleton<ReliabilityService>().BuildServiceProvider();
             
 
             await InstallCommands();
