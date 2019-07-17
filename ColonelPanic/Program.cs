@@ -362,9 +362,11 @@ namespace ColonelPanic
             await commands.AddModuleAsync<NoteModule>();
             await commands.AddModuleAsync<PingGroupModule>();
             await commands.AddModuleAsync<AudioModule>();
-            await commands.AddModuleAsync<RedditModule>();            
-            await commands.AddModuleAsync<QuoteModule>();
-        }        
+            await commands.AddModuleAsync<RedditModule>();
+			await commands.AddModuleAsync<QuoteModule>();
+			await commands.AddModuleAsync<MarioMakerModule>();
+			await commands.AddModuleAsync<PokedexModule>();
+		}        
 
         public async Task HandleCommand(SocketMessage messageParam)
         {
