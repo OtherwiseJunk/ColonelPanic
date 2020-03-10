@@ -53,14 +53,12 @@
     <Compile Include="Contexts\ConfigurationContext.cs" />
     <Compile Include="Contexts\NoteContext.cs" />
     <Compile Include="Contexts\PingGroupContext.cs" />
-    <Compile Include="Contexts\QuoteContext.cs" />
     <Compile Include="Contexts\RedditContext.cs" />
     <Compile Include="Migrations\201804112255528_AddNaughtyreduxThree.cs" />
     <Compile Include="Migrations\201804112255528_AddNaughtyreduxThree.Designer.cs">
       <DependentUpon>201804112255528_AddNaughtyreduxThree.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\Quote.cs" />
     <Compile Include="Models\GuildState.cs" />
     <Compile Include="Models\Configuration.cs" />
     <Compile Include="Models\Note.cs" />

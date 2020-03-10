@@ -85,6 +85,8 @@
     <Compile Include="Modules\Audio\Interfaces\IAudioService.cs" />
     <Compile Include="Modules\Audio\Interfaces\ITidalService.cs" />
     <Compile Include="Modules\Audio\AudioModule.cs" />
+    <Compile Include="Modules\Help\HelpModule.cs" />
+    <Compile Include="Modules\Help\Interfaces\IHelpConfig.cs" />
     <Compile Include="Modules\Pokemon\Interfaces\IPokemonService.cs" />
     <Compile Include="Modules\Pokemon\Models\PokemonGuildConfiguration.cs" />
     <Compile Include="Modules\Pokemon\PokemonModule.cs" />

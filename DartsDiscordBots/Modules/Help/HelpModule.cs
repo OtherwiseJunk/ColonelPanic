@@ -1,29 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using Discord;
-using Discord.WebSocket;
 using Discord.Commands;
 using System.Threading.Tasks;
+using DartsDiscordBots.Interfaces;
 
-namespace ColonelPanic.Modules
+namespace DartsDiscordBots.Modules
 {
     public class HelpModule : ModuleBase
     {
         private readonly CommandService _service;
+		private readonly IHelpConfig _config;
         
 
-        public HelpModule(CommandService service)
+        public HelpModule(CommandService service, IHelpConfig config)
         {
             _service = service;
+			_config = config;
         }
 
         [Command("help"),Summary("Display a list of all commands")]
         public async Task HelpAsync()
         {
-            string prefix = "$";
-            var builder = new EmbedBuilder()
+			string prefix = _config.Prefix;
+
+			var builder = new EmbedBuilder()
             {
                 Color = new Color(114, 137, 218),
                 Description = "These are the commands you can use"
@@ -68,8 +68,9 @@ namespace ColonelPanic.Modules
                 return;
             }
 
-            string prefix = "$";
-            var builder = new EmbedBuilder()
+			string prefix = _config.Prefix;
+
+			var builder = new EmbedBuilder()
             {
                 Color = new Color(114, 137, 218),
                 Description = $"Here are some commands like **{command}**"

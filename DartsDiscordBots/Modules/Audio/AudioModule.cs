@@ -28,6 +28,7 @@ namespace DartsDiscordBots.Modules
 		public async Task JoinCmd()
 		{
 			await _service.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
+			await _tidal.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
 		}
 
 		// Remember to add preconditions to your commands,
@@ -37,6 +38,7 @@ namespace DartsDiscordBots.Modules
 		public async Task LeaveCmd()
 		{
 			await _service.LeaveAudio(Context.Guild);
+			await _tidal.LeaveAudio(Context.Guild);
 		}
 
 		[Command("play", RunMode = RunMode.Async)]

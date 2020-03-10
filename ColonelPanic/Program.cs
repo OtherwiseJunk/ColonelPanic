@@ -51,14 +51,7 @@ namespace ColonelPanic
 
 			commands = new CommandService();
 
-			services = new ServiceCollection()
-				.AddSingleton<ITidalService, TidalService>()
-				.AddSingleton<IAudioService, AudioService>()
-				.AddSingleton<IPokemonService, PokemonService>()
-				.AddSingleton<ReliabilityService>()
-				.BuildServiceProvider();
-
-
+			InstallServices();
 			await InstallCommands();
 
 			client.Log += WriteLog;
@@ -363,6 +356,17 @@ namespace ColonelPanic
 			await commands.AddModuleAsync<PokemonModule>();
 		}
 
+		public void InstallServices()
+		{
+			services = new ServiceCollection()
+				.AddSingleton<ITidalService, TidalService>()
+				.AddSingleton<IHelpConfig, HelpConfig>()
+				.AddSingleton<IAudioService, AudioService>()
+				.AddSingleton<IPokemonService, PokemonService>()
+				.AddSingleton<ReliabilityService>()
+				.BuildServiceProvider();
+		}
+
 		public async Task HandleCommand(SocketMessage messageParam)
 		{
 			// Don't process the command if it was a System Message
@@ -374,7 +378,7 @@ namespace ColonelPanic
 			if (!message.HasCharPrefix('$', ref argPos) && !false) return;
 			// Create a Command Context
 			var context = new CommandContext(client, message);
-			bool commandExists = commands.Commands.FirstOrDefault(c => c.Name == message.Content) != null;
+			bool commandExists = commands.Commands.FirstOrDefault(c => c.Name == message.Content.Replace("$",string.Empty).Split()[0]) != null;
 			// Execute the command. (result does not indicate a return value, 
 			// rather an object stating if the command executed successfully)
 			var result = await commands.ExecuteAsync(context, argPos, services);
@@ -386,7 +390,10 @@ namespace ColonelPanic
 			}
 		}
 	}
-
+	public class HelpConfig : IHelpConfig
+	{
+		public string Prefix { get; set; } = "$";
+	}
 	public class RedditVideoLinkXMetadata
 	{
 		public string URL;

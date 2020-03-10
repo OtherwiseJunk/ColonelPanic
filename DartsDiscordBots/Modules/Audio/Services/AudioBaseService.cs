@@ -13,7 +13,7 @@ namespace DartsDiscordBots.Services
 {
 	public class AudioBaseService : IAudioBaseService
 	{
-		public ConcurrentDictionary<ulong, IAudioClient> ConnectedChannels { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public ConcurrentDictionary<ulong, IAudioClient> ConnectedChannels { get; set; }
 		public AudioBaseService()
 		{
 			ConnectedChannels = new ConcurrentDictionary<ulong, IAudioClient>();
