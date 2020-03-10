@@ -63,36 +63,54 @@ namespace ColonelPanic.Utilities.Permissions
         }
     }
 
-    public class RequireTrustedUserOrPermission : PreconditionAttribute
-    {
+	public class RequireTrustedUserOrPermission : PreconditionAttribute
+	{
 
-        RequireUserPermissionAttribute UserPermAttribute { get; set; }
-        RequireTrustedUser TrustedUserAttribute { get; set; }
+		RequireUserPermissionAttribute UserPermAttribute { get; set; }
+		RequireTrustedUser TrustedUserAttribute { get; set; }
 
-        public RequireTrustedUserOrPermission(ChannelPermission permission)
-        {
-            UserPermAttribute = new RequireUserPermissionAttribute(permission);
-            TrustedUserAttribute = new RequireTrustedUser();
-        }
+		public RequireTrustedUserOrPermission(ChannelPermission permission)
+		{
+			UserPermAttribute = new RequireUserPermissionAttribute(permission);
+			TrustedUserAttribute = new RequireTrustedUser();
+		}
 
-        public RequireTrustedUserOrPermission(GuildPermission permission)
-        {
-            UserPermAttribute = new RequireUserPermissionAttribute(permission);
-            TrustedUserAttribute = new RequireTrustedUser();
-        }
+		public RequireTrustedUserOrPermission(GuildPermission permission)
+		{
+			UserPermAttribute = new RequireUserPermissionAttribute(permission);
+			TrustedUserAttribute = new RequireTrustedUser();
+		}
 
-        public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
-        {
-            if (UserPermAttribute.CheckPermissions(context,command,services).Result.IsSuccess)
-            {
-                return PreconditionResult.FromSuccess();
-            }
-            else
-            {
-                return TrustedUserAttribute.CheckPermissions(context, command, services).Result;
-            }
-        }
-    }
+		public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
+		{
+			if (UserPermAttribute.CheckPermissions(context, command, services).Result.IsSuccess)
+			{
+				return PreconditionResult.FromSuccess();
+			}
+			else
+			{
+				return TrustedUserAttribute.CheckPermissions(context, command, services).Result;
+			}
+		}
+	}
+
+	public class RequireSpecificChannel : PreconditionAttribute
+	{
+		public ulong ServerId;
+
+		public RequireSpecificChannel(ulong serverId)
+		{
+			ServerId = serverId;
+		}
+		public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
+		{
+			if (context.Guild.Id == ServerId)
+				return PreconditionResult.FromSuccess();
+
+			else
+				return PreconditionResult.FromError("This command doesn't work on this server, friend.");
+		}			
+	}
 
     public class RequireChannelConfiguration : PreconditionAttribute
     {

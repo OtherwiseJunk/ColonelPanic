@@ -499,12 +499,29 @@ namespace ColonelPanic.Modules
             int topPosition = Context.Guild.Roles.Count - 2;
             if (RoleExists(Context.Guild.Roles, user.Username, out usernameRole))
             {
-                await usernameRole.ModifyAsync(x =>
-                {
-                    x.Color = roleColor;
-                    x.Position = topPosition;
-                });
-            }
+				try
+				{
+					await usernameRole.ModifyAsync(x =>
+					{
+						x.Color = roleColor;
+					});
+				}
+				catch
+				{
+					await Context.User.SendMessageAsync("Sorry, something went wrong when applying the role color.");
+				}
+				try
+				{
+					await usernameRole.ModifyAsync(x =>
+					{						
+						x.Position = topPosition;
+					});
+				}
+				catch
+				{
+					await Context.User.SendMessageAsync("Sorry, I created the role but I don't have permission to move it's position, so your color might not change :shrug:");
+				}
+			}
             else
             {
                 usernameRole = Context.Guild.CreateRoleAsync(name: user.Username, color: roleColor).Result;
