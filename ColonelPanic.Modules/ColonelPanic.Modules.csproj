@@ -128,7 +128,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AudioModule.cs" />
     <Compile Include="ConfigurationModule.cs" />
     <Compile Include="EnableModule.cs" />
     <Compile Include="GeosusModule.cs" />

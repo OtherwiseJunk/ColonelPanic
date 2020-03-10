@@ -4,6 +4,8 @@ using ColonelPanic.Modules;
 using ColonelPanic.Utilities;
 using ColonelPanic.Utilities.JSONClasses;
 using DartsDiscordBots.Utilities;
+using DartsDiscordBots.Interfaces;
+using DartsDiscordBots.Modules;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -18,6 +20,7 @@ using System.Text.RegularExpressions;
 using System.Net;
 using System.Linq;
 using ColonelPanic.Services;
+using DartsDiscordBots.Interfaces;
 
 namespace ColonelPanic
 {
@@ -51,7 +54,11 @@ namespace ColonelPanic
 
             commands = new CommandService();
 
-            services = new ServiceCollection().AddSingleton<AudioService>().AddSingleton<ReliabilityService>().BuildServiceProvider();
+            services = new ServiceCollection()
+				.AddSingleton<ITidalService, TidalService>()
+				.AddSingleton<IAudioService,AudioService>()
+				.AddSingleton<ReliabilityService>()
+				.BuildServiceProvider();
             
 
             await InstallCommands();
@@ -307,16 +314,6 @@ namespace ColonelPanic
                 }
             }
             
-            if (arg.Content.ToLower().Contains("```haskell"))
-            {
-                //removes the 10 characters for ```haskell as well as the newline
-                string snippet = arg.Content.Remove(0, 11);
-                //removes the final three ``` as well as the new line.
-                snippet = snippet.Remove(snippet.Length - 4, 4);
-
-                AudioService.SendUdpStatic(9999, "138.197.42.213", 9999, Encoding.ASCII.GetBytes(snippet));
-            }
-            
             return;
         }
 
@@ -365,7 +362,7 @@ namespace ColonelPanic
             await commands.AddModuleAsync<RedditModule>();
 			await commands.AddModuleAsync<QuoteModule>();
 			await commands.AddModuleAsync<MarioMakerModule>();
-			await commands.AddModuleAsync<PokedexModule>();
+			await commands.AddModuleAsync<PokemonModule>();
 		}        
 
         public async Task HandleCommand(SocketMessage messageParam)
@@ -379,11 +376,16 @@ namespace ColonelPanic
             if (!message.HasCharPrefix('$', ref argPos) && !false) return;
             // Create a Command Context
             var context = new CommandContext(client, message);
-            // Execute the command. (result does not indicate a return value, 
-            // rather an object stating if the command executed successfully)
-            var result = await commands.ExecuteAsync(context, argPos, services);
-            if (!result.IsSuccess)
+			bool commandExists = commands.Commands.FirstOrDefault(c => c.Name == message.Content) != null;
+			// Execute the command. (result does not indicate a return value, 
+			// rather an object stating if the command executed successfully)
+			var result = await commands.ExecuteAsync(context, argPos, services);
+            if (!result.IsSuccess && commandExists)
                 await context.Channel.SendMessageAsync(result.ErrorReason);
+			else if (!commandExists)
+			{
+				await context.Message.AddReactionAsync(new Emoji("😕"));
+			}
         }
     }
 
