@@ -80,11 +80,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\IAudioBaseService.cs" />
-    <Compile Include="Services\AudioBaseService.cs" />
-    <Compile Include="Interfaces\IAudioService.cs" />
-    <Compile Include="Interfaces\ITidalService.cs" />
-    <Compile Include="Modules\AudioModule.cs" />
+    <Compile Include="Modules\Audio\Interfaces\IAudioBaseService.cs" />
+    <Compile Include="Modules\Audio\Services\AudioBaseService.cs" />
+    <Compile Include="Modules\Audio\Interfaces\IAudioService.cs" />
+    <Compile Include="Modules\Audio\Interfaces\ITidalService.cs" />
+    <Compile Include="Modules\Audio\AudioModule.cs" />
+    <Compile Include="Modules\Pokemon\Interfaces\IPokemonService.cs" />
+    <Compile Include="Modules\Pokemon\Models\PokemonGuildConfiguration.cs" />
+    <Compile Include="Modules\Pokemon\PokemonModule.cs" />
     <Compile Include="Permissions\Preconditions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\Dice.cs" />

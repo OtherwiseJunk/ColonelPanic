@@ -94,17 +94,17 @@ namespace ColonelPanic.Utilities.Permissions
 		}
 	}
 
-	public class RequireSpecificChannel : PreconditionAttribute
+	public class RequireSpecificGuild : PreconditionAttribute
 	{
-		public ulong ServerId;
+		public ulong GuildId;
 
-		public RequireSpecificChannel(ulong serverId)
+		public RequireSpecificGuild(ulong guildId)
 		{
-			ServerId = serverId;
+			GuildId = guildId;
 		}
 		public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
 		{
-			if (context.Guild.Id == ServerId)
+			if (context.Guild.Id == GuildId)
 				return PreconditionResult.FromSuccess();
 
 			else
