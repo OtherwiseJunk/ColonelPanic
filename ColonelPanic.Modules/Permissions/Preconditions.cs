@@ -94,24 +94,6 @@ namespace ColonelPanic.Utilities.Permissions
 		}
 	}
 
-	public class RequireSpecificGuild : PreconditionAttribute
-	{
-		public ulong GuildId;
-
-		public RequireSpecificGuild(ulong guildId)
-		{
-			GuildId = guildId;
-		}
-		public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
-		{
-			if (context.Guild.Id == GuildId)
-				return PreconditionResult.FromSuccess();
-
-			else
-				return PreconditionResult.FromError("This command doesn't work on this server, friend.");
-		}			
-	}
-
     public class RequireChannelConfiguration : PreconditionAttribute
     {
         public string ConfigurationType;
