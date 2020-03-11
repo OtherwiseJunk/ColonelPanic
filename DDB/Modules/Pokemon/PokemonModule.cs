@@ -25,9 +25,9 @@ namespace DartsDiscordBots.Modules
 				{
 					await (Context.User as IGuildUser).AddRoleAsync(SwordRole);
 					await Context.Message.AddReactionAsync(Context.Guild.Emotes.First(emote => emote.Id == pokemonConfig.SwordEmoteId));
-					if ((Context.User as IGuildUser).RoleIds.Contains(pokemonConfig.SwordRoleId))
+					if ((Context.User as IGuildUser).RoleIds.Contains(pokemonConfig.ShieldRoleId))
 					{
-						await Context.Channel.SendFileAsync(GetImageStreamFromBase64(_pokemon.TwoPokemonSwordImage), "TWOPokemonz! - Sword");
+						await Context.Channel.SendFileAsync(GetImageStreamFromBase64(_pokemon.TwoPokemonSwordImage), "TWOPokemonz! - Sword.png");
 					}
 				}
 				else
@@ -49,9 +49,9 @@ namespace DartsDiscordBots.Modules
 				{
 					await (Context.User as IGuildUser).AddRoleAsync(ShieldRole);
 					await Context.Message.AddReactionAsync(Context.Guild.Emotes.First(emote => emote.Id == pokemonConfig.ShieldEmoteId));
-					if ((Context.User as IGuildUser).RoleIds.Contains(pokemonConfig.ShieldRoleId))
+					if ((Context.User as IGuildUser).RoleIds.Contains(pokemonConfig.SwordRoleId))
 					{
-						await Context.Channel.SendFileAsync(GetImageStreamFromBase64(_pokemon.TwoPokemonShieldImage), "TWOPokemonz! - Shield");
+						await Context.Channel.SendFileAsync(GetImageStreamFromBase64(_pokemon.TwoPokemonShieldImage), "TWOPokemonz! - Shield.png");
 					}
 				}
 				else

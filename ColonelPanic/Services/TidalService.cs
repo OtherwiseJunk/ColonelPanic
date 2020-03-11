@@ -2,6 +2,7 @@
 using DartsDiscordBots.Services;
 using Discord;
 using Discord.Audio;
+using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
@@ -13,7 +14,10 @@ namespace ColonelPanic.Services
 		public int TidalInputPort { get; set; } = 9999;
 		public int TidalStreamPort { get; set; } = 8081;
 
-		public TidalService():base() {}
+		public TidalService()
+		{
+			ConnectedChannels = new ConcurrentDictionary<ulong, IAudioClient>();
+		}
 
 		public async Task StartTidalStream(IGuild guild, IMessageChannel channel)
 		{

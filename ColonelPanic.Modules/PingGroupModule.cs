@@ -50,7 +50,7 @@ namespace ColonelPanic.Modules
             }
         }
 
-        [Command("create"), Summary("Creates the specified Ping Group. Requires Manage Channel permission."), RequireTrustedUserOrPermission(ChannelPermission.ManageChannel)]
+        [Command("create"), Summary("Creates the specified Ping Group. Requires Manage Channel permission."), RequireTrustedUserOrPermission(ChannelPermission.ManageChannels)]
         public async Task CreatePingGroup([Remainder, Summary("Name of the Ping Group to create.")] string pingGroupName)
         {
             if (!PingGroupHandler.PingGroupExists(pingGroupName, Context.Guild.Id.ToString()))
@@ -123,7 +123,7 @@ namespace ColonelPanic.Modules
             }
         }
 
-        [Command("adduser"), Summary("Adds the specified user (by UserID) to the specified Ping Group. Example \"$group adduser 000000000000000 SomeGroup\". Requires Manage Channel permission."), RequireTrustedUserOrPermission(ChannelPermission.ManageChannel)]
+        [Command("adduser"), Summary("Adds the specified user (by UserID) to the specified Ping Group. Example \"$group adduser 000000000000000 SomeGroup\". Requires Manage Channel permission."), RequireTrustedUserOrPermission(ChannelPermission.ManageChannels)]
         public async Task AddUserToPingGroup([Summary("The userId")]string userId,[Remainder, Summary("The Ping Group to ass the user to")]string pingGroupName)
         {
             ulong uId;

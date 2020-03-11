@@ -1,29 +1,34 @@
 namespace ColonelPanic.Database.Contexts
 {
     using ColonelPanic.Database.Models;
+    using ColonelPanic.DatabaseCore.Constants;
+    using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
-    using System.Data.Entity;
     using System.Linq;
     using System.Threading.Tasks;
 
     public class ConfigurationContext : DbContext
     {
-        public ConfigurationContext()
-            : base("name=BetaDB")
-        {
-        }
-        public DbSet<Configuration> Config { get; set; }
+		public ConfigurationContext(DbContextOptions<ConfigurationContext> options) : base(options) { }
+
+		public DbSet<Configuration> Config { get; set; }
         public DbSet<GuildState> GuildStates { get; set; }
         public DbSet<TrustedUser> TrustedUsers { get; set; }
     }
 
     public class ConfigurationHandler
     {
+		public static DbContextOptionsBuilder<ConfigurationContext> OptionsBuilder { get; set; }
+		static ConfigurationHandler()
+		{
+			OptionsBuilder = new DbContextOptionsBuilder<ConfigurationContext>();
+			OptionsBuilder.UseSqlServer(ConnectionStrings.ConnectionString);
+		}
 
-        private static List<GuildState> GetGuildStates()
+		private static List<GuildState> GetGuildStates()
         {
-            using (ConfigurationContext db = new ConfigurationContext())
+            using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
             {
                 return db.GuildStates.ToList();
             }
@@ -31,7 +36,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static void AddGuildState(GuildState guildState)
         {
-            using (ConfigurationContext db = new ConfigurationContext())
+            using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
             {
                 if (!GuildStateExists(guildState.GuildId))
                 {
@@ -54,7 +59,7 @@ namespace ColonelPanic.Database.Contexts
 
         private static void ChangGuildPermissionState(string permissionName, string guildId,bool newState)
         {
-            using (ConfigurationContext db = new ConfigurationContext())
+            using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
             {
                 GuildState guildStates = db.GuildStates.FirstOrDefault(gs => gs.GuildId == guildId);                
                 switch (permissionName)
@@ -83,7 +88,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static bool GuildStateExists(string guildId)
         {
-            using (ConfigurationContext db = new ConfigurationContext())
+            using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
             {                
                 return db.GuildStates.FirstOrDefault(gs => gs.GuildId == guildId) != null;
             }
@@ -99,7 +104,7 @@ namespace ColonelPanic.Database.Contexts
             guildState.PingGroupEnabled = false;
             guildState.CanSpeak = false;
             guildState.CanListen = false;
-            using (ConfigurationContext db = new ConfigurationContext())
+            using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
             {
                 if (!GuildStateExists(guildId))
                 {
@@ -111,14 +116,14 @@ namespace ColonelPanic.Database.Contexts
 
         public static string GetToken()
         {
-            using (ConfigurationContext db = new ConfigurationContext())
+            using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
             {
                 return db.Config.First().Token;
             }
         }
         public static void CreateConfig(string Token, string GithubToken, string GithubLastUpdate)
         {
-            using (ConfigurationContext db = new ConfigurationContext())
+            using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
             {
                 db.Config.Add(new Configuration(Token, GithubToken, GithubLastUpdate));
                 db.SaveChanges();
@@ -127,7 +132,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static void ChangeConfiguration<T>(string Field, T NewValue)
         {
-            using (ConfigurationContext db = new ConfigurationContext())
+            using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
             {
                 Configuration config = db.Config.First();
                 switch (Field)
@@ -154,9 +159,16 @@ namespace ColonelPanic.Database.Contexts
 
     public class PermissionHandler
     {
-        public static void AddTrustedUser(string userId, string username)
+		public static DbContextOptionsBuilder<ConfigurationContext> OptionsBuilder { get; set; }
+		static PermissionHandler()
+		{
+			OptionsBuilder = new DbContextOptionsBuilder<ConfigurationContext>();
+			OptionsBuilder.UseSqlServer(ConnectionStrings.ConnectionString);
+		}
+
+		public static void AddTrustedUser(string userId, string username)
         {
-            using (ConfigurationContext db = new ConfigurationContext())
+            using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
             {
                 if (db.TrustedUsers.FirstOrDefault(u=> u.UserId.ToString() == userId ) == null)
                 {
@@ -168,7 +180,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static bool IsTrustedUser(string userId)
         {
-            using (ConfigurationContext db = new ConfigurationContext())
+            using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
             {
                 return db.TrustedUsers.FirstOrDefault(u => u.UserId.ToString() == userId) != null;
             }
@@ -187,7 +199,7 @@ namespace ColonelPanic.Database.Contexts
         public static bool CanExecute(string permissionName,string guildId,string userId)
         {
             bool permEnabled = false;
-            using (ConfigurationContext db = new ConfigurationContext())
+            using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
             {
                 GuildState guildState = db.GuildStates.FirstOrDefault(gs => gs.GuildId == guildId);
                 if (guildState != null)
@@ -225,7 +237,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static void RemoveTrustedUser(string userId)
         {
-            using (ConfigurationContext db = new ConfigurationContext())
+            using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
             {
                 TrustedUser user = db.TrustedUsers.FirstOrDefault(u => u.UserId.ToString() == userId);
                 if (user != null)

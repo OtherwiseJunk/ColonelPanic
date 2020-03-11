@@ -14,10 +14,7 @@ namespace DartsDiscordBots.Services
 	public class AudioBaseService : IAudioBaseService
 	{
 		public ConcurrentDictionary<ulong, IAudioClient> ConnectedChannels { get; set; }
-		public AudioBaseService()
-		{
-			ConnectedChannels = new ConcurrentDictionary<ulong, IAudioClient>();
-		}
+
 		public Process CreateStream(string path)
 		{
 			return Process.Start(new ProcessStartInfo

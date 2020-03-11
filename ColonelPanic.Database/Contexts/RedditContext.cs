@@ -1,30 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ColonelPanic.Utilities.JSONClasses;
 using ColonelPanic.Database.Models;
+using ColonelPanic.DatabaseCore.Constants;
+using Microsoft.EntityFrameworkCore;
 
 namespace ColonelPanic.Database.Contexts
 {
     public class RedditContext : DbContext
     {
-        public RedditContext() : base("name=BetaDB"){ }
+		public RedditContext(DbContextOptions<RedditContext> options) : base(options) { }
 
-        public DbSet<TopDaily> TopDaily { get; set; }
+
+		public DbSet<TopDaily> TopDaily { get; set; }
 
     }
 
     public class RedditHandler
     {
 
-        public static object GetSubredditsLock = new object();
+		public static DbContextOptionsBuilder<RedditContext> OptionsBuilder { get; set; }
+		public static object GetSubredditsLock = new object();
+		static RedditHandler()
+		{
+			OptionsBuilder = new DbContextOptionsBuilder<RedditContext>();
+			OptionsBuilder.UseSqlServer(ConnectionStrings.ConnectionString);
+		}
+
+		
 
         public static void AddTopDaily(string channelId, string subreddit, DateTime nextUpdateTime)
         {
-            using(RedditContext db = new RedditContext())
+            using(RedditContext db = new RedditContext(OptionsBuilder.Options))
             {
                 var daily = new TopDaily(channelId, subreddit, nextUpdateTime);
                 db.TopDaily.Add(daily);
@@ -38,7 +45,7 @@ namespace ColonelPanic.Database.Contexts
             lock (GetSubredditsLock)
             {
                 List<TopDaily> topDailies = new List<TopDaily>();
-                using (var db = new RedditContext())
+                using (var db = new RedditContext(OptionsBuilder.Options))
                 {
                     var topDailiesFromDB = db.TopDaily.ToList();
                     foreach (TopDaily tdaily in topDailiesFromDB)
@@ -79,7 +86,7 @@ namespace ColonelPanic.Database.Contexts
             string msg = @"Top Dailies
 ==========="+Environment.NewLine;
             Console.WriteLine(msg.Length);
-            using (RedditContext db = new RedditContext())
+            using (RedditContext db = new RedditContext(OptionsBuilder.Options))
             {
                 foreach (TopDaily td in db.TopDaily.Where(td => td.ChannelId == channelId))
                 {
@@ -92,7 +99,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static string DeleteTopDaily(int topDailyId, string channelId)
         {
-            using (RedditContext db = new RedditContext())
+            using (RedditContext db = new RedditContext(OptionsBuilder.Options))
             {
                 if (db.TopDaily.FirstOrDefault(td => td.ChannelId == channelId && td.TopDailyNum == topDailyId) != null)
                 {

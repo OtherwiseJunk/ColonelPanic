@@ -17,7 +17,7 @@ namespace ColonelPanic.Modules
 		public async Task GetLevels()
 		{
 			await Context.Channel.SendMessageAsync("Request received! Processing...");
-			var msgCollection = await Context.Channel.GetMessagesAsync(10000).Flatten();
+			List<IMessage> msgCollection = Context.Channel.GetMessagesAsync(10000).Flatten().ToList().Result;
 			List<string> MarioMakerMessages = new List<string>();
 			Regex regex = new Regex(marioMakerCourseIDRegex);
 

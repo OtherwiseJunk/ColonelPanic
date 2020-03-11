@@ -2,7 +2,7 @@
 
 namespace ColonelPanic.Database.Models
 {
-    class Note
+    public class Note
     {
         [Key]
         public int NoteId { get; set; }

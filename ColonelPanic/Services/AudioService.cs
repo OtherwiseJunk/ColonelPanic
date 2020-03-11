@@ -12,6 +12,10 @@ namespace ColonelPanic.Services
 {
 	public class AudioService : AudioBaseService, IAudioService
 	{
+		public AudioService()
+		{
+			ConnectedChannels = new ConcurrentDictionary<ulong, IAudioClient>();
+		}
 		public async Task SendAudioAsync(IGuild guild, IMessageChannel channel, string path)
 		{
 			// Your task: Get a full path to the file if the value of 'path' is only a filename.

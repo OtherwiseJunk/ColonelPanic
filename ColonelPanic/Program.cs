@@ -341,19 +341,18 @@ namespace ColonelPanic
 			// Hook the MessageReceived Event into our Command Handler
 			client.MessageReceived += HandleCommand;
 			// Discover all of the commands in this assembly and load them.
-			await commands.AddModulesAsync(Assembly.GetEntryAssembly());
-			await commands.AddModuleAsync<ServerModule>();
-			await commands.AddModuleAsync<HelpModule>();
-			await commands.AddModuleAsync<ConfigurationModule>();
-			await commands.AddModuleAsync<GeosusModule>();
-			await commands.AddModuleAsync<EnableModule>();
-			await commands.AddModuleAsync<DisableModule>();
-			await commands.AddModuleAsync<NoteModule>();
-			await commands.AddModuleAsync<PingGroupModule>();
-			await commands.AddModuleAsync<AudioModule>();
-			await commands.AddModuleAsync<RedditModule>();
-			await commands.AddModuleAsync<MarioMakerModule>();
-			await commands.AddModuleAsync<PokemonModule>();
+			await commands.AddModuleAsync<ServerModule>(services);
+			await commands.AddModuleAsync<HelpModule>(services);
+			await commands.AddModuleAsync<ConfigurationModule>(services);
+			await commands.AddModuleAsync<GeosusModule>(services);
+			await commands.AddModuleAsync<EnableModule>(services);
+			await commands.AddModuleAsync<DisableModule>(services);
+			await commands.AddModuleAsync<NoteModule>(services);
+			await commands.AddModuleAsync<PingGroupModule>(services);
+			await commands.AddModuleAsync<AudioModule>(services);
+			await commands.AddModuleAsync<RedditModule>(services);
+			await commands.AddModuleAsync<MarioMakerModule>(services);
+			await commands.AddModuleAsync<PokemonModule>(services);
 		}
 
 		public void InstallServices()

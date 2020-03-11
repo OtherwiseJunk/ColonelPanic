@@ -16,52 +16,51 @@ namespace ColonelPanic.Utilities.Permissions
         {
             Permission = perm;
         }
-        public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
-        {
 
+		public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
+		{
+			if (PermissionHandler.CanExecute(Permission, context.Guild.Id.ToString(), context.User.Id.ToString()))
+				return new Task(() => PreconditionResult.FromSuccess()) as Task<PreconditionResult>;
 
-            if (PermissionHandler.CanExecute(Permission, context.Guild.Id.ToString(), context.User.Id.ToString()))
-                return PreconditionResult.FromSuccess();
-
-            else
-                return PreconditionResult.FromError("That command is not available on this channel.");
-        }
-    }
+			else
+				return new Task(() => PreconditionResult.FromError("That command is not available on this channel.")) as Task<PreconditionResult>;
+		}
+	}
 
     public class RequireUserNotNaughty : PreconditionAttribute
     {
         public RequireUserNotNaughty() { }
 
-        public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
-        {
-            if (UserDataHandler.IsUserNaughty(context.Message.Author.Id.ToString()))
-            {
-                return PreconditionResult.FromError("Sorry, you've been naughty so that functionality isn't available.");
-            }
-            else
-            {
-                return PreconditionResult.FromSuccess();
-            }
-        }
-    }
+		public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
+		{
+			if (UserDataHandler.IsUserNaughty(context.Message.Author.Id.ToString()))
+			{
+				return new Task(() => PreconditionResult.FromSuccess()) as Task<PreconditionResult>;
+			}
+			else
+			{
+				return new Task(() => PreconditionResult.FromError("")) as Task<PreconditionResult>;
+			}
+		}
+	}
 
     public class RequireTrustedUser : PreconditionAttribute
     {
         public RequireTrustedUser() { }
 
-        public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
-        {
-            if (PermissionHandler.IsTrustedUser(context.User.Id.ToString()))
-            {
-                return PreconditionResult.FromSuccess();
-            }
+		public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
+		{
+			if (PermissionHandler.IsTrustedUser(context.User.Id.ToString()))
+			{
+				return new Task(() => PreconditionResult.FromSuccess()) as Task<PreconditionResult>;
+			}
 
-            else
-            {                
-                return PreconditionResult.FromError("Unauthorized user detected. This action has been logged.");
-            }
-        }
-    }
+			else
+			{
+				return new Task(() => PreconditionResult.FromError("Unauthorized user detected. This action has been logged.")) as Task<PreconditionResult>;
+			}
+		}
+	}
 
 	public class RequireTrustedUserOrPermission : PreconditionAttribute
 	{
@@ -81,15 +80,15 @@ namespace ColonelPanic.Utilities.Permissions
 			TrustedUserAttribute = new RequireTrustedUser();
 		}
 
-		public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
+		public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
 		{
-			if (UserPermAttribute.CheckPermissions(context, command, services).Result.IsSuccess)
+			if (UserPermAttribute.CheckPermissionsAsync(context, command, services).Result.IsSuccess)
 			{
-				return PreconditionResult.FromSuccess();
+				return new Task(() => PreconditionResult.FromSuccess()) as Task<PreconditionResult>;
 			}
 			else
 			{
-				return TrustedUserAttribute.CheckPermissions(context, command, services).Result;
+				return new Task(() => PreconditionResult.FromError("Unauthorized user detected. This action has been logged.")) as Task<PreconditionResult>;
 			}
 		}
 	}
@@ -101,13 +100,14 @@ namespace ColonelPanic.Utilities.Permissions
         {
             ConfigurationType = configurationType;
         }
-        public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
-        {
-            if (PermissionHandler.ChannelConfigured(ConfigurationType, context.Channel.Id.ToString()))
-                return PreconditionResult.FromSuccess();
 
-            else
-                return PreconditionResult.FromError("That module is not setup for this channel, I'm missing configuration details.");
-        }
-    }
+		public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
+		{
+			if (PermissionHandler.ChannelConfigured(ConfigurationType, context.Channel.Id.ToString()))
+				return new Task(() => PreconditionResult.FromSuccess()) as Task<PreconditionResult>;
+
+			else
+				return new Task(() => PreconditionResult.FromError("That module is not setup for this channel, I'm missing configuration details.")) as Task<PreconditionResult>;
+		}
+	}
 }

@@ -46,39 +46,6 @@ namespace ColonelPanic.Modules
             await client.SetGameAsync(playing);                
         }
 
-        [Command("download"), RequireOwner]
-        public async Task downloadChannelData(string chnlName)
-        {
-            IMessageChannel channel = null;
-            IGuild channelsGuild = null;
-            foreach (var guild in Context.Client.GetGuildsAsync().Result)
-            {
-                if (guild.Name != "good music geosus-chan")
-                {
-                    continue;
-                }
-                foreach (var chnl in guild.GetChannelsAsync().Result)
-                {
-                    if(chnl.Name.ToLower() == chnlName)
-                    {
-                        channel = chnl as IMessageChannel;
-                        channelsGuild = guild;
-                    }
-                }
-            }
-            if (channel != null)
-            {
-                string allMessages = "";
-                var msgsCollection = channel.GetMessagesAsync(10000).Flatten().Result;
-                
-                foreach (var msg in msgsCollection)
-                {
-                    allMessages += msg.Timestamp + "|" + msg.Author.Username + " on " + msg.Channel + ": " + msg.Content + Environment.NewLine;
-                }
-                File.WriteAllText(channelsGuild.Name + "." + channel.Name, allMessages);
-            }
-        }
-
         [Command("rolecolor"), Summary("Creates a role with your name with the specified (in hex) color. Ex) `rolecolor #000000`"), RequireBotPermission(GuildPermission.ManageRoles)]
         public async Task RoleColorChange([Remainder, Summary("The hexcode for your desired color.")] string hexText)
         {
@@ -141,7 +108,7 @@ namespace ColonelPanic.Modules
             }
         }
 
-        [Command("poop"), RequireUserPermission(ChannelPermission.ManageChannel)]
+        [Command("poop"), RequireUserPermission(ChannelPermission.ManageChannels)]
         public async Task poop([Remainder] string userId)
         {
             string chnlId = Context.Channel.Id.ToString();
@@ -163,7 +130,7 @@ namespace ColonelPanic.Modules
             await Context.Channel.SendMessageAsync("K.");
         }
 
-        [Command("eggplant"), RequireUserPermission(ChannelPermission.ManageChannel)]
+        [Command("eggplant"), RequireUserPermission(ChannelPermission.ManageChannels)]
         public async Task eggplant([Remainder] string userId)
         {
             string chnlId = Context.Channel.Id.ToString();
@@ -449,7 +416,7 @@ namespace ColonelPanic.Modules
             await Context.Channel.SendMessageAsync(ResponseCollections._8BallResponses.GetRandom());
         }
 
-        [Command("naughty"), RequireTrustedUserOrPermission(ChannelPermission.ManageChannel), Summary("Sets the specified user (by id) as being _NAUGHTY_")]
+        [Command("naughty"), RequireTrustedUserOrPermission(ChannelPermission.ManageChannels), Summary("Sets the specified user (by id) as being _NAUGHTY_")]
         public async Task NaughtyUser([Remainder, Summary("User's ID")] string userId)
         {
             ulong userUlong;
@@ -470,7 +437,7 @@ namespace ColonelPanic.Modules
                 await Context.Channel.SendMessageAsync("That doesn't seem to be the right input...");
             }
         }
-        [Command("notnaughty"), RequireTrustedUserOrPermission(ChannelPermission.ManageChannel), Summary("Sets the specified user (by id) as being _NAUGHTY_")]
+        [Command("notnaughty"), RequireTrustedUserOrPermission(ChannelPermission.ManageChannels), Summary("Sets the specified user (by id) as being _NAUGHTY_")]
         public async Task NotNaughtyUser([Remainder, Summary("User's ID")] string userId)
         {
             ulong userUlong;

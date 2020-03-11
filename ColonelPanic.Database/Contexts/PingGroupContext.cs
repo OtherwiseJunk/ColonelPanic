@@ -1,29 +1,33 @@
 ﻿using ColonelPanic.Database.Models;
+using ColonelPanic.DatabaseCore.Constants;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ColonelPanic.Database.Contexts
 {
     public class PingGroupContext : DbContext
     {
-        public PingGroupContext()
-            : base("name=BetaDB") { }
+		public PingGroupContext(DbContextOptions<PingGroupContext> options) : base(options) { }
 
-        public DbSet<PingGroup> Groups { get; set; }
+		public DbSet<PingGroup> Groups { get; set; }
         public DbSet<PingGroupUser> Users { get; set; }
 
     }
 
     public class PingGroupHandler
     {
-        public static List<string> GetPingUsers(string pingGroupName, string guildId)
+		public static DbContextOptionsBuilder<PingGroupContext> OptionsBuilder { get; set; }
+		static PingGroupHandler()
+		{
+			OptionsBuilder = new DbContextOptionsBuilder<PingGroupContext>();
+			OptionsBuilder.UseSqlServer(ConnectionStrings.ConnectionString);
+		}
+		public static List<string> GetPingUsers(string pingGroupName, string guildId)
         {
             List<string> users = new List<string> { "empty" };
-            using (PingGroupContext db = new PingGroupContext())
+            using (PingGroupContext db = new PingGroupContext(OptionsBuilder.Options))
             {
                 PingGroup group = db.Groups.FirstOrDefault(g => g.PingGroupName.ToLower() == pingGroupName.ToLower() && g.GuildId == guildId);
 
@@ -41,7 +45,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static void CreatePingGroup(string pingGroupName, string guildId)
         {
-            using (PingGroupContext db = new PingGroupContext())
+            using (PingGroupContext db = new PingGroupContext(OptionsBuilder.Options))
             {
                 db.Groups.Add(new PingGroup(guildId, pingGroupName));
                 db.SaveChanges();
@@ -50,7 +54,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static bool PingGroupExists(string pingGroupName, string guildId)
         {
-            using (PingGroupContext db = new PingGroupContext())
+            using (PingGroupContext db = new PingGroupContext(OptionsBuilder.Options))
             {
                 return db.Groups.FirstOrDefault(group => group.GuildId == guildId && group.PingGroupName.ToLower() == pingGroupName.ToLower()) != null;
             }
@@ -59,7 +63,7 @@ namespace ColonelPanic.Database.Contexts
         public static string GetPingGroups(string guildId)
         {
             string msg = "";
-            using (PingGroupContext db = new PingGroupContext())
+            using (PingGroupContext db = new PingGroupContext(OptionsBuilder.Options))
             {
 
                 if (db.Groups.FirstOrDefault(g => g.GuildId == guildId) != null)
@@ -80,7 +84,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static void AddPingGroupUser(int pingGroupId, string userId, string guildId)
         {
-            using(PingGroupContext db = new PingGroupContext())
+            using(PingGroupContext db = new PingGroupContext(OptionsBuilder.Options))
             {
                 db.Users.Add(new PingGroupUser(guildId, userId, pingGroupId));
                 db.SaveChanges();
@@ -89,7 +93,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static int GetPingGroupId(string pingGroupName, string guildId)
         {
-            using (PingGroupContext db = new PingGroupContext())
+            using (PingGroupContext db = new PingGroupContext(OptionsBuilder.Options))
             {
                 return db.Groups.First(g => g.PingGroupName.ToLower() == pingGroupName.ToLower() && g.GuildId == guildId).PingGroupId;
             }
@@ -97,7 +101,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static void PurgeUser(string userId, string guildId)
         {
-            using (PingGroupContext db = new PingGroupContext())
+            using (PingGroupContext db = new PingGroupContext(OptionsBuilder.Options))
             {
                 List<PingGroupUser> userInstances = db.Users.Where(u => u.UserId == userId && u.GuildId == guildId).ToList();
                 foreach (PingGroupUser userInstance in userInstances)
@@ -111,7 +115,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static bool PingGroupUserExists(int pingGroupId, string userId, string guildId)
         {
-            using (PingGroupContext db = new PingGroupContext())
+            using (PingGroupContext db = new PingGroupContext(OptionsBuilder.Options))
             {
                 return db.Users.FirstOrDefault(u => u.PingGroupId == pingGroupId && u.UserId == userId && u.GuildId == guildId) != null;
             }

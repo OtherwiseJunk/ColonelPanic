@@ -1,16 +1,14 @@
 ﻿using ColonelPanic.Database.Models;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
+using ColonelPanic.DatabaseCore.Constants;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ColonelPanic.Database.Contexts
 {
     public class UserDataContext : DbContext
     {
-        public UserDataContext() : base("name=BetaDB") { }
+        public UserDataContext(DbContextOptions<UserDataContext> options) : base(options) { }
 
         public DbSet<UserXChannelFlags> UserFlags { get; set; }
         public DbSet<UserState> UserStates { get; set; }
@@ -20,9 +18,15 @@ namespace ColonelPanic.Database.Contexts
 
     public class UserDataHandler
     {
+		public static DbContextOptionsBuilder<UserDataContext> OptionsBuilder { get; set; }
+		static UserDataHandler()
+		{
+			OptionsBuilder = new DbContextOptionsBuilder<UserDataContext>();
+			OptionsBuilder.UseSqlServer(ConnectionStrings.ConnectionString);
+		}
         public static void AddShitlistUser(string channelId, string userId)
         {            
-            using (UserDataContext db = new UserDataContext())
+            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
             {
                 if (UserHasFlags(channelId, userId))
                 {
@@ -40,7 +44,7 @@ namespace ColonelPanic.Database.Contexts
         }
         public static void RemoveShitlistUser(string channelId, string userId)
         {
-            using (UserDataContext db = new UserDataContext())
+            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
             {
                 db.UserFlags.FirstOrDefault(u => u.ChannelId == channelId && u.UserId == userId).Shitlist = false;
                 db.SaveChanges();
@@ -48,7 +52,7 @@ namespace ColonelPanic.Database.Contexts
         }
         public static void AddEggplantUser(string channelId, string userId)
         {
-            using (UserDataContext db = new UserDataContext())
+            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
             {
                 if (UserHasFlags(channelId, userId))
                 {
@@ -66,14 +70,14 @@ namespace ColonelPanic.Database.Contexts
         }
         public static bool UserStateExists(string userId)
         {
-            using (UserDataContext db = new UserDataContext())
+            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
             {
                 return db.UserStates.FirstOrDefault(u => u.UserId == userId) != null;
             }
         }
         public static void AddUserState(string userId, string username)
         {
-            using (UserDataContext db = new UserDataContext())
+            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
             {
                 db.UserStates.Add(new UserState(userId, username));
                 db.SaveChanges();
@@ -83,7 +87,7 @@ namespace ColonelPanic.Database.Contexts
         public static int IncrementTableFlipPoints(string userId,string username)
         {
             int points;
-            using (UserDataContext db = new UserDataContext())
+            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
             {
                 var userState = db.UserStates.FirstOrDefault(u => u.UserId == userId);
                 if (userState != null)
@@ -107,7 +111,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static void RemoveEggplantUser(string channelId, string userId)
         {            
-            using (UserDataContext db = new UserDataContext())
+            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
             {
                 db.UserFlags.FirstOrDefault(u => u.ChannelId == channelId && u.UserId == userId).EggplantList = false;                
                 db.SaveChanges();
@@ -115,7 +119,7 @@ namespace ColonelPanic.Database.Contexts
         }
         public static bool IsShitlistUser(string channelId, string userId)
         {
-            using (UserDataContext db = new UserDataContext())
+            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
             {
                 if (UserHasFlags(channelId, userId))
                 {
@@ -126,7 +130,7 @@ namespace ColonelPanic.Database.Contexts
         }
         public static bool IsEggplantUser(string channelId, string userId)
         {
-            using (UserDataContext db = new UserDataContext())
+            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
             {
                 if (UserHasFlags(channelId, userId))
                 {
@@ -137,7 +141,7 @@ namespace ColonelPanic.Database.Contexts
         }
         public static bool UserHasFlags(string channelId, string userId)
         {
-            using (UserDataContext db = new UserDataContext())
+            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
             {
                 return null != db.UserFlags.FirstOrDefault(u => u.ChannelId == channelId && u.UserId == userId);
             }
@@ -145,7 +149,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static bool IsUserNaughty(string userId)
         {
-            using (UserDataContext db = new UserDataContext())
+            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
             {
                 if (UserStateExists(userId))
                 {
@@ -157,7 +161,7 @@ namespace ColonelPanic.Database.Contexts
 
         public static void SetUserNaughtyState(string userId, bool state)
         {
-            using (UserDataContext db = new UserDataContext())
+            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
             {
                 if (UserStateExists(userId))
                 {
