@@ -11,7 +11,7 @@ namespace ColonelPanic.Database.Contexts
     {
 		public RedditContext(DbContextOptions<RedditContext> options) : base(options) { }
 
-
+        
 		public DbSet<TopDaily> TopDaily { get; set; }
 
     }

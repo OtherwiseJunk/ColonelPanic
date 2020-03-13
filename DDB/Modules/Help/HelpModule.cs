@@ -31,15 +31,12 @@ namespace DartsDiscordBots.Modules
 
             foreach (var module in _service.Modules)
             {
-                string description = "";
+                string description = null;
                 foreach (var cmd in module.Commands)
                 {
                     var result = await cmd.CheckPreconditionsAsync(Context);
                     if (result.IsSuccess)
-                        if (!description.Contains($"{prefix}{cmd.Aliases.First()}\n"))
-                        {
-                            description += $"{prefix}{cmd.Aliases.First()}\n";
-                        }                        
+                        description += $"{prefix}{cmd.Aliases.First()}\n";
                 }
 
                 if (!string.IsNullOrWhiteSpace(description))

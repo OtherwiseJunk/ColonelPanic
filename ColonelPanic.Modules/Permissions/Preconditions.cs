@@ -9,56 +9,47 @@ using Discord;
 
 namespace ColonelPanic.Utilities.Permissions
 {
-    public class RequireColPermissionAttribute : PreconditionAttribute
-    {
-        public string Permission;
-        public RequireColPermissionAttribute(string perm)
-        {
-            Permission = perm;
-        }
+	public class RequireColPermissionAttribute : PreconditionAttribute
+	{
+		public string Permission;
+		public RequireColPermissionAttribute(string perm)
+		{
+			Permission = perm;
+		}
 
 		public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
 		{
-			if (PermissionHandler.CanExecute(Permission, context.Guild.Id.ToString(), context.User.Id.ToString()))
-				return new Task(() => PreconditionResult.FromSuccess()) as Task<PreconditionResult>;
-
-			else
-				return new Task(() => PreconditionResult.FromError("That command is not available on this channel.")) as Task<PreconditionResult>;
+			if (PermissionHandler.CanExecute(Permission, context.Guild.Id.ToString(), context.User.Id.ToString())) { 
+				return Task.FromResult(PreconditionResult.FromSuccess()); 
+			}
+			return Task.FromResult(PreconditionResult.FromError("That command is not available on this channel."));
 		}
 	}
-
-    public class RequireUserNotNaughty : PreconditionAttribute
-    {
-        public RequireUserNotNaughty() { }
+	public class RequireUserNotNaughty : PreconditionAttribute
+	{
+		public RequireUserNotNaughty() { }
 
 		public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
 		{
 			if (UserDataHandler.IsUserNaughty(context.Message.Author.Id.ToString()))
 			{
-				return new Task(() => PreconditionResult.FromSuccess()) as Task<PreconditionResult>;
+				return Task.FromResult(PreconditionResult.FromSuccess());
 			}
-			else
-			{
-				return new Task(() => PreconditionResult.FromError("")) as Task<PreconditionResult>;
-			}
+			return Task.FromResult(PreconditionResult.FromError("Sorry, looks like you've been _naughty_."));
 		}
 	}
 
-    public class RequireTrustedUser : PreconditionAttribute
-    {
-        public RequireTrustedUser() { }
+	public class RequireTrustedUser : PreconditionAttribute
+	{
+		public RequireTrustedUser() { }
 
 		public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
 		{
 			if (PermissionHandler.IsTrustedUser(context.User.Id.ToString()))
 			{
-				return new Task(() => PreconditionResult.FromSuccess()) as Task<PreconditionResult>;
+				return Task.FromResult(PreconditionResult.FromSuccess());
 			}
-
-			else
-			{
-				return new Task(() => PreconditionResult.FromError("Unauthorized user detected. This action has been logged.")) as Task<PreconditionResult>;
-			}
+			return  Task.FromResult(PreconditionResult.FromError("Unauthorized user detected. This action has been logged."));
 		}
 	}
 
@@ -84,16 +75,13 @@ namespace ColonelPanic.Utilities.Permissions
 		{
 			if (UserPermAttribute.CheckPermissionsAsync(context, command, services).Result.IsSuccess)
 			{
-				return new Task(() => PreconditionResult.FromSuccess()) as Task<PreconditionResult>;
+				return Task.FromResult(PreconditionResult.FromSuccess());
 			}
-			else
-			{
-				return new Task(() => PreconditionResult.FromError("Unauthorized user detected. This action has been logged.")) as Task<PreconditionResult>;
-			}
+			return Task.FromResult(PreconditionResult.FromError("Unauthorized user detected. This action has been logged."));
 		}
 	}
 
-    public class RequireChannelConfiguration : PreconditionAttribute
+	public class RequireChannelConfiguration : PreconditionAttribute
     {
         public string ConfigurationType;
         public RequireChannelConfiguration(string configurationType)
@@ -104,10 +92,10 @@ namespace ColonelPanic.Utilities.Permissions
 		public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
 		{
 			if (PermissionHandler.ChannelConfigured(ConfigurationType, context.Channel.Id.ToString()))
-				return new Task(() => PreconditionResult.FromSuccess()) as Task<PreconditionResult>;
-
-			else
-				return new Task(() => PreconditionResult.FromError("That module is not setup for this channel, I'm missing configuration details.")) as Task<PreconditionResult>;
+			{
+				return Task.FromResult(PreconditionResult.FromSuccess()) as Task<PreconditionResult>;
+			}
+			return Task.FromResult(PreconditionResult.FromError("That module is not setup for this channel, I'm missing configuration details.")) as Task<PreconditionResult>;
 		}
 	}
 }

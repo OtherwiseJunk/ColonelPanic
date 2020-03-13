@@ -1,5 +1,8 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DartsDiscordBots.Permissions
@@ -16,10 +19,10 @@ namespace DartsDiscordBots.Permissions
 		{
 
 			if (context.Channel.Id.ToString() == ChannelId)
-				return new Task(() => PreconditionResult.FromSuccess()) as Task<PreconditionResult>;
-
-			else
-				return new Task(() => PreconditionResult.FromError("That command is not available on this channel.")) as Task<PreconditionResult>;
+			{
+				return Task.FromResult(PreconditionResult.FromSuccess());
+			}				
+			return Task.FromResult(PreconditionResult.FromError("That command is not available on this channel."));
 		}
 	}
 
@@ -35,11 +38,34 @@ namespace DartsDiscordBots.Permissions
 
 		public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
 		{
-			if (context.Guild.Id.ToString() == GuildId)
-				return new Task (() => PreconditionResult.FromSuccess()) as Task<PreconditionResult>;
+			if (context.Guild.Id.ToString() == GuildId) {
+				return Task.FromResult(PreconditionResult.FromSuccess());
+			}				
+			return Task.FromResult(PreconditionResult.FromError("That command is not available on this channel."));
+		}
+	}
 
-			else
-				return new Task(() => PreconditionResult.FromError("That command is not available on this channel.")) as Task<PreconditionResult>;
+	public class RequireRoleName : PreconditionAttribute
+	{
+		public string RoleName;
+
+		public RequireRoleName(string roleName)
+		{
+			RoleName = roleName;
+		}
+
+		public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
+		{
+			IRole role = context.Guild.Roles.FirstOrDefault(r => r.Name.ToLower() == RoleName.ToLower());
+			if(role != null)
+			{
+				List<IGuildUser> users = context.Guild.GetUsersAsync().Result.Where(u => u.RoleIds.Contains(role.Id)).ToList();
+				if (users.Count > 0)
+				{
+					return Task.FromResult(PreconditionResult.FromSuccess());
+				}
+			}			
+			return Task.FromResult(PreconditionResult.FromError("I don't see any Squaddies here. Did you create the role?"));
 		}
 	}
 }

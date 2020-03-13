@@ -6,6 +6,6 @@ namespace ColonelPanic.DatabaseCore.Constants
 {
 	public class ConnectionStrings
 	{
-		public static string ConnectionString = "data source=(LocalDb)\\GARNET;initial catalog=MotherBrain;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework";
+		public static string ConnectionString = "data source=EPSILON;initial catalog=MotherBrain;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework";
 	}
 }

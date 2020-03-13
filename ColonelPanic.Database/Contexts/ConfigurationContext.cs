@@ -6,6 +6,7 @@ namespace ColonelPanic.Database.Contexts
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
 
     public class ConfigurationContext : DbContext
@@ -182,7 +183,7 @@ namespace ColonelPanic.Database.Contexts
         {
             using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
             {
-                return db.TrustedUsers.FirstOrDefault(u => u.UserId.ToString() == userId) != null;
+                return db.TrustedUsers.AsEnumerable().FirstOrDefault(u => u.UserId.ToString() == userId) != null;
             }
         }
 
