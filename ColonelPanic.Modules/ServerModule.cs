@@ -73,88 +73,8 @@ namespace ColonelPanic.Modules
             Context.Channel.SendMessageAsync("https://discordapp.com/oauth2/authorize?&client_id=357910708316274688&scope=bot");
         }
 
-        [Command("big"), Summary("`Applies the 'Big if True'`")]
-        public async Task BigIfTrue([Remainder, Summary("MsgId")]string msgId)
-        {
-            if (ulong.TryParse(msgId, out var mId))
-            {
-                var msg = Context.Channel.GetMessageAsync(mId).Result as IUserMessage;
-                var emoji = new Emoji("🇧");
-                await msg.AddReactionAsync(emoji);
-
-                emoji = new Emoji("🇮");
-                await msg.AddReactionAsync(emoji);
-
-                emoji = new Emoji("🇬");
-                await msg.AddReactionAsync(emoji);
-
-                emoji = new Emoji("\U00002139");
-                await msg.AddReactionAsync(emoji);
-
-                emoji = new Emoji("🇫");
-                await msg.AddReactionAsync(emoji);
-
-                emoji = new Emoji("🇹");
-                await msg.AddReactionAsync(emoji);
-
-                emoji = new Emoji("🇷");
-                await msg.AddReactionAsync(emoji);
-
-                emoji = new Emoji("🇺");
-                await msg.AddReactionAsync(emoji);
-
-                emoji = new Emoji("🇪");
-                await msg.AddReactionAsync(emoji);
-            }
-        }
-
-        [Command("poop"), RequireUserPermission(ChannelPermission.ManageChannels)]
-        public async Task poop([Remainder] string userId)
-        {
-            string chnlId = Context.Channel.Id.ToString();
-            if (UserDataHandler.UserHasFlags(chnlId, userId))
-            {
-                if (!UserDataHandler.IsShitlistUser(chnlId, userId))
-                {
-                    UserDataHandler.AddShitlistUser(chnlId, userId);
-                }
-                else if (UserDataHandler.UserHasFlags(chnlId, userId))
-                {
-                    UserDataHandler.RemoveShitlistUser(chnlId, userId);
-                }
-            }
-            else
-            {
-                UserDataHandler.AddShitlistUser(chnlId, userId);
-            }
-            await Context.Channel.SendMessageAsync("K.");
-        }
-
-        [Command("eggplant"), RequireUserPermission(ChannelPermission.ManageChannels)]
-        public async Task eggplant([Remainder] string userId)
-        {
-            string chnlId = Context.Channel.Id.ToString();
-
-            if (UserDataHandler.UserHasFlags(chnlId, userId))
-            {
-                if (!UserDataHandler.IsEggplantUser(chnlId, userId))
-                {
-                    UserDataHandler.AddEggplantUser(chnlId, userId);
-                }
-                else if (UserDataHandler.UserHasFlags(chnlId, userId))
-                {
-                    UserDataHandler.RemoveEggplantUser(chnlId, userId);
-                }
-            }
-            else
-            {
-                UserDataHandler.AddEggplantUser(chnlId, userId);
-            }
-            await Context.Channel.SendMessageAsync("K.");
-        }
-
-        [Command("roll")]
-        public async Task Roll([Remainder] string rollString)
+        [Command("roll"), Summary("Roll XdY+/-Z dice.")]
+        public async Task Roll([Remainder, Summary("What to roll. Can indicate the number of dice to roll, the number of sides on those dice, and a positive or negative modifier to add to the results. 3d6+2 would roll 3 6-sided dice and add 2 to the final result.")] string rollString)
         {
 
             var arguments = new List<string>(rollString.Split('d'));
@@ -311,54 +231,6 @@ namespace ColonelPanic.Modules
             }
         }
 
-        [Command("emojilist")]
-        public async Task EmojiList()
-        {
-            string msg = "";
-            foreach (var guild in Context.Client.GetGuildsAsync().Result)
-            {
-                foreach (var emote in guild.Emotes)
-                {
-                    msg += emote.Name + ": <:" + emote.Name + ":" + emote.Id + ">" + "\n";
-                    if (msg.Length >= 1900)
-                    {
-                        await Context.User.SendMessageAsync(msg);
-                        msg = "";
-                    }
-                }
-                
-
-            }
-            if (msg != "")
-            {
-                await Context.User.SendMessageAsync(msg);
-            }
-
-        }
-
-        [Command("emoji")]
-        public async Task Emoji([Remainder, Summary("name")]string name = "none")
-        {
-            bool brokeOut = false;            
-            foreach (var guild in Context.Client.GetGuildsAsync().Result)
-            {
-                foreach (var emote in guild.Emotes)
-                {
-                    if (emote.Name == name)
-                    {
-                        await Context.Channel.SendMessageAsync("<:" + emote.Name + ":" + emote.Id + ">");
-                        brokeOut = true;
-                        break;
-                    }
-                }
-                if (brokeOut)
-                {
-                    break;
-                }
-            }
-        }
-
-
         [Command("trust"), RequireOwner, Summary("Adds the user's ID to the trusted user list. Trusted users will be able to execute commands regardless of permissions.")]
         public async Task TrustUser([Remainder, Summary("User's ID")] string userId)
         {
@@ -492,27 +364,6 @@ namespace ColonelPanic.Modules
             else
             {
                 usernameRole = Context.Guild.CreateRoleAsync(name: user.Username, color: roleColor).Result;
-                await usernameRole.ModifyAsync(x => x.Position = topPosition);
-            }
-            return usernameRole;
-        }
-
-        private static async Task<IRole> ModifyUserRoleColor(int r,int g, int b, IUser user, IGuild guild)
-        {
-            Color roleColor = new Color(r, g, b);
-            IRole usernameRole;
-            int topPosition = guild.Roles.Count - 2;
-            if (RoleExists(guild.Roles, user.Username, out usernameRole))
-            {
-                await usernameRole.ModifyAsync(x =>
-                {
-                    x.Color = roleColor;
-                    x.Position = topPosition;
-                });
-            }
-            else
-            {
-                usernameRole = guild.CreateRoleAsync(name: user.Username, color: roleColor).Result;
                 await usernameRole.ModifyAsync(x => x.Position = topPosition);
             }
             return usernameRole;

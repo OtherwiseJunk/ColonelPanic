@@ -2,7 +2,7 @@
 using ColonelPanic.DatabaseCore.Constants;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-
+using System.Threading.Tasks;
 
 namespace ColonelPanic.Database.Contexts
 {
@@ -24,50 +24,6 @@ namespace ColonelPanic.Database.Contexts
 			OptionsBuilder = new DbContextOptionsBuilder<UserDataContext>();
 			OptionsBuilder.UseSqlServer(ConnectionStrings.ConnectionString);
 		}
-        public static void AddShitlistUser(string channelId, string userId)
-        {            
-            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
-            {
-                if (UserHasFlags(channelId, userId))
-                {
-                    db.UserFlags.FirstOrDefault(u => u.ChannelId == channelId && u.UserId == userId).Shitlist = true;
-
-                }
-                else
-                {
-                    var uxcf = new UserXChannelFlags(channelId, userId);
-                    uxcf.Shitlist = true;
-                    db.UserFlags.Add(uxcf);                                        
-                }
-                db.SaveChanges();
-            }            
-        }
-        public static void RemoveShitlistUser(string channelId, string userId)
-        {
-            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
-            {
-                db.UserFlags.FirstOrDefault(u => u.ChannelId == channelId && u.UserId == userId).Shitlist = false;
-                db.SaveChanges();
-            }            
-        }
-        public static void AddEggplantUser(string channelId, string userId)
-        {
-            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
-            {
-                if (UserHasFlags(channelId, userId))
-                {
-                    db.UserFlags.FirstOrDefault(u => u.ChannelId == channelId && u.UserId == userId).EggplantList = true;
-
-                }
-                else
-                {
-                    var uxcf = new UserXChannelFlags(channelId, userId);
-                    uxcf.EggplantList = true;
-                    db.UserFlags.Add(uxcf);
-                }
-                db.SaveChanges();
-            }
-        }
         public static bool UserStateExists(string userId)
         {
             using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
@@ -75,16 +31,19 @@ namespace ColonelPanic.Database.Contexts
                 return db.UserStates.FirstOrDefault(u => u.UserId == userId) != null;
             }
         }
-        public static void AddUserState(string userId, string username)
+        public static void AddUserStateIfMising(string userId, string username)
         {
             using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
             {
-                db.UserStates.Add(new UserState(userId, username));
-                db.SaveChanges();
+                if (db.UserStates.FirstOrDefault(u => u.UserId == userId) == null)
+                {
+                    db.UserStates.Add(new UserState(userId, username));
+                    db.SaveChanges();
+                }
             }
         }
 
-        public static int IncrementTableFlipPoints(string userId,string username)
+        public static int IncrementTableFlipPoints(string userId, string username)
         {
             int points;
             using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
@@ -105,40 +64,10 @@ namespace ColonelPanic.Database.Contexts
                     db.UserStates.Add(usrState);
                 }
                 db.SaveChanges();
-            }            
+            }
             return points;
         }
 
-        public static void RemoveEggplantUser(string channelId, string userId)
-        {            
-            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
-            {
-                db.UserFlags.FirstOrDefault(u => u.ChannelId == channelId && u.UserId == userId).EggplantList = false;                
-                db.SaveChanges();
-            }            
-        }
-        public static bool IsShitlistUser(string channelId, string userId)
-        {
-            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
-            {
-                if (UserHasFlags(channelId, userId))
-                {
-                    return db.UserFlags.FirstOrDefault(u => u.ChannelId == channelId && u.UserId == userId).Shitlist;
-                }
-                return false;
-            }
-        }
-        public static bool IsEggplantUser(string channelId, string userId)
-        {
-            using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))
-            {
-                if (UserHasFlags(channelId, userId))
-                {
-                    return db.UserFlags.FirstOrDefault(u => u.ChannelId == channelId && u.UserId == userId).EggplantList;
-                }
-                return false;
-            }
-        }
         public static bool UserHasFlags(string channelId, string userId)
         {
             using (UserDataContext db = new UserDataContext(OptionsBuilder.Options))

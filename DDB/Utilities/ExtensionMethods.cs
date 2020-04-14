@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DartsDiscordBots.Utilities
 {
-    public static class ExtensionMethods
-    {
+	public static class ExtensionMethods
+	{
+		public static string ToPascalCase(this string value)
+		{
+			return char.ToUpper(value[0]) + value.Substring(1).ToLower();
+		}
         private static Random _random = new Random();
 
         public static T GetRandom<T>(this IList<T> items)
@@ -25,6 +28,11 @@ namespace DartsDiscordBots.Utilities
                 items[r] = items[i];
                 items[i] = tempItem;
             }
+        }
+
+        public static string ToPascalPipeSeparatedString(this IList<string> list)
+        {
+            return String.Join("|", list.Select(s => s.ToPascalCase()));
         }
     }
 }

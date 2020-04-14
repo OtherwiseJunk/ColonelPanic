@@ -39,6 +39,14 @@ namespace ColonelPanic.Database.Contexts
             }
         }
 
+        public static List<TopDaily> GetAllTopDailies()
+        {
+            using(var db = new RedditContext(OptionsBuilder.Options))
+            {
+                return db.TopDaily.ToList();
+            }
+        }
+
         public static List<TopDaily> GetSubredditsToCheck()
         {
             Boolean EntryChanged = false;

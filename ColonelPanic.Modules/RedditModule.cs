@@ -18,8 +18,8 @@ namespace ColonelPanic.Modules
     [Group("topdaily")]
     public class RedditModule : ModuleBase
     {
-        [Command("rand")]
-        public async Task GetRandomImage([Remainder] string Subreddit) 
+        [Command("rand"), Summary("Get a random image from the top 20 posts of the specified subreddit")]
+        public async Task GetRandomImage([Remainder, Summary("The name of the subreddit to get a random top-twenty image from.")] string Subreddit) 
         {
             using (var client = new WebClient())
             {
@@ -49,7 +49,7 @@ namespace ColonelPanic.Modules
             }
         }
 
-        [Command("list")]
+        [Command("list"), Summary("Lists all of the topdailies for this channel.")]
         public async Task ListTopDailies()
         {
             await Context.Channel.SendMessageAsync(RedditHandler.GetTopDailies(Context.Channel.Id.ToString()));
@@ -61,7 +61,7 @@ Usage: $top ""birbs"" ""17:00""
 This command would cause the top image post from birbs to be posted at 5:00PM every day!
 
 All posts will occur at that time in ET, sorry lesser timezones :-)")]
-        public async Task AddTopDaily([Summary("Subreddit to post")]string Subreddit, [Summary("Time to post daily")]string Time)
+        public async Task AddTopDaily([Summary("Subreddit to post from")]string Subreddit, [Summary("Time to post daily")]string Time)
         {
             using (var client = new WebClient())
             {

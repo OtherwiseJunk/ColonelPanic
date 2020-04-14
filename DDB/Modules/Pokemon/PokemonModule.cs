@@ -1,5 +1,6 @@
 ﻿using DartsDiscordBots.Models;
 using DartsDiscordBots.Interfaces;
+using DartsDiscordBots.Utilities;
 using Discord;
 using Discord.Commands;
 using System;
@@ -27,7 +28,7 @@ namespace DartsDiscordBots.Modules
 					await Context.Message.AddReactionAsync(Context.Guild.Emotes.First(emote => emote.Id == pokemonConfig.SwordEmoteId));
 					if ((Context.User as IGuildUser).RoleIds.Contains(pokemonConfig.ShieldRoleId))
 					{
-						await Context.Channel.SendFileAsync(GetImageStreamFromBase64(_pokemon.TwoPokemonSwordImage), "TWOPokemonz! - Sword.png");
+						await Context.Channel.SendFileAsync(Converters.GetImageStreamFromBase64(_pokemon.TwoPokemonSwordImage), "TWOPokemonz! - Sword.png");
 					}
 				}
 				else
@@ -51,7 +52,7 @@ namespace DartsDiscordBots.Modules
 					await Context.Message.AddReactionAsync(Context.Guild.Emotes.First(emote => emote.Id == pokemonConfig.ShieldEmoteId));
 					if ((Context.User as IGuildUser).RoleIds.Contains(pokemonConfig.SwordRoleId))
 					{
-						await Context.Channel.SendFileAsync(GetImageStreamFromBase64(_pokemon.TwoPokemonShieldImage), "TWOPokemonz! - Shield.png");
+						await Context.Channel.SendFileAsync(Converters.GetImageStreamFromBase64(_pokemon.TwoPokemonShieldImage), "TWOPokemonz! - Shield.png");
 					}
 				}
 				else
@@ -103,12 +104,6 @@ namespace DartsDiscordBots.Modules
 			{
 				user.AddRoleAsync(context.Guild.Roles.First(r => r.Id == pokemonConfig.SwordChampionRoleId));
 			}
-		}
-
-		public Stream GetImageStreamFromBase64(string base64)
-		{
-			var bytes = Convert.FromBase64String(base64);
-			return new MemoryStream(bytes);
 		}
 	}
 }
