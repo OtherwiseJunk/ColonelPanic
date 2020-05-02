@@ -57,7 +57,7 @@ namespace ColonelPanic.Modules
 
         [Command("add"), RequireTrustedUserOrPermission(Discord.GuildPermission.ManageChannels), Summary(@"Will schedule a daily post at the specified time, taking the top image post from the provided subreddit.
 
-Usage: $top ""birbs"" ""17:00"" 
+Usage: $top birbs 17:00 
 This command would cause the top image post from birbs to be posted at 5:00PM every day!
 
 All posts will occur at that time in ET, sorry lesser timezones :-)")]
@@ -83,7 +83,7 @@ All posts will occur at that time in ET, sorry lesser timezones :-)")]
                                 nextPostDate.AddDays(1);
                             }
                             RedditHandler.AddTopDaily(Context.Channel.Id.ToString(), Subreddit, nextPostDate);
-                            await Context.Channel.SendMessageAsync("You got it, my dude.");
+                            await Context.Channel.SendMessageAsync("You got it, friend.");
                         }
                         else
                         {

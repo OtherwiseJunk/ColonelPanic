@@ -156,26 +156,55 @@ namespace DartsDiscordBots.Services
 					IGuildUser localMayor = users.FirstOrDefault(u => u.Id == town.MayorDiscordId);
 					if (town.TurnipSellPrice != 0)
 					{
-						if(localMayor != null)
+						if (town.BorderOpen)
 						{
-							sbSell.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {town.TurnipSellPrice} bells");
+							if (localMayor != null)
+							{
+								sbSell.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {town.TurnipSellPrice} bells. Open Now!" + town.DodoCode != String.Empty ? $" Dodo Code: {town.DodoCode}" : "");
+							}
+							else
+							{
+								sbSell.AppendLine($"{town.TownName} - {town.TurnipSellPrice} bells. Open Now!" + town.DodoCode != String.Empty ? $" Dodo Code: {town.DodoCode}" : "");
+
+							}
 						}
 						else
 						{
-							sbSell.AppendLine($"{town.TownName} - {town.TurnipSellPrice} bells");
-							
-						}
+							if (localMayor != null)
+							{
+								sbSell.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {town.TurnipSellPrice} bells.");
+							}
+							else
+							{
+								sbSell.AppendLine($"{town.TownName} - {town.TurnipSellPrice} bells.");
+
+							}
+						}						
 						sellUnset = false;
 					}
 					if (town.TurnipBuyPrice != 0)
 					{
-						if (localMayor != null)
+						if (town.BorderOpen)
 						{
-							sbBuy.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {town.TurnipBuyPrice} bells");
+							if (localMayor != null)
+							{
+								sbBuy.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {town.TurnipBuyPrice} bells. Open Now!" + town.DodoCode != String.Empty ? $" Dodo Code: {town.DodoCode}" : "");
+							}
+							else
+							{
+								sbBuy.AppendLine($"{town.TownName} - {town.TurnipBuyPrice} bells. Open Now!" + town.DodoCode != String.Empty ? $" Dodo Code: {town.DodoCode}" : "");
+							}
 						}
 						else
 						{
-							sbBuy.AppendLine($"{town.TownName} - {town.TurnipBuyPrice} bells");
+							if (localMayor != null)
+							{
+								sbBuy.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {town.TurnipBuyPrice} bells.");
+							}
+							else
+							{
+								sbBuy.AppendLine($"{town.TownName} - {town.TurnipBuyPrice} bells.");
+							}
 						}
 						buyUnset = false;
 					}
@@ -451,6 +480,7 @@ namespace DartsDiscordBots.Services
 				{
 					Town town = db.Towns.First(t => t.MayorDiscordId == userId);
 					town.BorderOpen = false;
+					town.DodoCode = null;
 					db.SaveChanges();
 					return "Ok, I'll let everyone know so they don't try and visit!";
 				}
@@ -467,11 +497,15 @@ namespace DartsDiscordBots.Services
 			{
 				try
 				{
-					Town town = db.Towns.Include(t => t.Fruits).First(t => t.MayorDiscordId == userId);
-					if (town.Fruits.FirstOrDefault(f => f.FruitName == fruitName.ToPascalCase()) == null) return "Your native fruit has to be registered to your town, first.";
+					Town town = db.Towns.Include(t => t.Fruits).First(t => t.MayorDiscordId == userId);					 
 
 					town.NativeFruit = fruitName.ToPascalCase();
 					db.SaveChanges();
+					if (town.Fruits.FirstOrDefault(f => f.FruitName == fruitName.ToPascalCase()) == null)
+					{
+						RegisterFruit(userId, fruitName);
+						return $"Ok, registered {fruitName.ToPascalCase()} as your native fruit, and added it to your towns fruit list.";
+					}						
 					return $"Ok, registered {fruitName.ToPascalCase()} as your native fruit.";
 				}
 				catch

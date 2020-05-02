@@ -80,7 +80,7 @@ namespace ColonelPanic.Database.Contexts
                 }
                 else
                 {
-                    return "That note name is already taken, my dude.";
+                    return "That note name is already taken, friend.";
                 }
             }
         }

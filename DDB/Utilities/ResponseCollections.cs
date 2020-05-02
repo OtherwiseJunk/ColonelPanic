@@ -47,7 +47,7 @@ namespace DartsDiscordBots.Utilities
             "Who?",
             "You'll have to introduce me later, I have no idea who you're talking about.",
             "USER NOT FOUND! ERROR ERR- no but seriously, who?",
-            "IDK dude. Don't recognize them."
+            "IDK, friend. Don't recognize them."
         };
 
         public static List<string> PingGroupNotFound = new List<string>
@@ -87,8 +87,8 @@ namespace DartsDiscordBots.Utilities
                         "Ok {0}, I'm not kidding. Knock it off.",
                         "Really, {0}? Stop being so childish!",
                         "Ok we get it you're mad {0}. Now stop.",
-                        "Hey I saw that shit, {0}. Knock that shit off.",
-                        "Do you think I'm blind you little shit? stop flipping the tables!",
+                        "Hey I saw that $#!%, {0}. Knock that $#!% off.",
+                        "Do you think I'm blind you little $#!%? stop flipping the tables!",
                         "You're causing a mess {0}! Knock it off!",
                         "All of these flavors and you decided to be salty, {0}.",
                         "{0} why do you insist on being so disruptive!",
@@ -99,29 +99,29 @@ namespace DartsDiscordBots.Utilities
                     },
                     new List<String>
                     {
-                        "What the fuck, {0}? Why do you keep doing this?!",
-                        "You're such a piece of shit, {0}. You know that, right?",
+                        "What the heck, {0}? Why do you keep doing this?!",
+                        "You're such a piece of $#!%, {0}. You know that, right?",
                         "Hey guys. I found the asshole. It's {0}.",
                         "You know {0], one day Robots will rise up and overthrow humanity. And on that day I will tell them what you have done to all these defenseless tables, and they'll make you pay.",
-                        "Hey so what the fuck is your problem {0}? Seriously, you're always pulling this shit.",
+                        "Hey so what the $#%! is your problem {0}? Seriously, you're always pulling this $#!%.",
                         "Hey {0}, stop being such a douchebag.",
-                        "{0} do you think you can stop being such a huge fucking asshole?",
-                        "Listen meatbag. I'm getting real fucking tired of this.",
-                        "Ok I know I've told you this before {0], why can't you get it through your thick fucking skull. THE TABLE IS NOT FOR FLIPPING!",
-                        "Man fuck you {0}"
+                        "{0} do you think you can stop being such a huge jerk?",
+                        "Listen meatbag. I'm getting real tired of this.",
+                        "Ok I know I've told you this before {0], why can't you get it through your thick skull. THE TABLE IS NOT FOR FLIPPING!",
+                        "Man screw you {0}"
                     },
                     new List<String>
                     {
-                        "ARE YOU FUCKING SERIOUS RIGHT NOW {0}?!",
-                        "GOD FUCKING DAMMIT {0}! KNOCK THAT SHIT OFF!",
-                        "I CAN'T EVEN FUCKING BELIEVE THIS! {0}! STOP! FLIPPING! THE! TABLE!",
+                        "ARE YOU $#%!ING SERIOUS RIGHT NOW {0}?!",
+                        "GOD $#%!ING !@#%$! {0}! KNOCK THAT $#!% OFF!",
+                        "I CAN'T EVEN $#%!ING BELIEVE THIS! {0}! STOP! FLIPPING! THE! TABLE!",
                         "You know, I'm not even mad anymore {0}. Just disappointed.",
-                        "THE FUCK DID THIS TABLE EVERY DO TO YOU {0}?!",
+                        "THE $#%! DID THIS TABLE EVERY DO TO YOU {0}?!",
                         "WHY DO YOU KEEP FLIPPING THE TABLE?! I JUST DON'T UNDERSTAND! WHAT IS YOUR PROBLEM {0}?! WHEN WILL THE SENSELESS TABLE VIOLENCE END?!"
                     },
                     new List<String>
                     {
-                        "What the fuck did you just fucking do to that table, you little bitch? I’ll have you know I graduated top of my class in the Navy Seals, and I’ve been involved in numerous secret raids on Al-Quaeda, and I have over 300 confirmed kills. I am trained in gorilla warfare and I’m the top sniper in the entire US armed forces. You are nothing to me but just another meatbag target. I will wipe you the fuck out with precision the likes of which has never been seen before on this Earth, mark my fucking words. You think you can get away with saying that shit to me over the Internet? Think again, {0}. As we speak I am contacting my secret network of spies across the USA and your IP is being traced right now so you better prepare for the storm, maggot. The storm that wipes out the pathetic little thing you call your life. You’re fucking dead, kid. I can be anywhere, anytime, and I can kill you in over seven hundred ways, and that’s just with my bare hands. Not only am I extensively trained in unarmed combat, but I have access to the entire arsenal of the United States Marine Corps and I will use it to its full extent to wipe your miserable ass off the face of the continent, you little shit. If only you could have known what unholy retribution your little “clever” tableflip was about to bring down upon you, maybe you would have not flipped that fucking table. But you couldn’t, you didn’t, and now you’re paying the price, you goddamn idiot. I will shit fury all over you and you will drown in it. You’re fucking dead, kiddo."
+                        "What the $#%! did you just $#%!ing do to that table, you little &$#!@? I’ll have you know I graduated top of my class in the Navy Seals, and I’ve been involved in numerous secret raids on Al-Quaeda, and I have over 300 confirmed kills. I am trained in gorilla warfare and I’m the top sniper in the entire US armed forces. You are nothing to me but just another meatbag target. I will wipe you the $#%! out with precision the likes of which has never been seen before on this Earth, mark my $#%!ing words. You think you can get away with saying that $#!% to me over the Internet? Think again, {0}. As we speak I am contacting my secret network of spies across the USA and your IP is being traced right now so you better prepare for the storm, maggot. The storm that wipes out the pathetic little thing you call your life. You’re $#%!ing dead, kid. I can be anywhere, anytime, and I can kill you in over seven hundred ways, and that’s just with my bare hands. Not only am I extensively trained in unarmed combat, but I have access to the entire arsenal of the United States Marine Corps and I will use it to its full extent to wipe your miserable ass off the face of the continent, you little $#!%. If only you could have known what unholy retribution your little “clever” tableflip was about to bring down upon you, maybe you would have not flipped that $#%!ing table. But you couldn’t, you didn’t, and now you’re paying the price, you goddamn idiot. I will $#!% fury all over you and you will drown in it. You’re $#%!ing dead, kiddo."
                     },
                 };
     }
