@@ -27,5 +27,7 @@ namespace DartsDiscordBots.Interfaces
 		Town GetTown(int townId);
 		Town GetTown(string townName);
 		Town GetTown(ulong mayorId);
+		string GetTurnipStats(ulong id);
+		string GetTurnipPricesForWeek(ulong id);
 	}
 }

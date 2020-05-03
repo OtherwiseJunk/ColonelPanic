@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ColonelPanic.Database.Migrations
 {
     [DbContext(typeof(AnimalCrossingContext))]
-    [Migration("20200502232209_TurnipOverhaul")]
-    partial class TurnipOverhaul
+    [Migration("20200503054225_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -93,8 +93,10 @@ namespace ColonelPanic.Database.Migrations
 
             modelBuilder.Entity("DartsDiscordBots.Modules.AnimalCrossing.Models.TurnipBuyPrice", b =>
                 {
-                    b.Property<double>("BuyPriceId")
-                        .HasColumnType("float");
+                    b.Property<int>("BuyPriceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("Price")
                         .HasColumnType("int");
@@ -109,13 +111,15 @@ namespace ColonelPanic.Database.Migrations
 
                     b.HasIndex("TownId");
 
-                    b.ToTable("BuyPrices");
+                    b.ToTable("AC_BuyPrices");
                 });
 
             modelBuilder.Entity("DartsDiscordBots.Modules.AnimalCrossing.Models.TurnipSellPrice", b =>
                 {
-                    b.Property<double>("SellPriceId")
-                        .HasColumnType("float");
+                    b.Property<int>("SellPriceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<bool>("IsMorningPrice")
                         .HasColumnType("bit");
@@ -133,7 +137,7 @@ namespace ColonelPanic.Database.Migrations
 
                     b.HasIndex("TownId");
 
-                    b.ToTable("SellPrices");
+                    b.ToTable("AC_SellPrices");
                 });
 
             modelBuilder.Entity("DartsDiscordBots.Models.Fruit", b =>

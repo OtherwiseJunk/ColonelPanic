@@ -175,12 +175,12 @@ namespace DartsDiscordBots.Services
 							if (localMayor != null)
 							{
 								sbBuy.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {latestBuy.Price} bells as of {latestBuy.Timestamp}.");
-								sbSell.AppendLine(openNowString);
+								sbBuy.AppendLine(openNowString);
 							}
 							else
 							{
 								sbBuy.AppendLine($"{town.TownName} - {latestBuy.Price} bells as of {latestBuy.Timestamp}.");
-								sbSell.AppendLine(openNowString);
+								sbBuy.AppendLine(openNowString);
 							}
 						}
 						else
@@ -525,6 +525,118 @@ namespace DartsDiscordBots.Services
 					town.BorderOpen = false;
 					town.DodoCode = null;
 				});
+			}
+		}
+
+		public string GetTurnipStats(ulong id)
+		{
+			if(GetTown(id) != null)
+			{
+				using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
+				{
+					Town town = db.Towns.Include(t => t.BuyPrices).Include(t => t.SellPrices).First(t => t.MayorDiscordId == id);
+
+					StringBuilder sbBuy = new StringBuilder().AppendLine();
+					StringBuilder sbSell = new StringBuilder().AppendLine();
+					bool sellUnset = true;
+					bool buyUnset = true;
+
+					if(town.SellPrices.Count > 0)
+					{
+						int sMin = town.SellPrices.First().Price;
+						int sMax = town.SellPrices.First().Price;
+						double sSum = 0;
+						double sAvg;
+
+						foreach (TurnipSellPrice price in town.SellPrices)
+						{
+							if (sMin > price.Price) sMin = price.Price;
+							if (sMax < price.Price) sMax = price.Price;
+
+							sSum += price.Price;
+						}
+
+						sAvg = Math.Round(sSum / town.SellPrices.Count(),2);
+						sbSell.AppendLine($"**Best Sell Price**:{sMax}");
+						sbSell.AppendLine($"**Worst Sell Price**:{sMin}");
+						sbSell.AppendLine($"**Typical Sell Price**:{sAvg}");
+						sbSell.AppendLine($"**Sell Price Count**:{town.SellPrices.Count}");
+						sellUnset = false;
+					}
+					if(town.BuyPrices.Count > 0)
+					{
+						int bMin = town.BuyPrices.First().Price;
+						int bMax = town.BuyPrices.First().Price;
+						double bSum = 0;
+						double bAvg;
+
+						foreach (TurnipBuyPrice price in town.BuyPrices)
+						{
+							if (bMin > price.Price) bMin = price.Price;
+							if (bMax < price.Price) bMax = price.Price;
+
+							bSum += price.Price;
+						}
+
+						bAvg = Math.Round(bSum / town.BuyPrices.Count(),2);
+						sbBuy.AppendLine($"**Best Buy Price**:{bMin}");
+						sbBuy.AppendLine($"**Worst Buy Price**:{bMax}");
+						sbBuy.AppendLine($"**Typical Sell Price**:{bAvg}");
+						sbBuy.AppendLine($"**Sell Price Count**:{town.BuyPrices.Count}");
+						buyUnset = false;
+					}
+					if (sellUnset) sbSell = new StringBuilder("No Sell Price Data Found.");
+					if (buyUnset) sbBuy = new StringBuilder("No Buy Price Data Found.");
+
+					return sbSell.ToString() + Environment.NewLine + sbBuy.ToString();
+				}
+			}
+			else
+			{
+				return "Sorry, you have to be a registered mayor to get stats on your town's turnip prices.";
+			}
+		}
+
+		public string GetTurnipPricesForWeek(ulong id)
+		{
+
+			if (GetTown(id) != null)
+			{
+				using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
+				{
+					Town town = db.Towns.Include(t => t.BuyPrices).Include(t => t.SellPrices).First(t => t.MayorDiscordId == id);
+					DateTime sunday = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek);
+					List<TurnipSellPrice> sellPrices = town.SellPrices.Where(s => s.Timestamp.CompareTo(sunday) >= 0).ToList();
+					List<TurnipBuyPrice> buyPrices = town.BuyPrices.Where(s => s.Timestamp.CompareTo(sunday) >= 0).ToList();
+
+					StringBuilder sbBuy = new StringBuilder("Buy Prices").AppendLine();
+					StringBuilder sbSell = new StringBuilder("Sell Prices").AppendLine();
+					bool sellUnset = true;
+					bool buyUnset = true;
+
+					if (sellPrices.Count > 0)
+					{
+						sellPrices.ForEach(s => {
+							sbSell.AppendLine($"{s.Timestamp}: {s.Price}");
+						});
+						sellUnset = false;
+					}
+					if (buyPrices.Count > 0)
+					{
+						buyPrices.ForEach(b => {
+							sbBuy.AppendLine($"{b.Timestamp}: {b.Price}");
+						});
+						buyUnset = false;
+					}
+					if (sellUnset) sbSell = new StringBuilder("No Sell Price Data Found.");
+					if (buyUnset) sbBuy = new StringBuilder("No Buy Price Data Found.");
+
+					return sbSell.ToString() + Environment.NewLine + sbBuy.ToString();
+				}
+			}
+			else
+			{
+				return "Sorry, you have to be a registered mayor to see a weekly summary on your town's turnip prices.";
 			}
 		}
 	}
