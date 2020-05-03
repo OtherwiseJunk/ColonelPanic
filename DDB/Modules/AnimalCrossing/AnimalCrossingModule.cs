@@ -126,6 +126,7 @@ namespace DartsDiscordBots.Modules
 						if (price <= MAXIMUM_TURNIP_SELL_PRICE)
 						{
 							if (price == 69) await Context.Channel.SendMessageAsync("Nice.");
+							if (price == 420) await Context.Channel.SendMessageAsync("Dank.");
 							await Context.Channel.SendMessageAsync(_acService.RegisterTurnipSellPrice(Context.User.Id, price));
 						}
 						else

@@ -9,8 +9,6 @@ namespace DartsDiscordBots.Interfaces
 	public interface IAnimalCrossingService
 	{
 		bool UserHasTown(ulong userId);
-		bool TownHasTurnipSellPrice(ulong userId);
-		bool TownHasTurnipBuyPrice(ulong userId);
 		string SetHemisphere(ulong userId, bool isNorthern);
 		string SetNativeFruit(ulong userId, string fruitName);
 		string RegisterTown(ulong userId, string townName);

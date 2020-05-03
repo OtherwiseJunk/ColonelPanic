@@ -110,9 +110,7 @@ namespace ColonelPanic
 
 			}
 
-			scheduledTaskRegistry.Schedule(() => AnimalCrossingService.ClearTurnipSellPrices()).ToRunEvery(1).Days().At(00, 00);
-			scheduledTaskRegistry.Schedule(() => AnimalCrossingService.ClearTurnipSellPrices()).ToRunEvery(1).Days().At(12, 00);
-			scheduledTaskRegistry.Schedule(() => AnimalCrossingService.ClearTurnipBuyPrices()).ToRunEvery(1).Weeks().On(DayOfWeek.Sunday).At(00, 00);
+			scheduledTaskRegistry.Schedule(() => AnimalCrossingService.Cleanup()).ToRunEvery(1).Days().At(00, 00);
 			ScheduleTopDaily();
 
 			JobManager.Initialize(scheduledTaskRegistry);

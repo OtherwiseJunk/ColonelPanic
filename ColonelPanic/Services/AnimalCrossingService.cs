@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using DartsDiscordBots.Database.Constants;
 using ColonelPanic.Database.Contexts;
 using DartsDiscordBots.Utilities;
+using DartsDiscordBots.Modules.AnimalCrossing.Models;
 
 namespace DartsDiscordBots.Services
 {
@@ -20,28 +21,6 @@ namespace DartsDiscordBots.Services
 			OptionsBuilder = new DbContextOptionsBuilder<AnimalCrossingContext>();
 			OptionsBuilder.UseSqlServer(ConnectionStrings.ConnectionString);
 		}
-		public static void ClearTurnipBuyPrices()
-		{
-			using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
-			{
-				foreach (Town town in db.Towns.ToList())
-				{
-					town.TurnipBuyPrice = 0;
-				};
-				db.SaveChanges();
-			}
-		}
-		public static void ClearTurnipSellPrices()
-		{
-			using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
-			{
-				foreach (Town town in db.Towns.ToList())
-				{
-					town.TurnipSellPrice = 0;
-				};
-				db.SaveChanges();
-			}
-		}
 
 		public string GetFruitList(List<IGuildUser> users)
 		{
@@ -49,7 +28,7 @@ namespace DartsDiscordBots.Services
 			{
 				StringBuilder sb = new StringBuilder("Town Name - Fruits").AppendLine();
 				bool fruitUnset = true;
-				foreach(Town town in db.Towns.Include(t => t.Fruits).ToList())
+				foreach (Town town in db.Towns.Include(t => t.Fruits).ToList())
 				{
 					IGuildUser localMayor = users.FirstOrDefault(u => u.Id == town.MayorDiscordId);
 					if (town.Fruits.Count > 0)
@@ -64,7 +43,7 @@ namespace DartsDiscordBots.Services
 						}
 						foreach (Fruit fruit in town.Fruits)
 						{
-							if(town.NativeFruit == fruit.FruitName)
+							if (town.NativeFruit == fruit.FruitName)
 							{
 								sb.Append($"**{fruit.FruitName}**, ");
 							}
@@ -123,7 +102,7 @@ namespace DartsDiscordBots.Services
 					{
 						hemisphere = town.NorthernHempisphere == "n" ? " in the Northern Hemisphere" : " in the Southern Hemisphere";
 					}
-					if(town.DodoCode != String.Empty)
+					if (town.DodoCode != null)
 					{
 						dodoCode = $" Dodo Code: `{town.DodoCode}`";
 					}
@@ -134,7 +113,7 @@ namespace DartsDiscordBots.Services
 					else
 					{
 						sb.AppendLine($"`{town.TownId}` | `{town.TownName}`{hemisphere} Border Open:`{town.BorderOpen}`{dodoCode}");
-					}					
+					}
 					townsUnset = false;
 				}
 				if (townsUnset) return "There's no towns :-(";
@@ -151,59 +130,68 @@ namespace DartsDiscordBots.Services
 				bool sellUnset = true;
 				bool buyUnset = true;
 
-				foreach(Town town in db.Towns.ToList())
+				foreach (Town town in db.Towns.Include(t => t.BuyPrices).Include(t => t.SellPrices).ToList())
 				{
 					IGuildUser localMayor = users.FirstOrDefault(u => u.Id == town.MayorDiscordId);
-					if (town.TurnipSellPrice != 0)
+					TurnipPrice latestBuy = null;
+					TurnipPrice latestSell = null;
+					if(town.BuyPrices.Count > 0) latestBuy = town.BuyPrices.OrderByDescending(price => price.Timestamp).First();
+					if(town.SellPrices.Count > 0) latestSell = town.SellPrices.OrderByDescending(price => price.Timestamp).First();
+					string dodoString = town.DodoCode != null ? $" Dodo Code: {town.DodoCode}" : "";
+					string openNowString = $"**Open Now!{dodoString}**";
+
+					if (latestSell != null)
 					{
 						if (town.BorderOpen)
-						{
+						{						
 							if (localMayor != null)
 							{
-								sbSell.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {town.TurnipSellPrice} bells. Open Now!" + town.DodoCode != String.Empty ? $" Dodo Code: {town.DodoCode}" : "");
+								sbSell.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {latestSell.Price} bells as of {latestSell.Timestamp}.");
+								sbSell.AppendLine(openNowString);
 							}
 							else
 							{
-								sbSell.AppendLine($"{town.TownName} - {town.TurnipSellPrice} bells. Open Now!" + town.DodoCode != String.Empty ? $" Dodo Code: {town.DodoCode}" : "");
-
+								sbSell.AppendLine($"{town.TownName} - {latestSell.Price} bells as of {latestSell.Timestamp}.");
+								sbSell.AppendLine(openNowString);
 							}
 						}
 						else
 						{
 							if (localMayor != null)
 							{
-								sbSell.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {town.TurnipSellPrice} bells.");
+								sbSell.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {latestSell.Price} bells as of {latestSell.Timestamp}.");
 							}
 							else
 							{
-								sbSell.AppendLine($"{town.TownName} - {town.TurnipSellPrice} bells.");
-
+								sbSell.AppendLine($"{town.TownName} - {latestSell.Price} bells as of {latestSell.Timestamp}.");
 							}
-						}						
+						}
 						sellUnset = false;
 					}
-					if (town.TurnipBuyPrice != 0)
+					if (latestBuy != null)
 					{
 						if (town.BorderOpen)
 						{
 							if (localMayor != null)
 							{
-								sbBuy.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {town.TurnipBuyPrice} bells. Open Now!" + town.DodoCode != String.Empty ? $" Dodo Code: {town.DodoCode}" : "");
+								sbBuy.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {latestBuy.Price} bells as of {latestBuy.Timestamp}.");
+								sbSell.AppendLine(openNowString);
 							}
 							else
 							{
-								sbBuy.AppendLine($"{town.TownName} - {town.TurnipBuyPrice} bells. Open Now!" + town.DodoCode != String.Empty ? $" Dodo Code: {town.DodoCode}" : "");
+								sbBuy.AppendLine($"{town.TownName} - {latestBuy.Price} bells as of {latestBuy.Timestamp}.");
+								sbSell.AppendLine(openNowString);
 							}
 						}
 						else
 						{
 							if (localMayor != null)
 							{
-								sbBuy.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {town.TurnipBuyPrice} bells.");
+								sbBuy.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) -  {latestBuy.Price} bells as of {latestBuy.Timestamp}.");
 							}
 							else
 							{
-								sbBuy.AppendLine($"{town.TownName} - {town.TurnipBuyPrice} bells.");
+								sbBuy.AppendLine($"{town.TownName} -  {latestBuy.Price} bells as of {latestBuy.Timestamp}.");
 							}
 						}
 						buyUnset = false;
@@ -268,17 +256,28 @@ namespace DartsDiscordBots.Services
 			using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
 			{
 				StringBuilder sb = new StringBuilder();
+				Town town = db.Towns.First(t => t.MayorDiscordId == userId);
+				TurnipBuyPrice todaysBuy = null;
 				try
 				{
-					if (TownHasTurnipBuyPrice(userId))
+					
+					if (town.BuyPrices.Count > 0)
 					{
-						sb.AppendLine("Ok, I've updated your turnip buy price to " + turnipPrice);
+						todaysBuy = town.BuyPrices
+								.OrderByDescending(price => price.Timestamp)
+								.Where(price => price.Timestamp.Date == DateTime.Now.Date).First();
+					}
+					if (todaysBuy == null)
+					{
+						town.BuyPrices.Add(new TurnipBuyPrice(turnipPrice));
+						sb.AppendLine("Ok, I've registered your buy price for the day as " + turnipPrice);
 					}
 					else
 					{
-						sb.AppendLine("Ok, I've set your turnip buy price to " + turnipPrice);
+						todaysBuy = new TurnipBuyPrice(turnipPrice);
+						sb.AppendLine("Ok, I've updated your buy price for the day to " + turnipPrice);
+						db.Update(todaysBuy);
 					}
-					db.Towns.First(t => t.MayorDiscordId == userId).TurnipBuyPrice = turnipPrice;
 					db.SaveChanges();
 				}
 				catch
@@ -296,15 +295,34 @@ namespace DartsDiscordBots.Services
 				StringBuilder sb = new StringBuilder();
 				try
 				{
-					if (TownHasTurnipSellPrice(userId))
+					TurnipSellPrice todaysSell = null;
+					Town town = db.Towns.First(t => t.MayorDiscordId == userId);
+					if (town.SellPrices.Count > 0)
 					{
-						sb.AppendLine("Ok, I've updated your turnip sell price to " + turnipPrice);
+						if (DateTime.Now.Hour >= 12)
+						{
+							todaysSell = town.SellPrices
+								.OrderByDescending(price => price.Timestamp)
+								.Where(price => price.IsMorningPrice = true).First();
+						}
+						else
+						{
+							todaysSell = town.SellPrices
+								.OrderByDescending(price => price.Timestamp)
+								.Where(price => price.IsMorningPrice = false).First();
+						}
+					}					
+					if (todaysSell == null)
+					{
+						town.SellPrices.Add(new TurnipSellPrice(turnipPrice));
+						sb.AppendLine("Ok, I've set your turnip sell price to " + turnipPrice);
 					}
 					else
 					{
-						sb.AppendLine("Ok, I've set your turnip sell price to " + turnipPrice);
+						todaysSell = new TurnipSellPrice(turnipPrice);
+						db.Update(todaysSell);
+						sb.AppendLine("Ok, I've updated your turnip sell price to " + turnipPrice);
 					}
-					db.Towns.First(t => t.MayorDiscordId == userId).TurnipSellPrice = turnipPrice;
 					db.SaveChanges();
 				}
 				catch
@@ -312,22 +330,6 @@ namespace DartsDiscordBots.Services
 					sb = new StringBuilder("Sorry, something went wrong while I was trying to update your sell price.");
 				}
 				return sb.ToString();
-			}
-		}
-
-		public bool TownHasTurnipBuyPrice(ulong userId)
-		{
-			using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
-			{
-				return db.Towns.FirstOrDefault(t => t.MayorDiscordId == userId).TurnipBuyPrice != 0;
-			}
-		}
-
-		public bool TownHasTurnipSellPrice(ulong userId)
-		{
-			using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
-			{
-				return db.Towns.FirstOrDefault(t => t.MayorDiscordId == userId).TurnipSellPrice != 0;
 			}
 		}
 
@@ -350,7 +352,7 @@ namespace DartsDiscordBots.Services
 					db.SaveChanges();
 					return $"Updated your hemisphere to be the {hemisphere} Hempisphere!";
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
 					Console.WriteLine(ex.Message);
 					return "Sorry, something went wrong updating your hemisphere. Try again later.";
@@ -360,7 +362,7 @@ namespace DartsDiscordBots.Services
 
 		public string RegisterWishlistItem(ulong userId, string itemName)
 		{
-			using(AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
+			using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
 			{
 				try
 				{
@@ -381,7 +383,7 @@ namespace DartsDiscordBots.Services
 
 		public string RemoveWishlistItemById(ulong userId, int itemId)
 		{
-			using(AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
+			using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
 			{
 				try
 				{
@@ -453,9 +455,9 @@ namespace DartsDiscordBots.Services
 			}
 		}
 
-		public string OpenTownBorder(ulong userId, string dodoCode="")
+		public string OpenTownBorder(ulong userId, string dodoCode = "")
 		{
-			using(AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
+			using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
 			{
 				try
 				{
@@ -493,11 +495,11 @@ namespace DartsDiscordBots.Services
 
 		public string SetNativeFruit(ulong userId, string fruitName)
 		{
-			using(AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
+			using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
 			{
 				try
 				{
-					Town town = db.Towns.Include(t => t.Fruits).First(t => t.MayorDiscordId == userId);					 
+					Town town = db.Towns.Include(t => t.Fruits).First(t => t.MayorDiscordId == userId);
 
 					town.NativeFruit = fruitName.ToPascalCase();
 					db.SaveChanges();
@@ -505,13 +507,24 @@ namespace DartsDiscordBots.Services
 					{
 						RegisterFruit(userId, fruitName);
 						return $"Ok, registered {fruitName.ToPascalCase()} as your native fruit, and added it to your towns fruit list.";
-					}						
+					}
 					return $"Ok, registered {fruitName.ToPascalCase()} as your native fruit.";
 				}
 				catch
 				{
 					return "Sorry, something went wrong trying to set your native fruit.";
 				}
+			}
+		}
+		public static void Cleanup()
+		{
+			using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
+			{
+				db.Towns.ForEachAsync(town =>
+				{
+					town.BorderOpen = false;
+					town.DodoCode = null;
+				});
 			}
 		}
 	}
