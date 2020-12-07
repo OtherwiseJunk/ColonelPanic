@@ -31,10 +31,10 @@ namespace ColonelPanic.Database.Contexts
             {
                 PingGroup group = db.Groups.FirstOrDefault(g => g.PingGroupName.ToLower() == pingGroupName.ToLower() && g.GuildId == guildId);
 
-                if (db.Users.Where(u => u.PingGroupId == group.PingGroupId).Count() > 0)
+                if (db.Users.AsQueryable().Where(u => u.PingGroupId == group.PingGroupId).Count() > 0)
                 {
                     users = new List<string>();
-                    foreach (PingGroupUser user in db.Users.Where(u => u.PingGroupId == group.PingGroupId && u.GuildId == group.GuildId))
+                    foreach (PingGroupUser user in db.Users.AsQueryable().Where(u => u.PingGroupId == group.PingGroupId && u.GuildId == group.GuildId))
                     {
                         users.Add(user.UserId);
                     }
@@ -68,7 +68,7 @@ namespace ColonelPanic.Database.Contexts
 
                 if (db.Groups.FirstOrDefault(g => g.GuildId == guildId) != null)
                 {
-                    foreach (PingGroup group in db.Groups.Where(g => g.GuildId == guildId).ToList())
+                    foreach (PingGroup group in db.Groups.AsQueryable().Where(g => g.GuildId == guildId).ToList())
                     {
                         msg += group.PingGroupName + Environment.NewLine;
                     }
@@ -103,7 +103,7 @@ namespace ColonelPanic.Database.Contexts
         {
             using (PingGroupContext db = new PingGroupContext(OptionsBuilder.Options))
             {
-                List<PingGroupUser> userInstances = db.Users.Where(u => u.UserId == userId && u.GuildId == guildId).ToList();
+                List<PingGroupUser> userInstances = db.Users.AsQueryable().Where(u => u.UserId == userId && u.GuildId == guildId).ToList();
                 foreach (PingGroupUser userInstance in userInstances)
                 {
                     db.Users.Attach(userInstance);

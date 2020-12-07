@@ -42,7 +42,7 @@ namespace ColonelPanic.Database.Contexts
                 if (db.Notes.Count() > 0)
                 {
                     msg = "";
-                    foreach (Note note in db.Notes.Where(n => n.GuildId == guildId).ToList())
+                    foreach (Note note in db.Notes.AsQueryable().Where(n => n.GuildId == guildId).ToList())
                     {
                         msg += $"{note.NoteId}|**{note.Name}**"+Environment.NewLine;
                     }
@@ -59,7 +59,7 @@ namespace ColonelPanic.Database.Contexts
                 if (db.Notes.Count() > 0)
                 {
                     msg = "";
-                    foreach (Note note in db.Notes.Where(n => n.GuildId == guildId).ToList())
+                    foreach (Note note in db.Notes.AsQueryable().Where(n => n.GuildId == guildId).ToList())
                     {
                         msg += $"{note.NoteId}|**{note.Name}**: {note.NoteText}" + Environment.NewLine;
                     }

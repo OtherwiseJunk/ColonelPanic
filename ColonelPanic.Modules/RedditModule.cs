@@ -15,7 +15,7 @@ using Discord;
 namespace ColonelPanic.Modules
 {
     
-    [Group("topdaily")]
+    [Group("topdaily"), Alias("top", "rtd")]
     public class RedditModule : ModuleBase
     {
         [Command("rand"), Summary("Get a random image from the top 20 posts of the specified subreddit")]
@@ -57,7 +57,7 @@ namespace ColonelPanic.Modules
 
         [Command("add"), RequireTrustedUserOrPermission(Discord.GuildPermission.ManageChannels), Summary(@"Will schedule a daily post at the specified time, taking the top image post from the provided subreddit.
 
-Usage: $top birbs 17:00 
+Usage: $rtd add birbs 17:00 
 This command would cause the top image post from birbs to be posted at 5:00PM every day!
 
 All posts will occur at that time in ET, sorry lesser timezones :-)")]
@@ -147,11 +147,12 @@ All posts will occur at that time in ET, sorry lesser timezones :-)")]
         public static Embed buildEmbedForImage(Child redditPost)
         {
             EmbedBuilder builder = new EmbedBuilder();
-
+            string uri = new Uri($"https://www.reddit.com{redditPost.data.permalink}").ToString();
             builder.WithTitle(redditPost.data.title);
             builder.AddField("Subreddit | Score", redditPost.data.subreddit + " | " + redditPost.data.score);
-            builder.WithImageUrl(redditPost.data.url);            
-            builder.WithColor(Color.DarkPurple);
+            builder.WithImageUrl(redditPost.data.url);
+			builder.WithColor(Color.DarkPurple);
+            builder.WithUrl(uri);
             return builder.Build();
         }
 

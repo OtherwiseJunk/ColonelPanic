@@ -128,17 +128,17 @@ namespace DartsDiscordBots.Modules
 		[Command("list"), Summary("See list of registered town names. Each name has an id for easy reference.")]
 		public async Task ListTowns()
 		{
-			await Context.Channel.SendMessageAsync(_acService.GetTownList(Context.Guild.GetUsersAsync().Result.ToList()));
+			await SendLargeListMessage(_acService.GetTownList(Context.Guild.GetUsersAsync().Result.ToList()));					
 		}
 		[Command("flist"), Summary("See list of each registered town's fruit.")]
 		public async Task ListTownsFruits()
 		{
-			await Context.Channel.SendMessageAsync(_acService.GetFruitList(Context.Guild.GetUsersAsync().Result.ToList()));
+			await SendLargeListMessage(_acService.GetFruitList(Context.Guild.GetUsersAsync().Result.ToList()));
 		}
 		[Command("tlist"), Summary("See list of registered turnip prices.")]
 		public async Task ListTownsTurnipPrices()
-		{
-			await Context.Channel.SendMessageAsync(_acService.GetTurnipPrices(Context.Guild.GetUsersAsync().Result.ToList()));
+		{ 
+			 _acService.SendTurnipPriceList(Context.Guild.GetUsersAsync().Result.ToList(), Context);
 		}
 		[Command("freg"), Summary("See list of registered town names. Each name has an id for easy reference.")]
 		public async Task RegisterFruit([Remainder,Summary("Fruit to register. Valid fruits are <Apple|Cherry|Coconut|Orange|Peach|Pear>" )]string fruitName)
@@ -294,7 +294,7 @@ namespace DartsDiscordBots.Modules
 			await Context.Channel.SendMessageAsync(_acService.GetWishlist(Context.Guild.GetUsersAsync().Result.ToList()));
 		}
 		[Command("open"),  Summary("Marks your town as open in the town list. You can optionally provide a dodocode so non-switch friends can join.")]
-		public async Task OpenTownBorder([Summary("The Dodo Code needed to visit your town. Optional."), Remainder]string dodoCode = "") {
+		public async Task OpenTownBorder([Summary("The Dodo Code needed to visit your town. Optional."), Remainder]string dodoCode = null) {
 			if (_acService.UserHasTown(Context.User.Id))
 			{
 				await Context.Channel.SendMessageAsync(_acService.OpenTownBorder(Context.User.Id, dodoCode));
@@ -326,5 +326,41 @@ namespace DartsDiscordBots.Modules
 			else await Context.Channel.SendMessageAsync(NoRegisteredTownResponse);
 		}
 
+		[Command("namereg"), Summary("Registers your real name, will be displayed in any of the town lists in place of your discord username.")]
+		public async Task RegisterRealName([Summary("The name you want to be registered under."), Remainder]string realName)
+		{
+			if (_acService.UserHasTown(Context.User.Id))
+			{
+				await Context.Channel.SendMessageAsync(_acService.SetRealName(Context.User.Id, realName));
+			}
+			else await Context.Channel.SendMessageAsync(NoRegisteredTownResponse);
+		}
+		
+
+		public async Task SendLargeListMessage(string message)
+		{			
+			while (message.Length > 1999)
+			{
+				string submessage = "";
+				List<string> townLines = message.Split(Environment.NewLine).ToList();
+				foreach (string townLine in townLines)
+				{
+					if (submessage.Length + townLine.Length < 2000)
+					{
+						submessage += townLine + Environment.NewLine;
+					}
+					else
+					{
+						break;
+					}
+				}
+				await Context.Channel.SendMessageAsync(submessage);
+				message = message.Remove(0, submessage.Length);
+			}
+			if (message.Length != 0)
+			{
+				await Context.Channel.SendMessageAsync(message);
+			}
+		}
 	}
 }

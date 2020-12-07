@@ -1,5 +1,6 @@
 ﻿using DartsDiscordBots.Models;
 using Discord;
+using Discord.Commands;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,7 +22,7 @@ namespace DartsDiscordBots.Interfaces
 		string GetWishlist(List<IGuildUser> users);
 		string GetTownList(List<IGuildUser> users);
 		string GetFruitList(List<IGuildUser> users);
-		string GetTurnipPrices(List<IGuildUser> users);
+		void SendTurnipPriceList(List<IGuildUser> users, ICommandContext context);
 		string OpenTownBorder(ulong userId, string dodoCode);
 		string CloseTownBorder(ulong userId);
 		Town GetTown(int townId);
@@ -29,5 +30,6 @@ namespace DartsDiscordBots.Interfaces
 		Town GetTown(ulong mayorId);
 		string GetTurnipStats(ulong id);
 		string GetTurnipPricesForWeek(ulong id);
+		string SetRealName(ulong userId, string realName);
 	}
 }

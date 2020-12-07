@@ -11,6 +11,7 @@ using System.IO;
 using Discord.WebSocket;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Linq;
 
 namespace ColonelPanic.Modules
 {
@@ -59,13 +60,21 @@ namespace ColonelPanic.Modules
             }
         }
 
-        [Command("say"), Summary("Echos a message."), RequireOwner]
-        public async Task Say([Remainder, Summary("The text to echo")] string echo)
-        {
-            // ReplyAsync is a method on ModuleBase
-            await ReplyAsync(echo);
-            Context.Message.DeleteAsync();
-        }
+		[Command("say"), Summary("Echos a message."), RequireOwner]
+		public async Task Say([Remainder, Summary("The text to echo")] string echo)
+		{
+			// ReplyAsync is a method on ModuleBase
+			await ReplyAsync(echo);
+			Context.Message.DeleteAsync();
+		}
+
+        [Command("pick"), Summary("Picks a random value from a comma separated list")]
+        public async Task Pick([Remainder, Summary("The comma separated list of items to pick from")] string items)
+		{
+            List<string> choices = items.Split(',').ToList();
+            await Context.Channel.SendMessageAsync(choices.GetRandom());
+		}
+
 
         [Command("link"), Alias("install"), Summary("Provides a link for installing the bot on other servers. You must be an admin of the target server to use the provided link.")]
         public async Task ProvideInstallLink()
@@ -77,7 +86,7 @@ namespace ColonelPanic.Modules
         public async Task Roll([Remainder, Summary("What to roll. Can indicate the number of dice to roll, the number of sides on those dice, and a positive or negative modifier to add to the results. 3d6+2 would roll 3 6-sided dice and add 2 to the final result.")] string rollString)
         {
 
-            var arguments = new List<string>(rollString.Split('d'));
+            var arguments = new List<string>(rollString.ToLower().Split('d'));
             arguments.Remove("");
             int sides, times, modifier;
 
@@ -363,7 +372,7 @@ namespace ColonelPanic.Modules
 			}
             else
             {
-                usernameRole = Context.Guild.CreateRoleAsync(name: user.Username, color: roleColor).Result;
+                usernameRole = Context.Guild.CreateRoleAsync(user.Username, null, roleColor, false, null).Result;
                 await usernameRole.ModifyAsync(x => x.Position = topPosition);
             }
             return usernameRole;

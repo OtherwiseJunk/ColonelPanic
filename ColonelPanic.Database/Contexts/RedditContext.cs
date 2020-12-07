@@ -96,7 +96,7 @@ namespace ColonelPanic.Database.Contexts
             Console.WriteLine(msg.Length);
             using (RedditContext db = new RedditContext(OptionsBuilder.Options))
             {
-                foreach (TopDaily td in db.TopDaily.Where(td => td.ChannelId == channelId))
+                foreach (TopDaily td in db.TopDaily.AsQueryable().Where(td => td.ChannelId == channelId))
                 {
                     msg += $"{td.TopDailyNum}. {td.Subreddit} : {td.NextTimeToPost}" + Environment.NewLine;
                 }

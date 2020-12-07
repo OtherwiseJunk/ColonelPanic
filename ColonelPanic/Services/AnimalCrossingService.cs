@@ -10,6 +10,7 @@ using DartsDiscordBots.Database.Constants;
 using ColonelPanic.Database.Contexts;
 using DartsDiscordBots.Utilities;
 using DartsDiscordBots.Modules.AnimalCrossing.Models;
+using Discord.Commands;
 
 namespace DartsDiscordBots.Services
 {
@@ -35,7 +36,8 @@ namespace DartsDiscordBots.Services
 					{
 						if (localMayor != null)
 						{
-							sb.Append($"{town.TownName} (Mayor: {localMayor.Username}) - ");
+							string mayorIdentifier = town.MayorRealName != null ? $"{town.MayorRealName} - {localMayor.Username}" : localMayor.Username;
+							sb.Append($"{town.TownName} (Mayor: {mayorIdentifier}) - ");
 						}
 						else
 						{
@@ -108,7 +110,8 @@ namespace DartsDiscordBots.Services
 					}
 					if (localMayor != null)
 					{
-						sb.AppendLine($"`{town.TownId}` | `{town.TownName}`{hemisphere} Border Open:`{town.BorderOpen}`{dodoCode} - Mayor: {localMayor.Username}");
+						string mayorIdentifier = town.MayorRealName != null ? $"{town.MayorRealName} - {localMayor.Username}" : localMayor.Username;
+						sb.AppendLine($"`{town.TownId}` | `{town.TownName}`{hemisphere} Border Open:`{town.BorderOpen}`{dodoCode} - Mayor: {mayorIdentifier}");
 					}
 					else
 					{
@@ -121,32 +124,35 @@ namespace DartsDiscordBots.Services
 			}
 		}
 
-		public string GetTurnipPrices(List<IGuildUser> users)
+		public void SendTurnipPriceList(List<IGuildUser> users, ICommandContext context)
 		{
 			using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
 			{
-				StringBuilder sbBuy = new StringBuilder("Turnip Buy Prices").AppendLine();
-				StringBuilder sbSell = new StringBuilder("Turnip Sell Prices").AppendLine();
+				StringBuilder sbBuy = new StringBuilder("**Turnip Buy Prices**").AppendLine();
+				StringBuilder sbSell = new StringBuilder("**Turnip Sell Prices**").AppendLine();
 				bool sellUnset = true;
 				bool buyUnset = true;
+				int buyLoopCount = 0;
+				int sellLoopCount = 0;
 
 				foreach (Town town in db.Towns.Include(t => t.BuyPrices).Include(t => t.SellPrices).ToList())
 				{
 					IGuildUser localMayor = users.FirstOrDefault(u => u.Id == town.MayorDiscordId);
 					TurnipPrice latestBuy = null;
 					TurnipPrice latestSell = null;
-					if(town.BuyPrices.Count > 0) latestBuy = town.BuyPrices.OrderByDescending(price => price.Timestamp).First();
-					if(town.SellPrices.Count > 0) latestSell = town.SellPrices.OrderByDescending(price => price.Timestamp).First();
+					if (town.BuyPrices.Count > 0) latestBuy = town.BuyPrices.OrderByDescending(price => price.Timestamp).First();
+					if (town.SellPrices.Count > 0) latestSell = town.SellPrices.OrderByDescending(price => price.Timestamp).First();
 					string dodoString = town.DodoCode != null ? $" Dodo Code: {town.DodoCode}" : "";
 					string openNowString = $"**Open Now!{dodoString}**";
 
 					if (latestSell != null)
 					{
 						if (town.BorderOpen)
-						{						
+						{
 							if (localMayor != null)
 							{
-								sbSell.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {latestSell.Price} bells as of {latestSell.Timestamp}.");
+								string mayorIdentifier = town.MayorRealName != null ? $"{town.MayorRealName} - {localMayor.Username}" : localMayor.Username;
+								sbSell.AppendLine($"{town.TownName} (Mayor: {mayorIdentifier}) - {latestSell.Price} bells as of {latestSell.Timestamp}.");
 								sbSell.AppendLine(openNowString);
 							}
 							else
@@ -159,7 +165,8 @@ namespace DartsDiscordBots.Services
 						{
 							if (localMayor != null)
 							{
-								sbSell.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {latestSell.Price} bells as of {latestSell.Timestamp}.");
+								string mayorIdentifier = town.MayorRealName != null ? $"{town.MayorRealName} - {localMayor.Username}" : localMayor.Username;
+								sbSell.AppendLine($"{town.TownName} (Mayor: {mayorIdentifier}) - {latestSell.Price} bells as of {latestSell.Timestamp}.");
 							}
 							else
 							{
@@ -167,6 +174,13 @@ namespace DartsDiscordBots.Services
 							}
 						}
 						sellUnset = false;
+						if (sbSell.Length >= 1750)
+						{
+							context.Channel.SendMessageAsync(sbSell.ToString());
+							sbSell = new StringBuilder("**Turnip Sell Prices CONT**").AppendLine();
+							sellUnset = true;
+							sellLoopCount++;
+						}
 					}
 					if (latestBuy != null)
 					{
@@ -174,7 +188,8 @@ namespace DartsDiscordBots.Services
 						{
 							if (localMayor != null)
 							{
-								sbBuy.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) - {latestBuy.Price} bells as of {latestBuy.Timestamp}.");
+								string mayorIdentifier = town.MayorRealName != null ? $"{town.MayorRealName} - {localMayor.Username}" : localMayor.Username;
+								sbBuy.AppendLine($"{town.TownName} (Mayor: {mayorIdentifier}) - {latestBuy.Price} bells as of {latestBuy.Timestamp}.");
 								sbBuy.AppendLine(openNowString);
 							}
 							else
@@ -187,7 +202,8 @@ namespace DartsDiscordBots.Services
 						{
 							if (localMayor != null)
 							{
-								sbBuy.AppendLine($"{town.TownName} (Mayor: {localMayor.Username}) -  {latestBuy.Price} bells as of {latestBuy.Timestamp}.");
+								string mayorIdentifier = town.MayorRealName != null ? $"{town.MayorRealName} - {localMayor.Username}" : localMayor.Username;
+								sbBuy.AppendLine($"{town.TownName} (Mayor: {mayorIdentifier}) -  {latestBuy.Price} bells as of {latestBuy.Timestamp}.");
 							}
 							else
 							{
@@ -195,12 +211,35 @@ namespace DartsDiscordBots.Services
 							}
 						}
 						buyUnset = false;
+						if (sbBuy.Length >= 1750)
+						{
+							context.Channel.SendMessageAsync(sbBuy.ToString());
+							sbBuy = new StringBuilder("**Turnip Buy Prices CONT**").AppendLine();
+							buyUnset = true;
+							buyLoopCount++;
+						}
 					}
 				};
-				if (sellUnset) sbSell = new StringBuilder("No Sell Prices Found.");
-				if (buyUnset) sbBuy = new StringBuilder("No Buy Prices Found.");
+				if (sellLoopCount > 1)
+				{
+					if (sellUnset) sbSell = new StringBuilder("");
+				}
+				else
+				{
+					if (sellUnset) sbSell = new StringBuilder("No Sell Prices Found.");
+				}
+				if (buyLoopCount > 1)
+				{
+					if (sellUnset) sbBuy = new StringBuilder("");
+				}
+				else
+				{
+					if (buyUnset) sbBuy = new StringBuilder("No Buy Prices Found.");
+				}
+				
 
-				return sbBuy.ToString() + Environment.NewLine + sbSell.ToString();
+				context.Channel.SendMessageAsync(sbSell.ToString());
+				context.Channel.SendMessageAsync(sbBuy.ToString());
 			}
 		}
 
@@ -432,11 +471,13 @@ namespace DartsDiscordBots.Services
 				foreach (Town town in db.Towns.Include(t => t.Wishlist).ToList())
 				{
 					IGuildUser localMayor = users.FirstOrDefault(u => u.Id == town.MayorDiscordId);
+					
 					if (town.Wishlist.Count > 0)
 					{
 						if (localMayor != null)
 						{
-							sb.Append($"{town.TownName} (Mayor: {localMayor.Username}) - ");
+							string mayorIdentifier = town.MayorRealName != null ? $"{town.MayorRealName} - {localMayor.Username}" : localMayor.Username;
+							sb.Append($"{town.TownName} (Mayor: {mayorIdentifier}) - ");
 						}
 						else
 						{
@@ -516,15 +557,35 @@ namespace DartsDiscordBots.Services
 				}
 			}
 		}
+
+		public string SetRealName(ulong userId, string realName)
+		{
+			using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
+			{
+				try
+				{
+					Town town = db.Towns.Include(t => t.Fruits).First(t => t.MayorDiscordId == userId);
+					town.MayorRealName = realName;
+					db.SaveChanges();
+					return $"Ok, registered {realName.ToPascalCase()} as your real name.";
+				}
+				catch
+				{
+					return "Sorry, something went wrong trying to set your real name.";
+				}
+			}
+		}
 		public static void Cleanup()
 		{
 			using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
 			{
-				db.Towns.ForEachAsync(town =>
+				db.Towns.AsQueryable().ForEachAsync(town =>
 				{
 					town.BorderOpen = false;
 					town.DodoCode = null;
-				});
+					db.Update(town);
+				}).Wait();
+				db.SaveChanges();
 			}
 		}
 
@@ -581,8 +642,8 @@ namespace DartsDiscordBots.Services
 						bAvg = Math.Round(bSum / town.BuyPrices.Count(),2);
 						sbBuy.AppendLine($"**Best Buy Price**:{bMin}");
 						sbBuy.AppendLine($"**Worst Buy Price**:{bMax}");
-						sbBuy.AppendLine($"**Typical Sell Price**:{bAvg}");
-						sbBuy.AppendLine($"**Sell Price Count**:{town.BuyPrices.Count}");
+						sbBuy.AppendLine($"**Typical Buy Price**:{bAvg}");
+						sbBuy.AppendLine($"**Buy Price Count**:{town.BuyPrices.Count}");
 						buyUnset = false;
 					}
 					if (sellUnset) sbSell = new StringBuilder("No Sell Price Data Found.");

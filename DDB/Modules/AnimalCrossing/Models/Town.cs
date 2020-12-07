@@ -11,6 +11,7 @@ namespace DartsDiscordBots.Models
 		[Key]
 		public int TownId { get; set; }
 		public ulong MayorDiscordId { get; set; }
+		public string MayorRealName { get; set; }
 		public string TownName { get; set; }
 		public ICollection<Fruit> Fruits { get; set; }
 		public ICollection<Item> Wishlist { get; set; }
