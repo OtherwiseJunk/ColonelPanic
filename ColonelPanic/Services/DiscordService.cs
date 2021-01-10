@@ -24,6 +24,9 @@ namespace ColonelPanic.Services
 		Random _rand = new Random((int)DateTime.Now.Ticks);
 		Regex isMentioningMeRegex = new Regex(@"(Co?l?o?n?e?l?)(\.?|\s)*(Pa?o?n?i?c?)?");
 		ulong botUserId = 357910708316274688;
+		ulong geosusUserId = 140620251976040449;
+
+		ulong goodMusicGeosusGuildId = 177229913512738816;
 
 		public DiscordService(IServiceProvider serviceProvider, DiscordSocketClient socketClient,
 							  CommandService commandService)
@@ -80,10 +83,15 @@ namespace ColonelPanic.Services
 			bool MentioningMe = BotUtilities.isMentioningMe(arg, isMentioningMeRegex, botUserId);
 			string chnlId = arg.Channel.Id.ToString();
 			string userId = arg.Author.Id.ToString();
-			SocketGuildChannel chnl = arg.Channel as SocketGuildChannel;
+			string message = arg.Content;
+			
+			SocketGuildChannel chnl = arg.Channel as SocketGuildChannel;			
+
 			await AddGuildStateIfMissing(chnl.Guild.Id.ToString(), chnl.Guild.Name);
 			UserDataHandler.AddUserStateIfMising(arg.Author.Id.ToString(), arg.Author.Username);
-			Console.WriteLine($"{arg.Author.Username} on {arg.Channel.Name}: {arg.Content}");
+
+			Console.WriteLine($"{arg.Author.Username} on {arg.Channel.Name}: {message}");
+
 			if (_rand.Next(1000) == 777)
 			{
 				var msg = arg.Channel.GetMessageAsync(arg.Id).Result as IUserMessage;
@@ -109,17 +117,17 @@ namespace ColonelPanic.Services
 				}
 
 			}
-			if (Regex.IsMatch(arg.Content, @"[)ʔ）][╯ノ┛].+┻━┻"))
+			if (Regex.IsMatch(message, @"[)ʔ）][╯ノ┛].+┻━┻"))
 			{
 				await arg.Channel.SendMessageAsync("┬─┬  ノ( º _ ºノ) ");
 				await arg.Channel.SendMessageAsync(GetTableFlipResponse(arg.Author));
 			}
-			else if (arg.Content == "(ノಠ益ಠ)ノ彡┻━┻")
+			else if (message == "(ノಠ益ಠ)ノ彡┻━┻")
 			{
 				await arg.Channel.SendMessageAsync("┬─┬  ノ(ಠ益ಠノ)");
 				await arg.Channel.SendMessageAsync(GetTableFlipResponse(arg.Author));
 			}
-			else if (arg.Content == "┻━┻ ︵ヽ(`Д´)ﾉ︵ ┻━┻")
+			else if (message == "┻━┻ ︵ヽ(`Д´)ﾉ︵ ┻━┻")
 			{
 				await arg.Channel.SendMessageAsync("┬─┬  ノ(`Д´ノ)");
 				await arg.Channel.SendMessageAsync("(/¯`Д´ )/¯ ┬─┬");
@@ -127,19 +135,23 @@ namespace ColonelPanic.Services
 			}
 			if (MentioningMe)
 			{
-				if (arg.Content.Contains("🤛"))
+				if (message.Contains("🤛"))
 				{
 					await arg.Channel.SendMessageAsync(":right_facing_fist:");
 
 				}
-				else if (arg.Content.Contains("🤜"))
+				else if (message.Contains("🤜"))
 				{
 					await arg.Channel.SendMessageAsync(":left_facing_fist:");
 				}
 			}
-			if (arg.Content.ToLower().Contains("pogger") && !arg.Content.Contains(" "))
+			if (message.ToLower().Contains("pogger") && !message.Contains(" "))
 			{
-				await arg.AddReactionAsync(Emote.Parse(CEC.PoggersEmoteCode));		
+				await arg.AddReactionAsync(Emote.Parse(CEC.PoggersEmoteCode));
+			}
+			if(message.ToLower().Contains("@geosus") && chnl.Guild.Id == goodMusicGeosusGuildId)
+			{
+				await arg.Channel.SendMessageAsync(arg.Channel.GetUserAsync(geosusUserId).Result.Mention);
 			}
 
 			return;

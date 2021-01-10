@@ -16,4 +16,8 @@
     <ProjectReference Include="..\ColonelPanic.Utilities\ColonelPanic.Utilities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Modules\ServerManagement\Models\" />
+  </ItemGroup>
+
 </Project>

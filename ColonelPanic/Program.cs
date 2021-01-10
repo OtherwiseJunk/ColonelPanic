@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using System.Net;
 using ColonelPanic.Services;
 using Victoria;
-
+using DartsDiscordBots.Modules.ServerManagement.Interfaces;
 
 namespace ColonelPanic
 {
@@ -122,6 +122,7 @@ namespace ColonelPanic
 				.AddSingleton<IHelpConfig, HelpConfig>()
 				.AddSingleton<IPokemonService, PokemonService>()
 				.AddSingleton<IAnimalCrossingService, AnimalCrossingService>()
+				.AddSingleton<IServerManagmentService, ServerManagementService>()
 				.AddSingleton<ReliabilityService>()
 				.AddDbContext<AnimalCrossingContext>()
 				.AddSingleton<DiscordService>()
