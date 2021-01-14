@@ -8,7 +8,7 @@ namespace DartsDiscordBots.Modules.Indecision
 {
 	public class IndecisionModule : ModuleBase
 	{
-		[Command("pick"), Summary("Picks a random value from a comma separated list. adding * to the end adds slight preference")]
+		[Command("pick"), Summary("Picks a random value from a comma separated list. adding + to the end adds slight preference")]
 		public async Task Pick([Remainder, Summary("The comma separated list of items to pick from")] string items)
 		{
 			List<string> choices = items.Split(',').ToList();
