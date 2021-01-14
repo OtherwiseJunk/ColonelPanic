@@ -1,12 +1,10 @@
-﻿using DartsDiscordBots.Interfaces;
-using Discord.Commands;
+﻿using Discord.Commands;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
+using DartsDiscordBots.Modules.AnimalCrossing.Interfaces;
 
-namespace DartsDiscordBots.Preconditions
+namespace DartsDiscordBots.Modules.AnimalCrossing.Preconditions
 {
 	public class RequireTown : PreconditionAttribute
 	{

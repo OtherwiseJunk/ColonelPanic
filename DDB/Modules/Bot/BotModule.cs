@@ -1,11 +1,9 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace DartsDiscordBots.Modules
+namespace DartsDiscordBots.Modules.Bot
 {
 	public class BotModule : ModuleBase
 	{

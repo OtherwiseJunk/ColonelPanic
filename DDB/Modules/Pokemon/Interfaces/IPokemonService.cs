@@ -1,11 +1,7 @@
-﻿using DartsDiscordBots.Models;
-using System;
+﻿using DartsDiscordBots.Modules.Pokemon.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DartsDiscordBots.Interfaces
+namespace DartsDiscordBots.Modules.Pokemon.Interfaces
 {
 	public interface IPokemonService
 	{

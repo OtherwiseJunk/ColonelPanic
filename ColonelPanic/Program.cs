@@ -3,7 +3,6 @@ using ColonelPanic.Database.Models;
 using ColonelPanic.Modules;
 using ColonelPanic.Utilities.JSONClasses;
 using DartsDiscordBots.Utilities;
-using DartsDiscordBots.Interfaces;
 using DartsDiscordBots.Services;
 using Discord;
 using Discord.Commands;
@@ -17,6 +16,9 @@ using System.Net;
 using ColonelPanic.Services;
 using Victoria;
 using DartsDiscordBots.Modules.ServerManagement.Interfaces;
+using DartsDiscordBots.Modules.Help.Interfaces;
+using DartsDiscordBots.Modules.Pokemon.Interfaces;
+using DartsDiscordBots.Modules.AnimalCrossing.Interfaces;
 
 namespace ColonelPanic
 {

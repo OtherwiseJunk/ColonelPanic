@@ -1,7 +1,4 @@
 ﻿using DartsDiscordBots.Utilities;
-using DartsDiscordBots.Interfaces;
-using DartsDiscordBots.Models;
-using DartsDiscordBots.Preconditions;
 using Discord.Commands;
 using System;
 using System.Collections.Generic;
@@ -10,8 +7,10 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Discord;
+using DartsDiscordBots.Modules.AnimalCrossing.Interfaces;
+using DartsDiscordBots.Modules.AnimalCrossing.Models;
 
-namespace DartsDiscordBots.Modules
+namespace DartsDiscordBots.Modules.AnimalCrossing
 {
 	[Group("ac"), Name("Animal Crossing")]
 	public class AnimalCrossingModule : ModuleBase

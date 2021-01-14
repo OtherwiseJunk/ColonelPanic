@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
-namespace DartsDiscordBots.Models
+namespace DartsDiscordBots.Modules.AnimalCrossing.Models
 {
 	[Table("AC_Wishlist_Items")]
 	public class Item

@@ -2,7 +2,7 @@
 using Discord.Commands;
 using System.Threading.Tasks;
 
-namespace DartsDiscordBots.Modules.ChatModule
+namespace DartsDiscordBots.Modules.Chat
 {
 	public class ChatModule : ModuleBase
 	{

@@ -1,6 +1,4 @@
-﻿using DartsDiscordBots.Interfaces;
-using DartsDiscordBots.Models;
-using Discord;
+﻿using Discord;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,6 +9,7 @@ using ColonelPanic.Database.Contexts;
 using DartsDiscordBots.Utilities;
 using DartsDiscordBots.Modules.AnimalCrossing.Models;
 using Discord.Commands;
+using DartsDiscordBots.Modules.AnimalCrossing.Interfaces;
 
 namespace DartsDiscordBots.Services
 {

@@ -1,9 +1,8 @@
-﻿using DartsDiscordBots.Modules.AnimalCrossing.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DartsDiscordBots.Models
+namespace DartsDiscordBots.Modules.AnimalCrossing.Models
 {
 	[Table("AC_Towns")]
 	public class Town

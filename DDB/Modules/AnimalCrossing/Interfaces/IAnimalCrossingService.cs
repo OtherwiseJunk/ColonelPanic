@@ -1,11 +1,9 @@
-﻿using DartsDiscordBots.Models;
+﻿using DartsDiscordBots.Modules.AnimalCrossing.Models;
 using Discord;
 using Discord.Commands;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace DartsDiscordBots.Interfaces
+namespace DartsDiscordBots.Modules.AnimalCrossing.Interfaces
 {
 	public interface IAnimalCrossingService
 	{

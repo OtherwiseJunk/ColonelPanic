@@ -2,9 +2,9 @@
 using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
-using DartsDiscordBots.Interfaces;
+using DartsDiscordBots.Modules.Help.Interfaces;
 
-namespace DartsDiscordBots.Modules
+namespace DartsDiscordBots.Modules.Help
 {
     public class HelpModule : ModuleBase
     {

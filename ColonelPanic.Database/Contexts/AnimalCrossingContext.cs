@@ -1,5 +1,4 @@
-﻿using DartsDiscordBots.Models;
-using DartsDiscordBots.Modules.AnimalCrossing.Models;
+﻿using DartsDiscordBots.Modules.AnimalCrossing.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ColonelPanic.Database.Contexts

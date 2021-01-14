@@ -1,14 +1,13 @@
-﻿using DartsDiscordBots.Models;
-using DartsDiscordBots.Interfaces;
+﻿using DartsDiscordBots.Modules.Pokemon.Interfaces;
+using DartsDiscordBots.Modules.Pokemon.Models;
 using DartsDiscordBots.Utilities;
 using Discord;
 using Discord.Commands;
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DartsDiscordBots.Modules
+namespace DartsDiscordBots.Modules.Pokemon
 {
 	public class PokemonModule : ModuleBase
 	{
