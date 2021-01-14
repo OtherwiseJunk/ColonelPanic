@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using DartsDiscordBots.Modules.Bot.Interfaces;
+using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ namespace DartsDiscordBots.Modules.Bot
 {
 	public class BotModule : ModuleBase
 	{
+		public IBotInformation _info { get; set; }
 		[Command("listchnl"), RequireOwner]
 		public async Task listChannels()
 		{
@@ -45,9 +47,14 @@ namespace DartsDiscordBots.Modules.Bot
 		[Command("link"), Alias("install"), Summary("Provides a link for installing the bot on other servers. You must be an admin of the target server to use the provided link.")]
 		public async Task ProvideInstallLink()
 		{
-			Context.Channel.SendMessageAsync("https://discordapp.com/oauth2/authorize?&client_id=357910708316274688&scope=bot");
+			await Context.Channel.SendMessageAsync(_info.InstallationLink);
 		}
 
+		[Command("repo"), Alias("github"), Summary("Provides a link for the bot's.")]
+		public async Task ProvideRepoLink()
+		{
+			await Context.Channel.SendMessageAsync(_info.GithubRepo);
+		}
 		[Command("renick"), RequireOwner, Summary("Renames the bot")]
 		public async Task ChangeNickname([Remainder, Summary("what to rename the bot")] string newNick)
 		{
