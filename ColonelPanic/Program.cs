@@ -19,6 +19,8 @@ using DartsDiscordBots.Modules.ServerManagement.Interfaces;
 using DartsDiscordBots.Modules.Help.Interfaces;
 using DartsDiscordBots.Modules.Pokemon.Interfaces;
 using DartsDiscordBots.Modules.AnimalCrossing.Interfaces;
+using DartsDiscordBots.Modules.Bot.Interfaces;
+using ColonelPanic.Constants;
 
 namespace ColonelPanic
 {
@@ -125,6 +127,7 @@ namespace ColonelPanic
 				.AddSingleton<IPokemonService, PokemonService>()
 				.AddSingleton<IAnimalCrossingService, AnimalCrossingService>()
 				.AddSingleton<IServerManagmentService, ServerManagementService>()
+				.AddSingleton<IBotInformation,BotInformation>()
 				.AddSingleton<ReliabilityService>()
 				.AddDbContext<AnimalCrossingContext>()
 				.AddSingleton<DiscordService>()
