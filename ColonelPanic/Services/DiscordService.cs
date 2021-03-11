@@ -49,7 +49,7 @@ namespace ColonelPanic.Services
 			}
 			catch (Exception ex)
 			{
-                throw new ApplicationException("Unable to retrieve Token from Database. Exiting.");
+                throw new ApplicationException($"Unable to retrieve Token from Database. Exiting.{Environment.NewLine}{Environment.NewLine}{ex.Message}");
 			}
 		}
         private async Task UserLeft(SocketGuildUser user)

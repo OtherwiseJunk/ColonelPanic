@@ -338,6 +338,7 @@ namespace DartsDiscordBots.Modules.AnimalCrossing
 
 		public async Task SendLargeListMessage(string message)
 		{			
+
 			while (message.Length > 1999)
 			{
 				string submessage = "";
