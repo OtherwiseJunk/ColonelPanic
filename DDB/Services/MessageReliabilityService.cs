@@ -19,7 +19,7 @@ namespace DartsDiscordBots.Services
 			_logger = logger;
 		}*/
 
-		public async Task SendMessageToChannel(string messageContent, IChannel channel, MessageReference referencedMessage, List<ulong> mentionedUserIds)
+		public async Task SendMessageToChannel(string messageContent, IChannel channel, MessageReference referencedMessage, List<ulong> mentionedUserIds, string seperatingCharacter)
 		{
 			IMessageChannel socketChannel = (IMessageChannel)channel;
 			List<string> messages;
@@ -27,7 +27,7 @@ namespace DartsDiscordBots.Services
 
 			if (messageContent.Length > MAX_MESSAGE_LENGTH)
 			{
-				messages = SplitMessageContent(messageContent);
+				messages = SplitMessageContent(messageContent, seperatingCharacter);
 			}
 			else
 			{
@@ -41,19 +41,19 @@ namespace DartsDiscordBots.Services
 			}						
 		}
 
-		public List<string> SplitMessageContent(string messageContent)
+		public List<string> SplitMessageContent(string messageContent, string seperatingCharacter)
 		{
 			List<string> messages = new List<string>();			
 
 			while (messageContent.Length > MAX_MESSAGE_LENGTH)
 			{
 				string submessage = "";
-				List<string> messageLines = messageContent.Split(Environment.NewLine).ToList();
+				List<string> messageLines = messageContent.Split(seperatingCharacter).ToList();				
 				foreach(string line in messageLines)
-				{					
-					if(submessage.Length + line.Length + Environment.NewLine.Length <= MAX_MESSAGE_LENGTH)
+				{			
+					if(submessage.Length + line.Length + seperatingCharacter.Length <= MAX_MESSAGE_LENGTH)
 					{
-						submessage += line + Environment.NewLine;
+						submessage += line + seperatingCharacter;
 					}
 					else
 					{

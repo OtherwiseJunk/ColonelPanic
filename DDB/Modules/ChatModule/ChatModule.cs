@@ -22,7 +22,8 @@ namespace DartsDiscordBots.Modules.Chat
 		[Command("8ball"), Summary("Ask the bot a true or false question.")]
 		public async Task Send8BallResponse([Remainder, Summary("The question!")] string question)
 		{
-			await _messenger.SendMessageToChannel(ResponseCollections._8BallResponses.GetRandom(), Context.Channel, Context.Message.Reference, new List<ulong>(Context.Message.MentionedUserIds));
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(ResponseCollections._8BallResponses.GetRandom(), Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 		}
 
 		[Command("clap")]
@@ -31,8 +32,9 @@ namespace DartsDiscordBots.Modules.Chat
 		{
 			string user = (Context.Message.Author as IGuildUser).Nickname ?? Context.Message.Author.Username;
 			string message = SharedConstants.ReplacedMessageFormat(user, Clapify(msg));
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
 
-			await _messenger.SendMessageToChannel(message, Context.Channel, Context.Message.Reference, new List<ulong>(Context.Message.MentionedUserIds));
+			await _messenger.SendMessageToChannel(message, Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 			await Context.Message.DeleteAsync();
 		}
 
@@ -41,10 +43,10 @@ namespace DartsDiscordBots.Modules.Chat
 		public async Task Mock([Summary("The message to Mockify"), Remainder] string msg)
 		{
 			string user = (Context.Message.Author as IGuildUser).Nickname ?? Context.Message.Author.Username;
-
 			string message = SharedConstants.ReplacedMessageFormat(user, Mockify(msg));
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
 
-			await _messenger.SendMessageToChannel(message, Context.Channel, Context.Message.Reference, new List<ulong>(Context.Message.MentionedUserIds));
+			await _messenger.SendMessageToChannel(message, Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 			await Context.Message.DeleteAsync();
 		}
 

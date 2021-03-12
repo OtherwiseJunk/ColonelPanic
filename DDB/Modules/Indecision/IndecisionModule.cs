@@ -1,13 +1,22 @@
-﻿using DartsDiscordBots.Utilities;
+﻿using DartsDiscordBots.Services.Interfaces;
+using DartsDiscordBots.Utilities;
+using Discord;
 using Discord.Commands;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace DartsDiscordBots.Modules.Indecision
 {
 	public class IndecisionModule : ModuleBase
 	{
+        IMessageReliabilityService _messenger { get; set; }
+
+        public IndecisionModule(IMessageReliabilityService messenger)
+		{
+            _messenger = messenger;
+		}
 		[Command("pick"), Summary("Picks a random value from a comma separated list. adding + to the end adds slight preference")]
 		public async Task Pick([Remainder, Summary("The comma separated list of items to pick from")] string items)
 		{
@@ -34,15 +43,16 @@ namespace DartsDiscordBots.Modules.Indecision
 					choices.Add(choiceName);
 				}
 			}
-			await Context.Channel.SendMessageAsync($"Rolling list: [`{string.Join("`,`", choices)}]`");
-			await Context.Channel.SendMessageAsync(choices.GetRandom());
+            MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+            await _messenger.SendMessageToChannel($"Rolling list: [`{string.Join("`,`", choices)}]`", Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), ",");
+            await _messenger.SendMessageToChannel(choices.GetRandom(), Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 		}
 
         [Command("roll"), Summary("Roll XdY+/-Z dice.")]
         public async Task Roll([Remainder, Summary("What to roll. Can indicate the number of dice to roll, the number of sides on those dice, and a positive or negative modifier to add to the results. 3d6+2 would roll 3 6-sided dice and add 2 to the final result.")] string rollString)
         {
-
-            var arguments = new List<string>(rollString.ToLower().Split('d'));
+            StringBuilder sb = new StringBuilder();
+            List<string> arguments = new List<string>(rollString.ToLower().Split('d'));
             arguments.Remove("");
             int sides, times, modifier;
 
@@ -57,20 +67,17 @@ namespace DartsDiscordBots.Modules.Indecision
                         var temp = dice.Roll();
                         if (int.TryParse(arguments[1], out modifier))
                         {
-                            await Context.Channel.SendMessageAsync(
-                                    string.Format("Rolled one d{0} plus {1} and got a total of {2}", sides,
-                                        modifier, temp + modifier));
-
+                            sb.AppendLine(string.Format("Rolled one d{0} plus {1} and got a total of {2}", sides,modifier, temp + modifier));
                         }
                         else
                         {
-                            await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+                            sb.AppendLine("Sorry, I don't recognize that number.");
 
                         }
                     }
                     else
                     {
-                        await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+                        sb.AppendLine("Sorry, I don't recognize that number.");
 
                     }
                 }
@@ -83,19 +90,18 @@ namespace DartsDiscordBots.Modules.Indecision
                         var temp = dice.Roll();
                         if (int.TryParse(arguments[1], out modifier))
                         {
-                            await Context.Channel.SendMessageAsync(
-                                    string.Format("Rolled one d{0} minus {1} and got a total of {2}", sides,
-                                        modifier, temp - modifier));
+                            sb.AppendLine(string.Format("Rolled one d{0} plus {1} and got a total of {2}", sides, modifier, temp + modifier));
+                            sb.AppendLine(string.Format("Rolled one d{0} minus {1} and got a total of {2}", sides,modifier, temp - modifier));
                         }
                         else
                         {
-                            await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+                            sb.AppendLine("Sorry, I don't recognize that number.");
 
                         }
                     }
                     else
                     {
-                        await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+                        sb.AppendLine("Sorry, I don't recognize that number.");
 
                     }
                 }
@@ -104,12 +110,12 @@ namespace DartsDiscordBots.Modules.Indecision
                     if (int.TryParse(arguments[0], out sides))
                     {
                         var dice = new Dice(sides);
-                        await Context.Channel.SendMessageAsync(string.Format("Rolled one d{0} and got a total of {1}",
-                                sides, dice.Roll()));
+
+                        sb.AppendLine(string.Format("Rolled one d{0} and got a total of {1}",sides, dice.Roll()));
                     }
                     else
                     {
-                        await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+                        sb.AppendLine("Sorry, I don't recognize that number.");
 
                     }
                 }
@@ -127,22 +133,18 @@ namespace DartsDiscordBots.Modules.Indecision
                             var temp = dice.Roll(times);
                             if (int.TryParse(arguments[1], out modifier))
                             {
-                                await Context.Channel.SendMessageAsync(
-                                        string.Format("Rolled {0} d{1} plus {2} and got a total of {3}",
-                                            times, sides, modifier, temp.Total + modifier));
-                                await Context.Channel.SendMessageAsync(string.Format("Individual Rolls: {0}",
-                                        string.Join(",", temp.Rolls)));
-
+                                sb.AppendLine(string.Format("Rolled {0} d{1} plus {2} and got a total of {3}", times, sides, modifier, temp.Total + modifier));
+                                sb.AppendLine(string.Format("Individual Rolls: {0}",string.Join(",", temp.Rolls)));
                             }
                             else
                             {
-                                await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+                                sb.AppendLine("Sorry, I don't recognize that number.");
 
                             }
                         }
                         else
                         {
-                            await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+                            sb.AppendLine("Sorry, I don't recognize that number.");
 
                         }
                     }
@@ -155,23 +157,17 @@ namespace DartsDiscordBots.Modules.Indecision
                             var temp = dice.Roll(times);
                             if (int.TryParse(arguments[1], out modifier))
                             {
-                                await Context.Channel.SendMessageAsync(
-                                        string.Format("Rolled {0} d{1} minus {2} and got a total of {3}", times, sides,
-                                            modifier, temp.Total - modifier));
-                                await Context.Channel.SendMessageAsync(string.Format("Individual Rolls: {0}",
-                                        string.Join(",", temp.Rolls)));
-
+                                sb.AppendLine(string.Format("Rolled {0} d{1} minus {2} and got a total of {3}", times, sides, modifier, temp.Total - modifier));
+                                sb.AppendLine(string.Format("Individual Rolls: {0}", string.Join(",", temp.Rolls)));
                             }
                             else
                             {
-                                await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
-
+                                sb.AppendLine("Sorry, I don't recognize that number.");
                             }
                         }
                         else
                         {
-                            await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
-
+                            sb.AppendLine("Sorry, I don't recognize that number.");
                         }
                     }
                     else
@@ -180,20 +176,19 @@ namespace DartsDiscordBots.Modules.Indecision
                         {
                             var dice = new Dice(sides);
                             var temp = dice.Roll(times);
-                            await Context.Channel.SendMessageAsync(string.Format(
-                                    "Rolled {0} d{1} and got a total of {2}", times, sides, temp.Total));
-                            await Context.Channel.SendMessageAsync(string.Format("Individual Rolls: {0}",
-                                    string.Join(",", temp.Rolls)));
-
+                            sb.AppendLine(string.Format("Rolled {0} d{1} and got a total of {2}", times, sides, temp.Total));
+                            sb.AppendLine(string.Format("Individual Rolls: {0}",string.Join(",", temp.Rolls)));							
                         }
                         else
                         {
-                            await Context.Channel.SendMessageAsync("Sorry, I don't recognize that number.");
+                            sb.AppendLine("Sorry, I don't recognize that number.");
 
                         }
-                    }
+                    }                    
                 }
             }
+            MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+            await _messenger.SendMessageToChannel(sb.ToString(), Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), ",");
         }
     }
 }

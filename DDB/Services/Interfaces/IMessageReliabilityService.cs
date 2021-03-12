@@ -10,7 +10,7 @@ namespace DartsDiscordBots.Services.Interfaces
 	{
 		private int MAX_MESSAGE_LENGTH { get => 1999; }
 		private ILogService _logger { get => null; }
-		public Task SendMessageToChannel(string messageContent, IChannel channel, MessageReference? referencedMessage, List<ulong>? mentionedUserIds);
-		public List<string> SplitMessageContent(string messageContent);
+		public Task SendMessageToChannel(string messageContent, IChannel channel, MessageReference? referencedMessage, List<ulong>? mentionedUserIds, string seperatingCharacter);
+		public List<string> SplitMessageContent(string messageContent, string seperatingCharacter);
 	}
 }

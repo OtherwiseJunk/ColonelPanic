@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using Discord;
 using DartsDiscordBots.Modules.AnimalCrossing.Interfaces;
 using DartsDiscordBots.Modules.AnimalCrossing.Models;
+using DartsDiscordBots.Services.Interfaces;
 
 namespace DartsDiscordBots.Modules.AnimalCrossing
 {
@@ -16,6 +17,7 @@ namespace DartsDiscordBots.Modules.AnimalCrossing
 	public class AnimalCrossingModule : ModuleBase
 	{
 		private readonly IAnimalCrossingService _acService;
+		private readonly IMessageReliabilityService _messenger;
 		private static List<string> ValidFruit = new List<string> { "apple", "cherry", "orange", "peach", "pear", "coconut"};
 		private static string ValidFruitString = ValidFruit.ToPascalPipeSeparatedString();
 		private static string NoRegisteredTownResponse = "Sorry, this command is only for Mayors! If you are a mayor you should register your town!";
@@ -42,97 +44,113 @@ namespace DartsDiscordBots.Modules.AnimalCrossing
 		private int MAXIMUM_TURNIP_BUY_PRICE = 110;
 
 
-		public AnimalCrossingModule(IAnimalCrossingService acService)
+		public AnimalCrossingModule(IAnimalCrossingService acService, IMessageReliabilityService messenger)
 		{
 			_acService = acService;
+			_messenger = messenger;
 		}
 
 		[Command("reg"), Summary("Register your town name. Needed to use some other AC commands. Town must be unique.")]
 		public async Task RegisterTown([Remainder, Summary("Your Animal Crossing town name")] string townName )
 		{
-			if(_acService.GetTown(townName) == null)
+			string message = "";
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+
+			if (_acService.GetTown(townName) == null)
 			{
-				await Context.Channel.SendMessageAsync(_acService.RegisterTown(Context.User.Id, townName));
+				message = _acService.RegisterTown(Context.User.Id, townName);
 			}
 			else
 			{
-				await Context.Channel.SendMessageAsync("Sorry, someone has already claimed this name! Try again.");
+				message = "Sorry, someone has already claimed this name! Try again.";
 			}
+			await _messenger.SendMessageToChannel(message, Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 		}
 		[Command("tornps"), Summary("Get the tornps picture")]
 		public async Task Tornps()
 		{
-			await Context.Channel.SendFileAsync(Converters.GetImageStreamFromBase64(TornpsBase64EncodedImage), "Tornps.png");
+			await Context.Channel.SendFileAsync(Converters.GetImageStreamFromBase64(TornpsBase64EncodedImage), "Tornps.png", messageReference: new MessageReference(Context.Message.Id));
 		}
 		[Command("tstats"), Summary("Displays stats based on youre lifetime turnip prices.")]
 		public async Task TurnipStats([Remainder, Summary("The name of the town to display stats for. If not provided will default to the discord user's town."), Optional]string townName)
 		{
+			string message = "";
 			if(townName == null)
 			{
-				await Context.Channel.SendMessageAsync(_acService.GetTurnipStats(Context.User.Id));
+				message = _acService.GetTurnipStats(Context.User.Id);
 			}
 			else
 			{
 				Town town = _acService.GetTown(townName);
 				if(town != null)
 				{
-					await Context.Channel.SendMessageAsync(_acService.GetTurnipStats(town.MayorDiscordId));
+					message = _acService.GetTurnipStats(town.MayorDiscordId);
 				}
 				else
 				{
-					await Context.Channel.SendMessageAsync($"Sorry, I couldn't find a town by the name of {townName}");
+					message = $"Sorry, I couldn't find a town by the name of {townName}";
 				}
 			}
-			
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(message, Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 		}
 
 		[Command("tweek"), Summary("Get your prices for the week. Goes back to the previous Sunday,  and will only show the days prices if executed on a Sunday.")]
 		public async Task TurnipWeek([Remainder, Summary("The name of the town to display prices for. If not provided will default to the discord user's town."), Optional]string townName)
 		{
+			string message = "";
 			if (townName == null)
 			{
-				await Context.Channel.SendMessageAsync(_acService.GetTurnipPricesForWeek(Context.User.Id));
+				message = _acService.GetTurnipPricesForWeek(Context.User.Id);
 			}
 			else
 			{
 				Town town = _acService.GetTown(townName);
 				if (town != null)
 				{
-					await Context.Channel.SendMessageAsync(_acService.GetTurnipPricesForWeek(town.MayorDiscordId));
+					message = _acService.GetTurnipPricesForWeek(town.MayorDiscordId);
 				}
 				else
 				{
-					await Context.Channel.SendMessageAsync($"Sorry, I couldn't find a town by the name of {townName}");
+					message = $"Sorry, I couldn't find a town by the name of {townName}";
 				}
 			}
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(message, Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 		}
 
 		[Command("hemi"), Summary("Set your hemisphere, either to North or South.")]
 		public async Task SetHempisphere([Remainder, Summary("The Hemisphere your town is in. Accepts `n|s|north|south|southern|northern`")]string hemisphere)
 		{
+			string message = "";
 			if (_acService.UserHasTown(Context.User.Id))
 			{
 				if (ValidNorthernHempisphereInputs.Contains(hemisphere.ToLower()))
 				{
-					await Context.Channel.SendMessageAsync(_acService.SetHemisphere(Context.User.Id, true));
+					message = _acService.SetHemisphere(Context.User.Id, true);
 				}
 				else if (ValidSouthernHempisphereInputs.Contains(hemisphere.ToLower()))
 				{
-					await Context.Channel.SendMessageAsync(_acService.SetHemisphere(Context.User.Id, false));
+					message = _acService.SetHemisphere(Context.User.Id, false);
 				}
-				else await Context.Channel.SendMessageAsync("Sorry, I don't know what hempisphere that is. Please send either `north`, `northern`, or `n` for Northern or `south`, `southern`, or `s` for Southern.");
+				else message = "Sorry, I don't know what hempisphere that is. Please send either `north`, `northern`, or `n` for Northern or `south`, `southern`, or `s` for Southern.";
 			}
-			else await Context.Channel.SendMessageAsync(NoRegisteredTownResponse);
+			else message = NoRegisteredTownResponse;
+
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(message, Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 		}
 		[Command("list"), Summary("See list of registered town names. Each name has an id for easy reference.")]
 		public async Task ListTowns()
 		{
-			await SendLargeListMessage(_acService.GetTownList(Context.Guild.GetUsersAsync().Result.ToList()));					
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(_acService.GetTownList(Context.Guild.GetUsersAsync().Result.ToList()), Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), Environment.NewLine);					
 		}
 		[Command("flist"), Summary("See list of each registered town's fruit.")]
 		public async Task ListTownsFruits()
 		{
-			await SendLargeListMessage(_acService.GetFruitList(Context.Guild.GetUsersAsync().Result.ToList()));
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(_acService.GetFruitList(Context.Guild.GetUsersAsync().Result.ToList()), Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), Environment.NewLine);
 		}
 		[Command("tlist"), Summary("See list of registered turnip prices.")]
 		public async Task ListTownsTurnipPrices()
@@ -142,25 +160,31 @@ namespace DartsDiscordBots.Modules.AnimalCrossing
 		[Command("freg"), Summary("See list of registered town names. Each name has an id for easy reference.")]
 		public async Task RegisterFruit([Remainder,Summary("Fruit to register. Valid fruits are <Apple|Cherry|Coconut|Orange|Peach|Pear>" )]string fruitName)
 		{
+			string message = "";
 			if (_acService.UserHasTown(Context.User.Id))
 			{
 				if (ValidFruit.Contains(fruitName.ToLower()))
 				{
-					await Context.Channel.SendMessageAsync(_acService.RegisterFruit(Context.User.Id, fruitName));
+					message = _acService.RegisterFruit(Context.User.Id, fruitName);
 				}
 				else
 				{
-					await Context.Channel.SendMessageAsync("Sorry, I don't recognize that fruit.");
+					message = "Sorry, I don't recognize that fruit.";
 				}
 			}
 			else
 			{
-				await Context.Channel.SendMessageAsync(NoRegisteredTownResponse);
+				message = NoRegisteredTownResponse;
 			}
+
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(message, Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 		}
 		[Command("sell"), Summary("Register your daily turnip sell price. Will reset at Midnight ET, and Noon ET. Not usable on Sundays")]
 		public async Task RegisterTurnipSellPrice([Remainder, Summary("Sell price to register. Must be between 15 and 800 bells.")]int price)
 		{
+			string message = "";
+
 			if (Context.Message.Timestamp.ToLocalTime().DayOfWeek != DayOfWeek.Sunday)
 			{
 				if (_acService.UserHasTown(Context.User.Id))
@@ -171,28 +195,32 @@ namespace DartsDiscordBots.Modules.AnimalCrossing
 						{
 							if (price == 69) await Context.Channel.SendMessageAsync("Nice.");
 							if (price == 420) await Context.Channel.SendMessageAsync("Dank.");
-							await Context.Channel.SendMessageAsync(_acService.RegisterTurnipSellPrice(Context.User.Id, price));
+							message = _acService.RegisterTurnipSellPrice(Context.User.Id, price);
 						}
 						else
 						{
-							await Context.Channel.SendMessageAsync("I can't believe Joan charged you that much! No really, I don't believe you.");
+							message = "I can't believe Joan charged you that much! No really, I don't believe you.";
 						}
 					}
 					else
 					{
-						await Context.Channel.SendMessageAsync("What an unbelievable deal! No literally, I don't believe you.");
+						message = "What an unbelievable deal! No literally, I don't believe you.";
 					}
 				}
 				else
 				{
-					await Context.Channel.SendMessageAsync(NoRegisteredTownResponse);
+					message = NoRegisteredTownResponse;
 				}
 			}
-			else  await Context.Channel.SendMessageAsync("Sorry, I can't set sell prices on Sundays. Wonder why that is "+Emote.Parse(IsathonkEmote));
+			else  message = "Sorry, I can't set sell prices on Sundays. Wonder why that is "+Emote.Parse(IsathonkEmote);
+
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(message, Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 		}
 		[Command("buy"), Summary("Register your daily turnip sell price. Will reset at Midnight ET. Only usable on Sundays")]
 		public async Task RegisterTurnipBuyPrice([Remainder, Summary("Sell price to register. Must be between 90 and 110 bells.")]int price)
 		{
+			string message = "";
 			if (Context.Message.Timestamp.ToLocalTime().DayOfWeek == DayOfWeek.Sunday)
 			{
 				if (_acService.UserHasTown(Context.User.Id))
@@ -201,28 +229,32 @@ namespace DartsDiscordBots.Modules.AnimalCrossing
 					{
 						if (price <= MAXIMUM_TURNIP_BUY_PRICE)
 						{
-							await Context.Channel.SendMessageAsync(_acService.RegisterTurnipBuyPrice(Context.User.Id, price));
+							message = _acService.RegisterTurnipBuyPrice(Context.User.Id, price);
 						}
 						else
 						{
-							await Context.Channel.SendMessageAsync("Wow! That's really an unbelievable deal you have on your hands! No really, I don't believe you.");
+							message = "Wow! That's really an unbelievable deal you have on your hands! No really, I don't believe you.";
 						}
 					}
 					else
 					{
-						await Context.Channel.SendMessageAsync("I can't believe Nook had the gaul to pay so little! No literally, I don't believe you.");
+						message = "I can't believe Nook had the gaul to pay so little! No literally, I don't believe you.";
 					}
 				}
 				else
 				{
-					await Context.Channel.SendMessageAsync(NoRegisteredTownResponse);
+					message = NoRegisteredTownResponse;
 				}
 			}
-			else await Context.Channel.SendMessageAsync("Sorry, I can't set buy prices when it isn't Sunday. I wonder why that is " + Emote.Parse(IsathonkEmote));
+			else message = "Sorry, I can't set buy prices when it isn't Sunday. I wonder why that is " + Emote.Parse(IsathonkEmote);
+
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(message, Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 		}
 		[Command("msg"), Summary("Have the discord bot send a message to the mayor of the town. Mostly anonymous to those outside your Discord Guild, you'll be represented as the mayor of your town.")]
 		public async Task Message([Summary("The town to message")]string town, [Remainder, Summary("The message")]string msg)
 		{
+
 			if (_acService.UserHasTown(Context.User.Id))
 			{
 				if (Int32.TryParse(town, out int townId))
@@ -267,100 +299,102 @@ namespace DartsDiscordBots.Modules.AnimalCrossing
 		}
 		[Command("wreg"), Summary("Adds the item to your wishlist.")]
 		public async Task AddWishlistItem([Summary("The name of the item to add to your Wishlist."), Remainder]string itemName) {
+			string message = "";
 			if (_acService.UserHasTown(Context.User.Id))
 			{
-				await Context.Channel.SendMessageAsync(_acService.RegisterWishlistItem(Context.User.Id, itemName));
+				message = _acService.RegisterWishlistItem(Context.User.Id, itemName);
 			}
-			else await Context.Channel.SendMessageAsync(NoRegisteredTownResponse);
+			else message = NoRegisteredTownResponse;
+
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(message, Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 		}
 		[Command("wrem"), Summary("Removes the item from your wishlist.")]
 		public async Task RemoveWishlistItem([Summary("The name or ID of the item to remove from your Wishlist."), Remainder]string item) {
+			string message = "";
+
 			if (_acService.UserHasTown(Context.User.Id))
 			{
 				if(Int32.TryParse(item, out int itemNum))
 				{
-					await Context.Channel.SendMessageAsync(_acService.RemoveWishlistItemById(Context.User.Id, itemNum));
+					message = _acService.RemoveWishlistItemById(Context.User.Id, itemNum);
 				}
 				else
 				{
-					await Context.Channel.SendMessageAsync(_acService.RemoveWishlistItemByName(Context.User.Id, item));
+					message = _acService.RemoveWishlistItemByName(Context.User.Id, item);
 				}
 			}
-			else await Context.Channel.SendMessageAsync(NoRegisteredTownResponse);
+			else message = NoRegisteredTownResponse;
+
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(message, Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 		}
 		[Command("wishlist"), Alias("wlist"), Summary("Lists out the items on each towns wishlist.")]
 		public async Task GetWishlist() {
-			await Context.Channel.SendMessageAsync(_acService.GetWishlist(Context.Guild.GetUsersAsync().Result.ToList()));
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(_acService.GetWishlist(Context.Guild.GetUsersAsync().Result.ToList()), Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 		}
 		[Command("open"),  Summary("Marks your town as open in the town list. You can optionally provide a dodocode so non-switch friends can join.")]
 		public async Task OpenTownBorder([Summary("The Dodo Code needed to visit your town. Optional."), Remainder]string dodoCode = null) {
+			string message = "";
+
 			if (_acService.UserHasTown(Context.User.Id))
 			{
-				await Context.Channel.SendMessageAsync(_acService.OpenTownBorder(Context.User.Id, dodoCode));
+				message = _acService.OpenTownBorder(Context.User.Id, dodoCode);
 			}
-			else await Context.Channel.SendMessageAsync(NoRegisteredTownResponse);
+			else message = NoRegisteredTownResponse;
+
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(message, Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 		}
 		[Command("close"), Summary("Marks your town as closed in the town list.")]
 		public async Task CloseTownBorder() {
+			string message = "";
+
 			if (_acService.UserHasTown(Context.User.Id))
 			{
-				await Context.Channel.SendMessageAsync(_acService.CloseTownBorder(Context.User.Id));
+				message = _acService.CloseTownBorder(Context.User.Id);
 			}
-			else await Context.Channel.SendMessageAsync(NoRegisteredTownResponse);
+			else message = NoRegisteredTownResponse;
+
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(message, Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 		}
 		[Command("nreg"), Summary("Registers your towns native fruit, which is shown in the fruit list.")]
 		public async Task RegisterNativeFruit([Summary("The name of your native fruit."), Remainder]string fruitName)
 		{
+			string message = "";
+
 			if (_acService.UserHasTown(Context.User.Id))
 			{
 				if (ValidFruit.Contains(fruitName.ToLower()))
 				{
-					await Context.Channel.SendMessageAsync(_acService.SetNativeFruit(Context.User.Id, fruitName));
+					message = _acService.SetNativeFruit(Context.User.Id, fruitName);
 				}
 				else
 				{
-					await Context.Channel.SendMessageAsync("Sorry, I don't recognize that fruit.");
+					message = "Sorry, I don't recognize that fruit.";
 				}
 			}
-			else await Context.Channel.SendMessageAsync(NoRegisteredTownResponse);
+			else message = NoRegisteredTownResponse;
+
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(message, Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
 		}
 
 		[Command("namereg"), Summary("Registers your real name, will be displayed in any of the town lists in place of your discord username.")]
 		public async Task RegisterRealName([Summary("The name you want to be registered under."), Remainder]string realName)
 		{
+			string message = "";
+
 			if (_acService.UserHasTown(Context.User.Id))
 			{
-				await Context.Channel.SendMessageAsync(_acService.SetRealName(Context.User.Id, realName));
+				message = _acService.SetRealName(Context.User.Id, realName);
 			}
-			else await Context.Channel.SendMessageAsync(NoRegisteredTownResponse);
-		}
-		
+			else message = NoRegisteredTownResponse;
 
-		public async Task SendLargeListMessage(string message)
-		{			
-
-			while (message.Length > 1999)
-			{
-				string submessage = "";
-				List<string> townLines = message.Split(Environment.NewLine).ToList();
-				foreach (string townLine in townLines)
-				{
-					if (submessage.Length + townLine.Length < 2000)
-					{
-						submessage += townLine + Environment.NewLine;
-					}
-					else
-					{
-						break;
-					}
-				}
-				await Context.Channel.SendMessageAsync(submessage);
-				message = message.Remove(0, submessage.Length);
-			}
-			if (message.Length != 0)
-			{
-				await Context.Channel.SendMessageAsync(message);
-			}
-		}
+			MessageReference reference = Context.Message.Reference ?? new MessageReference(Context.Message.Id);
+			await _messenger.SendMessageToChannel(message, Context.Channel, reference, new List<ulong>(Context.Message.MentionedUserIds), " ");
+		}				
 	}
 }
