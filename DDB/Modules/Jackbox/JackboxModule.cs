@@ -23,7 +23,7 @@ namespace DartsDiscordBots.Modules.Jackbox
 			List<int> versionList;
 			try
 			{
-				versionList = versions.Split(',').Select(int.Parse).Where(i => i < _jackboxConstants.JackboxMaxVersion).Where(i => i > 0).ToList();
+				versionList = versions.Split(',').ToList().ConvertAll(int.Parse);
 			}
 			catch
 			{
@@ -35,7 +35,7 @@ namespace DartsDiscordBots.Modules.Jackbox
 
 			foreach(int versionNum in versionList)
 			{
-					pollGameList.AddRange(_jackboxConstants.JackboxGameListByNumber[versionNum]);
+					pollGameList.AddRange(_jackboxConstants.JackboxGameListByNumber[versionNum]);					
 			}
 
 			await Context.Channel.SendMessageAsync(string.Join(Environment.NewLine, pollGameList));
