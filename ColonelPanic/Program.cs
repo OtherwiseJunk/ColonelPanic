@@ -22,6 +22,8 @@ using DartsDiscordBots.Modules.AnimalCrossing.Interfaces;
 using DartsDiscordBots.Modules.Bot.Interfaces;
 using ColonelPanic.Constants;
 using DartsDiscordBots.Services.Interfaces;
+using DartsDiscordBots.Modules.Jackbox;
+using DartsDiscordBots.Modules.Jackbox.Interfaces;
 
 namespace ColonelPanic
 {
@@ -130,6 +132,7 @@ namespace ColonelPanic
 				.AddSingleton<IServerManagmentService, ServerManagementService>()
 				.AddSingleton<IMessageReliabilityService, MessageReliabilityService>()
 				.AddSingleton<IBotInformation,BotInformation>()
+				.AddSingleton<IJackboxConstants,JackboxConstants>()
 				.AddSingleton<ReliabilityService>()
 				.AddDbContext<AnimalCrossingContext>()
 				.AddSingleton<DiscordService>()

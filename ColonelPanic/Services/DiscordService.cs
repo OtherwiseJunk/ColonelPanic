@@ -40,16 +40,25 @@ namespace ColonelPanic.Services
 			_socketClient.MessageReceived += OnMessageReceivedAsync;
 			_socketClient.UserLeft += UserLeft;
 
-			token = String.Empty;
+			token = Environment.GetEnvironmentVariable("COLONELPANIC");
 
-
-			try
+			Console.WriteLine("Attempting to retrieve bot token from Environment...");
+			if (string.IsNullOrEmpty(token))
 			{
-				token = ConfigurationHandler.GetToken();
+				try
+				{
+					Console.WriteLine("Failed. Attempting to retrieve from local DB...");
+					token = ConfigurationHandler.GetToken();
+					Console.WriteLine("Success!");
+				}
+				catch (Exception ex)
+				{
+					throw new ApplicationException($"Unable to retrieve Token from Database. Exiting.{Environment.NewLine}{Environment.NewLine}{ex.Message}");
+				}
 			}
-			catch (Exception ex)
+			else
 			{
-                throw new ApplicationException($"Unable to retrieve Token from Database. Exiting.{Environment.NewLine}{Environment.NewLine}{ex.Message}");
+				Console.WriteLine("Success!");
 			}
 		}
         private async Task UserLeft(SocketGuildUser user)

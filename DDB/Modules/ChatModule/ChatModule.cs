@@ -2,7 +2,6 @@
 using DartsDiscordBots.Utilities;
 using Discord.Commands;
 using System.Threading.Tasks;
-using LoremNET;
 using System.Collections.Generic;
 using Discord;
 using DartsDiscordBots.Constants;
