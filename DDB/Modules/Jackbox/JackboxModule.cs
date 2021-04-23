@@ -3,6 +3,7 @@ using Discord.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace DartsDiscordBots.Modules.Jackbox
@@ -31,14 +32,18 @@ namespace DartsDiscordBots.Modules.Jackbox
 				return;
 			}
 
-			List<string> pollGameList = new List<string>();
+			StringBuilder sb = new StringBuilder($"Here's the list of games for that! We're using approval voting, react to this message with all the games you'd be OK with playing!{Environment.NewLine}");
 
 			foreach(int versionNum in versionList)
 			{
-					pollGameList.AddRange(_jackboxConstants.JackboxGameListByNumber[versionNum]);					
+				sb.AppendLine($"`Jackbox Party Pack {versionNum} games:`");
+				foreach(string game in _jackboxConstants.JackboxGameListByNumber[versionNum])
+				{
+					sb.AppendLine(game);
+				}			
 			}
 
-			await Context.Channel.SendMessageAsync(string.Join(Environment.NewLine, pollGameList));
+			await Context.Channel.SendMessageAsync(sb.ToString());
 		}
 	}
 }
