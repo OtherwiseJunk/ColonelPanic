@@ -12,7 +12,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ColonelPanic.Database\ColonelPanic.Database.csproj" />
     <ProjectReference Include="..\ColonelPanic.Utilities\ColonelPanic.Utilities.csproj" />
-    <ProjectReference Include="..\DDB\DDB.csproj" />
   </ItemGroup>
 
 </Project>

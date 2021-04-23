@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DDB" Version="0.7.6" />
     <PackageReference Include="Discord.Net" Version="2.3.0" />
     <PackageReference Include="FluentScheduler" Version="5.5.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.0">
@@ -20,7 +21,6 @@
     <ProjectReference Include="..\ColonelPanic.Database\ColonelPanic.Database.csproj" />
     <ProjectReference Include="..\ColonelPanic.Modules\ColonelPanic.Modules.csproj" />
     <ProjectReference Include="..\ColonelPanic.Utilities\ColonelPanic.Utilities.csproj" />
-    <ProjectReference Include="..\DDB\DDB.csproj" />
   </ItemGroup>
 
 </Project>
