@@ -2,20 +2,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using ColonelPanic.Utilities.JSONClasses;
 using System.Net;
 using System.Web;
 using ColonelPanic.Database.Contexts;
-using DartsDiscordBots.Utilities;
 using ColonelPanic.Utilities.Permissions;
 using Discord;
+using DartsDiscordBots.Utilities;
 
 namespace ColonelPanic.Modules
 {
-    
-    [Group("topdaily"), Alias("top", "rtd")]
+
+	[Group("topdaily"), Alias("top", "rtd")]
     public class RedditModule : ModuleBase
     {
         [Command("rand"), Summary("Get a random image from the top 20 posts of the specified subreddit")]

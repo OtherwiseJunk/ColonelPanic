@@ -38,7 +38,7 @@ namespace ColonelPanic
 		{
 			InstallServices();
 
-			scheduledTaskRegistry.Schedule(() => AnimalCrossingService.Cleanup()).ToRunEvery(1).Days().At(00, 00);
+			scheduledTaskRegistry.Schedule(AnimalCrossingService.Cleanup).ToRunEvery(1).Days().At(00, 00);
 			ScheduleTopDaily();
 
 			JobManager.Initialize(scheduledTaskRegistry);
