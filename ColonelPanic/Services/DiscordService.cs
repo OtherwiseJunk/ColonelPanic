@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Victoria;
 using CEC = ColonelPanic.Constants.CustomEmoteConstants;
+using DartsDiscordBots.Handlers;
 
 namespace ColonelPanic.Services
 {
@@ -74,9 +75,10 @@ namespace ColonelPanic.Services
 
         public async Task InitializeAsync()
         {
-			_socketClient.MessageReceived += HandleCommand;
 			await _commandService.AddModulesAsync(Assembly.LoadFrom("ColonelPanic.Modules.dll"), _serviceProvider);
 			await _commandService.AddModulesAsync(Assembly.LoadFrom("DDB.dll"), _serviceProvider);
+
+			_socketClient.MessageReceived += (async (SocketMessage messageParam) => { _ = OnMessageHandlers.HandleCommandWithSummaryOnError(messageParam, new CommandContext(_socketClient, (SocketUserMessage) messageParam), _commandService, _serviceProvider, '$'); });
 
 			await _socketClient.LoginAsync(TokenType.Bot, token);
             await _socketClient.StartAsync();
