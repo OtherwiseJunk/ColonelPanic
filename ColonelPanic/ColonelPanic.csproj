@@ -6,10 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DDB" Version="0.8.1" />
+    <PackageReference Include="DDB" Version="1.0.0" />
     <PackageReference Include="Discord.Net" Version="2.4.0" />
     <PackageReference Include="FluentScheduler" Version="5.5.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.6">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.9">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
