@@ -27,10 +27,11 @@ namespace ColonelPanic
 		static void Main(string[] args) => new Program().Start().GetAwaiter().GetResult();
 
 		private async Task Start()
-		{
-			InstallServices();
+        {
+            InstallServices();
+			Console.WriteLine($"Starting with Connection String of : {Environment.GetEnvironmentVariable("DATABASE")}");
 
-			scheduledTaskRegistry.Schedule(AnimalCrossingService.Cleanup).ToRunEvery(1).Days().At(00, 00);
+            scheduledTaskRegistry.Schedule(AnimalCrossingService.Cleanup).ToRunEvery(1).Days().At(00, 00);
 
 			JobManager.Initialize(scheduledTaskRegistry);
 			await InitializeDiscordAsync();
