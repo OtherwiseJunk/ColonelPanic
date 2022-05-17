@@ -11,12 +11,12 @@ ARG TOKEN
 WORKDIR /src/
 COPY ["ColonelPanic/ColonelPanic.csproj", "./"]
 RUN dotnet restore "ColonelPanic.csproj"
-COPY ["ColonelPanic.Database/DeepState.Database.csproj", "./"]
-RUN dotnet restore "DeepState.Database.csproj"
-COPY ["ColonelPanic.Modules/DeepState.Modules.csproj", "./"]
-RUN dotnet restore "DeepState.Modules.csproj"
-COPY ["ColonelPanic.Utilities/DeepState.Utilities.csproj", "./"]
-RUN dotnet restore "DeepState.Utilities.csproj"
+COPY ["ColonelPanic.Database/ColonelPanic.Database.csproj", "./"]
+RUN dotnet restore "ColonelPanic.Database.csproj"
+COPY ["ColonelPanic.Modules/ColonelPanic.Modules.csproj", "./"]
+RUN dotnet restore "ColonelPanic.Modules.csproj"
+COPY ["ColonelPanic.Utilities/ColonelPanic.Utilities.csproj", "./"]
+RUN dotnet restore "ColonelPanic.Utilities.csproj"
 COPY . .
 WORKDIR "/src/"
 RUN dotnet build "ColonelPanic.sln" -c Release -o /app/build
