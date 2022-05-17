@@ -39,7 +39,6 @@ namespace ColonelPanic.Services
 			_socketClient.Log += WriteLog;
 			_socketClient.Ready += OnReadyAsync;
 			_socketClient.MessageReceived += OnMessageReceivedAsync;
-			_socketClient.GuildMemberUpdated += UserStatusUpdate;
 			_socketClient.UserLeft += UserLeft;
 
 			token = Environment.GetEnvironmentVariable("COLONELPANIC");
@@ -63,9 +62,10 @@ namespace ColonelPanic.Services
 				Console.WriteLine("Success!");
 			}
 		}
-        private async Task UserLeft(SocketGuildUser user)
+
+        private async Task UserLeft(SocketGuild guild, SocketUser user)
         {
-            PingGroupHandler.PurgeUser(user.Id.ToString(), user.Guild.Id.ToString());
+            PingGroupHandler.PurgeUser(user.Id.ToString(), guild.Id.ToString());
         }
 
 		private async Task WriteLog(LogMessage message)
@@ -173,14 +173,6 @@ namespace ColonelPanic.Services
 			if (!ConfigurationHandler.GuildStateExists(guildId))
 			{
 				await ConfigurationHandler.AddGuildState(guildId, name);
-			}
-		}
-
-		public async Task UserStatusUpdate(SocketGuildUser before, SocketGuildUser after)
-		{
-			if (after.Status.ToString().Contains("deez nuts"))
-			{
-				await (after.Guild.GetChannel(186199467396038656) as ITextChannel).SendMessageAsync($"Wow, real mature {after.Username}");
 			}
 		}
 

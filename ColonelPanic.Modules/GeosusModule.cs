@@ -40,5 +40,11 @@ namespace ColonelPanic.Modules
 		{
 			await Context.Channel.SendFileAsync(Converters.GetImageStreamFromBase64(bird2ImageBase64Encoded), "bird2.png");
 		}
+
+		[Command("scratchy")]
+		public async Task scratchy()
+        {
+			await Context.Channel.SendMessageAsync("You are boring, and small.");
+        }
 	}
 }
