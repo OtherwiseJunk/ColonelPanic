@@ -10,7 +10,7 @@ namespace ColonelPanic.Database.Contexts
 	{
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE"));
+			optionsBuilder.UseSqlServer("Server=db.cacheblasters.com;Database=MotherBrain;User Id=sa;Password=ASecureP4ssw0rd!");
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)

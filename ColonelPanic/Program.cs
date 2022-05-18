@@ -67,6 +67,11 @@ namespace ColonelPanic
 				.AddSingleton<CommandService>()
 				.AddSingleton<DiscordSocketClient>()
 				.AddSingleton<AudioService>()
+				.AddSingleton(new ImagingService(Environment.GetEnvironmentVariable("DOPUBLIC"),
+					Environment.GetEnvironmentVariable("DOSECRET"),
+					Environment.GetEnvironmentVariable("DOURL"),
+					Environment.GetEnvironmentVariable("DOBUCKET"))
+				)
 				.AddDbContextFactory<JackboxContext>()
 				.BuildServiceProvider();
 		}				
