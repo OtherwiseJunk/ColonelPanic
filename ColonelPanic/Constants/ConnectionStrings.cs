@@ -6,6 +6,6 @@ namespace ColonelPanic.Constants
 {
 	public class ConnectionStrings
 	{
-		public static string ConnectionString = "data source=EPSILON;initial catalog=MotherBrain;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework";
+		public static string ConnectionString = Environment.GetEnvironmentVariable("COLONELDB") == null ? "data source=EPSILON;initial catalog=MotherBrain;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework" : Environment.GetEnvironmentVariable("COLONELDB");
 	}
 }
