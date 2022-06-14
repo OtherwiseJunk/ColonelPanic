@@ -68,9 +68,9 @@ namespace ColonelPanic.Services
         }
 		public async void EventReminderCheck()
         {
-            DateTime fiftyThreeMinutesFromNow = DateTime.Now.AddMinutes(53);
-            DateTime sixtySevenMinutesFromNow = DateTime.Now.AddMinutes(67);
-			Console.WriteLine($"[ColonelPanic] - Checking if there are any events firing between {fiftyThreeMinutesFromNow.ToString("r")} and {sixtySevenMinutesFromNow.ToString("r")}");
+            DateTime fiftyNineMinutesFromNow = DateTime.Now.AddMinutes(59);
+            DateTime sixtyOneMinutesFromNow = DateTime.Now.AddMinutes(61);
+			Console.WriteLine($"[ColonelPanic] - Checking if there are any events firing between {fiftyNineMinutesFromNow.ToString("r")} and {sixtyOneMinutesFromNow.ToString("r")}");
             foreach (SocketGuild guild in _socketClient.Guilds)
             {
 				ITextChannel announcementChnl = (ITextChannel)guild.Channels.FirstOrDefault(c => c.Name.ToLower() == "announcements");
@@ -80,7 +80,7 @@ namespace ColonelPanic.Services
 					foreach (IGuildScheduledEvent guildEvent in guild.GetEventsAsync(RequestOptions.Default).Result)
 					{
 						Console.WriteLine($"[ColonelPanic] - Checking event '{guildEvent.Name}' which starts at {guildEvent.StartTime.ToLocalTime().ToString("r")}");
-						if (guildEvent.StartTime >= fiftyThreeMinutesFromNow && guildEvent.StartTime <= sixtySevenMinutesFromNow)
+						if (guildEvent.StartTime >= fiftyNineMinutesFromNow && guildEvent.StartTime <= sixtyOneMinutesFromNow)
                         {
 							Console.WriteLine($"[ColonelPanic] - Got a hit! Alerting the media.");
 							string mentions = await EU.GetInterestedUsersMentioned(guildEvent);
