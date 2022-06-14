@@ -33,15 +33,16 @@ namespace ColonelPanic
 
             scheduledTaskRegistry.Schedule(AnimalCrossingService.Cleanup).ToRunEvery(1).Days().At(00, 00);
 
-			JobManager.Initialize(scheduledTaskRegistry);
 			await InitializeDiscordAsync();
+			JobManager.Initialize(scheduledTaskRegistry);			
 
 			await Task.Delay(-1);
 		}
 
 		private async Task InitializeDiscordAsync()
-		{
-			var discordService = services.GetRequiredService<DiscordService>();
+        {
+            var discordService = services.GetRequiredService<DiscordService>();
+			scheduledTaskRegistry.Schedule(discordService.EventReminderCheck).ToRunEvery(1).Hours().At(00);
 			await discordService.InitializeAsync();
 		}
 

@@ -1,4 +1,5 @@
 ﻿using ColonelPanic.Database.Contexts;
+using DartsDiscordBots.Handlers;
 using DartsDiscordBots.Utilities;
 using Discord;
 using Discord.Commands;
@@ -11,7 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Victoria;
 using CEC = ColonelPanic.Constants.CustomEmoteConstants;
-using DartsDiscordBots.Handlers;
+using EH = DartsDiscordBots.Handlers.EventHandlers;
 
 namespace ColonelPanic.Services
 {
@@ -29,41 +30,77 @@ namespace ColonelPanic.Services
 
 		ulong goodMusicGeosusGuildId = 177229913512738816;
 
-		public DiscordService(IServiceProvider serviceProvider, DiscordSocketClient socketClient,
-							  CommandService commandService)
-		{
-			_serviceProvider = serviceProvider;
-			_socketClient = socketClient;
-			_commandService = commandService;
+        public DiscordService(IServiceProvider serviceProvider, DiscordSocketClient socketClient,
+                              CommandService commandService)
+        {
+            _serviceProvider = serviceProvider;
+            _socketClient = socketClient;
+            _commandService = commandService;
 
-			_socketClient.Log += WriteLog;
-			_socketClient.Ready += OnReadyAsync;
-			_socketClient.MessageReceived += OnMessageReceivedAsync;
-			_socketClient.UserLeft += UserLeft;
+            _socketClient.Log += WriteLog;
+            _socketClient.Ready += OnReadyAsync;
+            _socketClient.MessageReceived += OnMessageReceivedAsync;
+            _socketClient.UserLeft += UserLeft;
+            _socketClient.GuildScheduledEventCreated += OnEventCreated;
+            _socketClient.GuildScheduledEventStarted += OnEventStarted;
 
-			token = Environment.GetEnvironmentVariable("COLONELPANIC");
 
-			Console.WriteLine("Attempting to retrieve bot token from Environment...");
-			if (string.IsNullOrEmpty(token))
-			{
-				try
-				{
-					Console.WriteLine("Failed. Attempting to retrieve from local DB...");
-					token = ConfigurationHandler.GetToken();
-					Console.WriteLine("Success!");
+            token = Environment.GetEnvironmentVariable("COLONELPANIC");
+
+            Console.WriteLine("Attempting to retrieve bot token from Environment...");
+            if (string.IsNullOrEmpty(token))
+            {
+                try
+                {
+                    Console.WriteLine("Failed. Attempting to retrieve from local DB...");
+                    token = ConfigurationHandler.GetToken();
+                    Console.WriteLine("Success!");
+                }
+                catch (Exception ex)
+                {
+                    throw new ApplicationException($"Unable to retrieve Token from Database. Exiting.{Environment.NewLine}{Environment.NewLine}{ex.Message}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Success!");
+            }
+        }
+		public async void EventReminderCheck()
+        {
+            DateTime thirtyMinutesFromNow = DateTime.Now.AddMinutes(30);
+			DateTime sixtyMinutesFromNow = DateTime.Now.AddMinutes(60);
+			foreach (SocketGuild guild in _socketClient.Guilds)
+            {
+				ITextChannel announcementChnl = (ITextChannel)guild.Channels.FirstOrDefault(c => c.Name.ToLower() == "announcements");
+				if(announcementChnl != null)
+                {
+					foreach (IGuildScheduledEvent guildEvent in guild.GetEventsAsync(RequestOptions.Default).Result)
+					{
+						if(guildEvent.StartTime >= thirtyMinutesFromNow && guildEvent.StartTime <= sixtyMinutesFromNow)
+                        {
+							announcementChnl.SendMessageAsync($"{guildEvent.Name} is starting soon! ");
+                        }
+					}
 				}
-				catch (Exception ex)
-				{
-					throw new ApplicationException($"Unable to retrieve Token from Database. Exiting.{Environment.NewLine}{Environment.NewLine}{ex.Message}");
-				}
-			}
-			else
-			{
-				Console.WriteLine("Success!");
-			}
+            }
+
 		}
-
-        private async Task UserLeft(SocketGuild guild, SocketUser user)
+		private async Task OnEventCreated(SocketGuildEvent arg)
+        {
+            new Task(() =>
+            {
+                EH.AnnounceNewEvent(arg);
+            }).Start();
+        }
+		private async Task OnEventStarted(SocketGuildEvent arg)
+		{
+			new Task(() =>
+			{
+				EH.AnnounceNewEventStarted(arg);
+			}).Start();
+		}
+		private async Task UserLeft(SocketGuild guild, SocketUser user)
         {
             PingGroupHandler.PurgeUser(user.Id.ToString(), guild.Id.ToString());
         }
