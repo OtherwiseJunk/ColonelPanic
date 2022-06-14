@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Victoria;
 using CEC = ColonelPanic.Constants.CustomEmoteConstants;
-using EH = DartsDiscordBots.Handlers.EventHandlers;
+using EU = DartsDiscordBots.Utilities.EventUtilities;
 
 namespace ColonelPanic.Services
 {
@@ -79,7 +79,8 @@ namespace ColonelPanic.Services
 					{
 						if(guildEvent.StartTime >= thirtyMinutesFromNow && guildEvent.StartTime <= sixtyMinutesFromNow)
                         {
-							announcementChnl.SendMessageAsync($"{guildEvent.Name} is starting soon! ");
+							string mentions = await EventUtilities.GetInterestedUsersMentioned(guildEvent);
+							_ = announcementChnl.SendMessageAsync($"{mentions} {guildEvent.Name} is starting soon! See you all in <t:{guildEvent.StartTime.ToUniversalTime().ToUnixTimeSeconds()}:R>");
                         }
 					}
 				}
@@ -90,14 +91,14 @@ namespace ColonelPanic.Services
         {
             new Task(() =>
             {
-                EH.AnnounceNewEvent(arg);
+                EU.AnnounceNewEvent(arg);
             }).Start();
         }
 		private async Task OnEventStarted(SocketGuildEvent arg)
 		{
 			new Task(() =>
 			{
-				EH.AnnounceNewEventStarted(arg);
+				EU.AnnounceNewEventStarted(arg);
 			}).Start();
 		}
 		private async Task UserLeft(SocketGuild guild, SocketUser user)
