@@ -43,7 +43,9 @@ namespace ColonelPanic
         {
             var discordService = services.GetRequiredService<DiscordService>();
             scheduledTaskRegistry.Schedule(discordService.EventReminderCheck).ToRunEvery(1).Hours().At(0);
-			scheduledTaskRegistry.Schedule(discordService.EventReminderCheck).ToRunEvery(1).Hours().At(30);
+			scheduledTaskRegistry.Schedule(discordService.EventReminderCheck).ToRunEvery(1).Hours().At(15);
+            scheduledTaskRegistry.Schedule(discordService.EventReminderCheck).ToRunEvery(1).Hours().At(30);
+			scheduledTaskRegistry.Schedule(discordService.EventReminderCheck).ToRunEvery(1).Hours().At(45);
 			await discordService.InitializeAsync();
 		}
 
