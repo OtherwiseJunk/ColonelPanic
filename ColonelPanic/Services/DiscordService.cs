@@ -83,7 +83,7 @@ namespace ColonelPanic.Services
 						if (guildEvent.StartTime >= fiftyNineMinutesFromNow && guildEvent.StartTime <= sixtyOneMinutesFromNow)
                         {
 							Console.WriteLine($"[ColonelPanic] - Got a hit! Alerting the media.");
-							string mentions = await EU.GetInterestedUsersMentioned(guildEvent);
+							string mentions = await EU.GetInterestedUsersMentions(guildEvent);
 							_ = announcementChnl.SendMessageAsync($"{mentions} {guildEvent.Name} is starting soon! See you all in <t:{guildEvent.StartTime.ToUniversalTime().ToUnixTimeSeconds()}:R>");
                         }
 					}
