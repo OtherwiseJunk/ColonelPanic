@@ -234,11 +234,11 @@ namespace ColonelPanic.Services
 				CommandInfo commandFromName = _commandService.Commands.FirstOrDefault(c => $"{prefix}{c.Name}" == message.Content.ToLower());
 				if (commandFromModuleGroup != null)
 				{
-					await context.Channel.SendMessageAsync(BotUtilities.BuildModuleInfo(prefix, commandFromModuleGroup.Module));
+					await context.Channel.SendMessageAsync(HelpUtilities.BuildModuleInfo(prefix, commandFromModuleGroup.Module));
 				}
 				if (commandFromNameWithGroup != null || commandFromName != null)
 				{
-					await context.Channel.SendMessageAsync(BotUtilities.BuildDetailedCommandInfo(prefix, (commandFromName ?? commandFromNameWithGroup)));
+					await context.Channel.SendMessageAsync(HelpUtilities.BuildDetailedCommandInfo(prefix, (commandFromName ?? commandFromNameWithGroup)));
 				}
 				if (commandFromModuleGroup == null && commandFromName == null && commandFromNameWithGroup == null)
 				{
