@@ -4,6 +4,7 @@ using DartsDiscordBots.Utilities;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -127,7 +128,7 @@ namespace ColonelPanic.Services
             await _socketClient.LoginAsync(TokenType.Bot, token);
             await _socketClient.StartAsync();
 
-			new Thread(() => JackboxUtilities.EnsureDefaultGamesExist(_services.GetService<JackboxContext>())).Start();
+			new Thread(() => JackboxUtilities.EnsureDefaultGamesExist(_serviceProvider.GetService<JackboxContext>())).Start();
 
 		}
 
