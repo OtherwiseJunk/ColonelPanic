@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Victoria;
 using CEC = ColonelPanic.Constants.CustomEmoteConstants;
@@ -114,20 +115,23 @@ namespace ColonelPanic.Services
 		{
 			Console.WriteLine($"{message.Source}: {message.Message} ");
 			return;
-		}
+        }
 
         public async Task InitializeAsync()
         {
-			await _commandService.AddModulesAsync(Assembly.LoadFrom("ColonelPanic.Modules.dll"), _serviceProvider);
-			await _commandService.AddModulesAsync(Assembly.LoadFrom("DDB.dll"), _serviceProvider);
+            await _commandService.AddModulesAsync(Assembly.LoadFrom("ColonelPanic.Modules.dll"), _serviceProvider);
+            await _commandService.AddModulesAsync(Assembly.LoadFrom("DDB.dll"), _serviceProvider);
 
-			_socketClient.MessageReceived += (async (SocketMessage messageParam) => { _ = OnMessageHandlers.HandleCommandWithSummaryOnError(messageParam, new CommandContext(_socketClient, (SocketUserMessage) messageParam), _commandService, _serviceProvider, '$'); });
+            _socketClient.MessageReceived += (async (SocketMessage messageParam) => { _ = OnMessageHandlers.HandleCommandWithSummaryOnError(messageParam, new CommandContext(_socketClient, (SocketUserMessage)messageParam), _commandService, _serviceProvider, '$'); });
 
-			await _socketClient.LoginAsync(TokenType.Bot, token);
+            await _socketClient.LoginAsync(TokenType.Bot, token);
             await _socketClient.StartAsync();
-        }
 
-        private async Task OnReadyAsync()
+			new Thread(() => JackboxUtilities.EnsureDefaultGamesExist(_services.GetService<JackboxContext>())).Start();
+
+		}
+
+		private async Task OnReadyAsync()
         {
             await _serviceProvider.UseLavaNodeAsync();
         }
