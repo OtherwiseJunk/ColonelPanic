@@ -1,6 +1,5 @@
 ﻿using ColonelPanic.Database.Contexts;
 using ColonelPanic.Handlers;
-using DartsDiscordBots.Handlers;
 using DartsDiscordBots.Utilities;
 using Discord;
 using Discord.Commands;
@@ -14,9 +13,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Victoria;
-
 using EU = DartsDiscordBots.Utilities.EventUtilities;
-using OMH = DartsDiscordBots.Handlers.OnMessageHandlers;
+
 
 namespace ColonelPanic.Services
 {
@@ -30,9 +28,6 @@ namespace ColonelPanic.Services
 
         Regex isMentioningMeRegex = new Regex(@"(Co?l?o?n?e?l?)(\.?|\s)*(Pa?o?n?i?c?)?");
         ulong botUserId = 357910708316274688;
-        ulong geosusUserId = 140620251976040449;
-
-        ulong goodMusicGeosusGuildId = 177229913512738816;
 
         public DiscordService(IServiceProvider serviceProvider, DiscordSocketClient socketClient,
                               CommandService commandService)

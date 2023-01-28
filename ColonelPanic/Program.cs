@@ -50,7 +50,13 @@ namespace ColonelPanic
 		}
 
 		public void InstallServices()
-		{
+        {
+
+            var config = new DiscordSocketConfig
+            {
+                GatewayIntents = Discord.GatewayIntents.All
+            };
+
 			services = new ServiceCollection()
 				.AddLavaNode(node =>
 				{
@@ -69,7 +75,7 @@ namespace ColonelPanic
 				.AddDbContext<AnimalCrossingContext>()
 				.AddSingleton<DiscordService>()
 				.AddSingleton<CommandService>()
-				.AddSingleton<DiscordSocketClient>()
+				.AddSingleton(new DiscordSocketClient(config))
 				.AddSingleton<AudioService>()
 				.AddSingleton(new ImagingService(Environment.GetEnvironmentVariable("DOPUBLIC"),
 					Environment.GetEnvironmentVariable("DOSECRET"),
