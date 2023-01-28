@@ -27,66 +27,6 @@ namespace ColonelPanic.Database.Contexts
 			OptionsBuilder.UseSqlServer(ConnectionStrings.ConnectionString);
 		}
 
-		private static List<GuildState> GetGuildStates()
-        {
-            using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
-            {
-                return db.GuildStates.ToList();
-            }
-        }
-
-        public static void AddGuildState(GuildState guildState)
-        {
-            using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
-            {
-                if (!GuildStateExists(guildState.GuildId))
-                {
-                    Console.WriteLine("Adding new Guild State.");
-                    db.GuildStates.Add(guildState);
-                    db.SaveChanges();
-                }
-            }
-        }
-
-        public static void ChangePermission(string permissiongType, string permissionName, string guildId, bool newState)
-        {
-            switch (permissiongType)
-            {
-                case "guild":
-                    ChangGuildPermissionState(permissionName, guildId, newState);
-                    break;
-            }
-        }
-
-        private static void ChangGuildPermissionState(string permissionName, string guildId,bool newState)
-        {
-            using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
-            {
-                GuildState guildStates = db.GuildStates.FirstOrDefault(gs => gs.GuildId == guildId);                
-                switch (permissionName)
-                {
-                    case "scrum":
-                        guildStates.ScrumEnabled = newState;
-                        break;
-                    case "speak":
-                        guildStates.CanSpeak = newState;
-                        break;
-                    case "listen":
-                        guildStates.CanListen = newState;
-                        break;
-                    case "note":
-                        guildStates.NoteEnabled = newState;
-                        break;
-                    case "ping":
-                        guildStates.PingGroupEnabled = newState;
-                        break;
-                }
-                db.GuildStates.Attach(guildStates);
-                db.Entry(guildStates).State = EntityState.Modified;
-                db.SaveChanges();
-            }            
-        }
-
         public static bool GuildStateExists(string guildId)
         {
             using (ConfigurationContext db = new ConfigurationContext(OptionsBuilder.Options))
