@@ -2,11 +2,11 @@
 
 ARG TOKEN
 
-FROM mcr.microsoft.com/dotnet/runtime:6.0 AS base
+FROM mcr.microsoft.com/dotnet/runtime:7.0 AS base
 ARG TOKEN
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 ARG TOKEN
 WORKDIR /src/
 COPY ["ColonelPanic/ColonelPanic.csproj", "./"]
@@ -33,7 +33,7 @@ COPY --from=publish /app/publish .
 RUN apt-get update
 RUN apt-get install -y libfreetype6
 RUN apt-get install -y libfontconfig1
-RUN apt-get install -y libc6-dev 
+RUN apt-get install -y libc6-dev
 RUN apt-get install -y libgdiplus
 RUN rm /etc/localtime
 RUN ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
