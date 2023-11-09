@@ -82,7 +82,7 @@ namespace ColonelPanic.Services
         public async Task InitializeAsync()
         {
             await _commandService.AddModulesAsync(Assembly.LoadFrom("ColonelPanic.Modules.dll"), _serviceProvider);
-            //await _commandService.AddModulesAsync(Assembly.LoadFrom("DDB.dll"), _serviceProvider);
+            await _commandService.AddModulesAsync(Assembly.LoadFrom("DDB.dll"), _serviceProvider);
 
             await _socketClient.LoginAsync(TokenType.Bot, token);
             await _socketClient.StartAsync();
