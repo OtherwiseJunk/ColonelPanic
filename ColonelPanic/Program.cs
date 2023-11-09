@@ -91,15 +91,4 @@ namespace ColonelPanic
 	{
 		public string Prefix { get; set; } = "$";
 	}
-	public class RedditVideoLinkXMetadata
-	{
-		public string URL;
-		public string MetadataMessage;
-
-		public RedditVideoLinkXMetadata(string url, string metadataMessage)
-		{
-			URL = url;
-			MetadataMessage = metadataMessage;
-		}
-	}
 }

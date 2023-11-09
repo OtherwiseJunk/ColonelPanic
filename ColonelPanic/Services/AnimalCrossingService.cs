@@ -10,8 +10,9 @@ using DartsDiscordBots.Utilities;
 using DartsDiscordBots.Modules.AnimalCrossing.Models;
 using Discord.Commands;
 using DartsDiscordBots.Modules.AnimalCrossing.Interfaces;
+using System.ComponentModel;
 
-namespace DartsDiscordBots.Services
+namespace ColonelPanic.Services
 {
 	public class AnimalCrossingService : IAnimalCrossingService
 	{
@@ -19,10 +20,10 @@ namespace DartsDiscordBots.Services
 		public AnimalCrossingService()
 		{
 			OptionsBuilder = new DbContextOptionsBuilder<AnimalCrossingContext>();
-			OptionsBuilder.UseSqlServer(ConnectionStrings.ConnectionString);
-		}
+			OptionsBuilder.UseSqlServer("data source=db.cacheblasters.com;initial catalog=MotherBrain;User Id=sa;Password=ASecureP4ssw0rd!");
+        }
 
-		public string GetFruitList(List<IGuildUser> users)
+        public string GetFruitList(List<IGuildUser> users)
 		{
 			using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
 			{
@@ -87,39 +88,40 @@ namespace DartsDiscordBots.Services
 			}
 		}
 
-		public string GetTownList(List<IGuildUser> users)
+		public Embed GetTownList(List<IGuildUser> users)
 		{
 			using (AnimalCrossingContext db = new AnimalCrossingContext(OptionsBuilder.Options))
 			{
-				StringBuilder sb = new StringBuilder("Town Id | Town Name").AppendLine();
+				EmbedBuilder builder = new();
+				builder.Title = "Town List";
+				builder.WithFooter("0");
 				var towns = db.Towns.ToList();
-				bool townsUnset = true;
-				foreach (Town town in towns)
+                if (towns.Count == 0)
+                {
+					builder.Description= "Sorry, No Towns Found!";
+                }
+                foreach (Town town in towns.Take(25))
 				{
 					IGuildUser localMayor = users.FirstOrDefault(u => u.Id == town.MayorDiscordId);
-					string hemisphere = "";
+					string hemisphere = String.IsNullOrEmpty(town.NorthernHempisphere) ? "" : $"({town.NorthernHempisphere.ToUpper()})";
 					string dodoCode = "";
-					if (town.NorthernHempisphere != String.Empty)
-					{
-						hemisphere = town.NorthernHempisphere == "n" ? " in the Northern Hemisphere" : " in the Southern Hemisphere";
-					}
+					string borderStatus = $"**Border Open:** `{town.BorderOpen}`";
 					if (town.DodoCode != null)
 					{
-						dodoCode = $" Dodo Code: `{town.DodoCode}`";
+						dodoCode = $"{Environment.NewLine}**Dodo Code**: `{town.DodoCode}`";
 					}
-					if (localMayor != null)
+                    else if (localMayor != null)
 					{
 						string mayorIdentifier = town.MayorRealName != null ? $"{town.MayorRealName} - {localMayor.Username}" : localMayor.Username;
-						sb.AppendLine($"`{town.TownId}` | `{town.TownName}`{hemisphere} Border Open:`{town.BorderOpen}`{dodoCode} - Mayor: {mayorIdentifier}");
+						builder.AddField($"{town.TownId}: {town.TownName} {hemisphere}", $"{borderStatus}{dodoCode}{Environment.NewLine}**Mayor**: `{mayorIdentifier.ToPascalCase()}`");
 					}
 					else
 					{
-						sb.AppendLine($"`{town.TownId}` | `{town.TownName}`{hemisphere} Border Open:`{town.BorderOpen}`{dodoCode}");
+                        builder.AddField($"{town.TownId}: {town.TownName} {hemisphere}", $"{borderStatus}{dodoCode}");
 					}
-					townsUnset = false;
 				}
-				if (townsUnset) return "There's no towns :-(";
-				return sb.ToString();
+
+				return builder.Build();
 			}
 		}
 
@@ -699,5 +701,25 @@ namespace DartsDiscordBots.Services
 				return "Sorry, you have to be a registered mayor to see a weekly summary on your town's turnip prices.";
 			}
 		}
-	}
+
+        Embed IAnimalCrossingService.GetWishlist(List<IGuildUser> users)
+        {
+            throw new NotImplementedException();
+        }
+
+        Embed IAnimalCrossingService.GetFruitList(List<IGuildUser> users)
+        {
+            throw new NotImplementedException();
+        }
+
+        Embed IAnimalCrossingService.GetTurnipStats(ulong mayorDiscordUserId)
+        {
+            throw new NotImplementedException();
+        }
+
+        Embed IAnimalCrossingService.GetTurnipPricesForWeek(ulong mayorDiscordUserId)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
