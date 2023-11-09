@@ -1,4 +1,5 @@
-﻿using ColonelPanic.Database.Contexts;
+﻿using ColonelPanic.Constants;
+using ColonelPanic.Database.Contexts;
 using ColonelPanic.Handlers;
 using DartsDiscordBots.Utilities;
 using Discord;
@@ -6,6 +7,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -26,9 +28,6 @@ namespace ColonelPanic.Services
         private readonly ILogger _logger;
         private string token;
 
-        Regex isMentioningMeRegex = new Regex(@"(Co?l?o?n?e?l?)(\.?|\s)*(Pa?o?n?i?c?)?");
-        ulong botUserId = 357910708316274688;
-
         public DiscordService(IServiceProvider serviceProvider, DiscordSocketClient socketClient,
                               CommandService commandService)
         {
@@ -43,7 +42,57 @@ namespace ColonelPanic.Services
             _socketClient.GuildScheduledEventCreated += OnEventCreated;
             _socketClient.GuildScheduledEventStarted += OnEventStarted;
 
+            token = GetBotToken();
 
+            
+        }
+        public async void EventReminderCheck()
+        {
+            DateTime fiftyNineMinutesFromNow = DateTime.Now.AddMinutes(59);
+            DateTime sixtyOneMinutesFromNow = DateTime.Now.AddMinutes(61);
+            Console.WriteLine($"[ColonelPanic] - Checking if there are any events firing between {fiftyNineMinutesFromNow.ToString("r")} and {sixtyOneMinutesFromNow.ToString("r")}");
+            foreach (SocketGuild guild in _socketClient.Guilds)
+            {
+                ITextChannel announcementChnl = (ITextChannel)guild.Channels.FirstOrDefault(c => c.Name.ToLower() == "announcements");
+                if (announcementChnl != null)
+                {
+                    new Thread(() =>
+                    {
+                        CheckGuildForEventsRequiringReminders(fiftyNineMinutesFromNow, sixtyOneMinutesFromNow, announcementChnl, guild);
+                    }).Start();                    
+                }
+            }
+
+        }
+
+        private async void CheckGuildForEventsRequiringReminders(DateTime lowerTimeLimit, DateTime upperTImeLimit, ITextChannel announcementChannel, SocketGuild guild)
+        {
+            Console.WriteLine("[ColonelPanic] - Announcement channel not null! Checking events.");
+            foreach (IGuildScheduledEvent guildEvent in guild.GetEventsAsync(RequestOptions.Default).Result)
+            {
+                Console.WriteLine($"[ColonelPanic] - Checking event '{guildEvent.Name}' which starts at {guildEvent.StartTime.ToLocalTime().ToString("r")}");
+                if (guildEvent.StartTime >= lowerTimeLimit && guildEvent.StartTime <= upperTImeLimit)
+                {
+                    Console.WriteLine($"[ColonelPanic] - Got a hit! Alerting the media.");
+                    string mentions = await EU.GetInterestedUsersMentions(guildEvent);
+                    _ = announcementChannel.SendMessageAsync($"{mentions} {guildEvent.Name} is starting soon! See you all in <t:{guildEvent.StartTime.ToUniversalTime().ToUnixTimeSeconds()}:R>");
+                }
+            }
+        }
+        public async Task InitializeAsync()
+        {
+            await _commandService.AddModulesAsync(Assembly.LoadFrom("ColonelPanic.Modules.dll"), _serviceProvider);
+            //await _commandService.AddModulesAsync(Assembly.LoadFrom("DDB.dll"), _serviceProvider);
+
+            await _socketClient.LoginAsync(TokenType.Bot, token);
+            await _socketClient.StartAsync();
+
+            new Thread(() => JackboxUtilities.EnsureDefaultGamesExist(_serviceProvider.GetService<JackboxContext>())).Start();
+
+        }
+        private string GetBotToken()
+        {
+            string token;
             token = Environment.GetEnvironmentVariable("COLONELPANIC");
 
             Console.WriteLine("Attempting to retrieve bot token from Environment...");
@@ -64,31 +113,7 @@ namespace ColonelPanic.Services
             {
                 Console.WriteLine("Success!");
             }
-        }
-        public async void EventReminderCheck()
-        {
-            DateTime fiftyNineMinutesFromNow = DateTime.Now.AddMinutes(59);
-            DateTime sixtyOneMinutesFromNow = DateTime.Now.AddMinutes(61);
-            Console.WriteLine($"[ColonelPanic] - Checking if there are any events firing between {fiftyNineMinutesFromNow.ToString("r")} and {sixtyOneMinutesFromNow.ToString("r")}");
-            foreach (SocketGuild guild in _socketClient.Guilds)
-            {
-                ITextChannel announcementChnl = (ITextChannel)guild.Channels.FirstOrDefault(c => c.Name.ToLower() == "announcements");
-                if (announcementChnl != null)
-                {
-                    Console.WriteLine("[ColonelPanic] - Announcement channel not null! Checking events.");
-                    foreach (IGuildScheduledEvent guildEvent in guild.GetEventsAsync(RequestOptions.Default).Result)
-                    {
-                        Console.WriteLine($"[ColonelPanic] - Checking event '{guildEvent.Name}' which starts at {guildEvent.StartTime.ToLocalTime().ToString("r")}");
-                        if (guildEvent.StartTime >= fiftyNineMinutesFromNow && guildEvent.StartTime <= sixtyOneMinutesFromNow)
-                        {
-                            Console.WriteLine($"[ColonelPanic] - Got a hit! Alerting the media.");
-                            string mentions = await EU.GetInterestedUsersMentions(guildEvent);
-                            _ = announcementChnl.SendMessageAsync($"{mentions} {guildEvent.Name} is starting soon! See you all in <t:{guildEvent.StartTime.ToUniversalTime().ToUnixTimeSeconds()}:R>");
-                        }
-                    }
-                }
-            }
-
+            return token;
         }
         private async Task OnEventCreated(SocketGuildEvent arg)
         {
@@ -104,35 +129,20 @@ namespace ColonelPanic.Services
                 EU.AnnounceNewEventStarted(arg);
             }).Start();
         }
-
         private async Task WriteLog(LogMessage message)
         {
             Console.WriteLine($"{message.Source}: {message.Message} ");
             return;
         }
-
-        public async Task InitializeAsync()
-        {
-            await _commandService.AddModulesAsync(Assembly.LoadFrom("ColonelPanic.Modules.dll"), _serviceProvider);
-            await _commandService.AddModulesAsync(Assembly.LoadFrom("DDB.dll"), _serviceProvider);
-
-            await _socketClient.LoginAsync(TokenType.Bot, token);
-            await _socketClient.StartAsync();
-
-            new Thread(() => JackboxUtilities.EnsureDefaultGamesExist(_serviceProvider.GetService<JackboxContext>())).Start();
-
-        }
-
         private async Task OnReadyAsync()
         {
             await _serviceProvider.UseLavaNodeAsync();
         }
-
         private async Task OnMessageReceivedAsync(SocketMessage arg)
         {
             try
             {
-                bool mentioningMe = BotUtilities.isMentioningMe(arg, isMentioningMeRegex, botUserId);
+                bool mentioningMe = BotUtilities.isMentioningMe(arg, BotInformation.isMentioningMeRegex, BotInformation.botUserId);
                 string chnlId = arg.Channel.Id.ToString();
                 string userId = arg.Author.Id.ToString();
                 string message = arg.Content;
@@ -154,8 +164,7 @@ namespace ColonelPanic.Services
 
             return;
         }
-
-        public async Task HandleCommand(SocketMessage messageParam)
+        private async Task HandleCommand(SocketMessage messageParam)
         {
             char prefix = '$';
             var message = messageParam as SocketUserMessage;
@@ -166,22 +175,25 @@ namespace ColonelPanic.Services
             var result = await _commandService.ExecuteAsync(context, argPos, _serviceProvider);
             if (!result.IsSuccess)
             {
-                CommandInfo commandFromModuleGroup = _commandService.Commands.FirstOrDefault(c => $"{prefix}{c.Module.Group}" == message.Content.ToLower());
-                CommandInfo commandFromNameWithGroup = _commandService.Commands.FirstOrDefault(c => $"{prefix}{c.Module.Group} {c.Name}" == message.Content.ToLower());
-                CommandInfo commandFromName = _commandService.Commands.FirstOrDefault(c => $"{prefix}{c.Name}" == message.Content.ToLower());
-                if (commandFromModuleGroup != null)
-                {
-                    await context.Channel.SendMessageAsync(HelpUtilities.BuildModuleInfo(prefix, commandFromModuleGroup.Module));
-                }
-                if (commandFromNameWithGroup != null || commandFromName != null)
-                {
-                    await context.Channel.SendMessageAsync(HelpUtilities.BuildDetailedCommandInfo(prefix, (commandFromName ?? commandFromNameWithGroup)));
-                }
-                if (commandFromModuleGroup == null && commandFromName == null && commandFromNameWithGroup == null)
-                {
-                    await context.Message.AddReactionAsync(new Emoji("😕"));
-                }
-
+                await HandleCommandError(prefix, message);
+            }
+        }
+        private async Task HandleCommandError(char prefix, SocketUserMessage message)
+        {
+            CommandInfo commandFromModuleGroup = _commandService.Commands.FirstOrDefault(c => $"{prefix}{c.Module.Group}" == message.Content.ToLower());
+            CommandInfo commandFromNameWithGroup = _commandService.Commands.FirstOrDefault(c => $"{prefix}{c.Module.Group} {c.Name}" == message.Content.ToLower());
+            CommandInfo commandFromName = _commandService.Commands.FirstOrDefault(c => $"{prefix}{c.Name}" == message.Content.ToLower());
+            if (commandFromModuleGroup != null)
+            {
+                await message.ReplyAsync(HelpUtilities.BuildModuleInfo(prefix, commandFromModuleGroup.Module));
+            }
+            if (commandFromNameWithGroup != null || commandFromName != null)
+            {
+                await message.ReplyAsync(HelpUtilities.BuildDetailedCommandInfo(prefix, (commandFromName ?? commandFromNameWithGroup)));
+            }
+            if (commandFromModuleGroup == null && commandFromName == null && commandFromNameWithGroup == null)
+            {
+                await message.AddReactionAsync(new Emoji("😕"));
             }
         }
 

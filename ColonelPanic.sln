@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29306.81
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34009.444
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ColonelPanic", "ColonelPanic\ColonelPanic.csproj", "{2D1D55CF-984B-4B49-BA0D-FA3941176A49}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ColonelPanic.Database", "ColonelPanic.Database\ColonelPanic.Database.csproj", "{12262D4D-5949-4874-8696-2386B4A7ABE8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ColonelPanic.Modules", "ColonelPanic.Modules\ColonelPanic.Modules.csproj", "{FE835A0F-1B15-464D-A1B4-9BDA87310E2D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ColonelPanic.Utilities", "ColonelPanic.Utilities\ColonelPanic.Utilities.csproj", "{82F0BD60-B6B4-414C-9742-0C5D703DB438}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +27,6 @@ Global
 		{FE835A0F-1B15-464D-A1B4-9BDA87310E2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE835A0F-1B15-464D-A1B4-9BDA87310E2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE835A0F-1B15-464D-A1B4-9BDA87310E2D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{82F0BD60-B6B4-414C-9742-0C5D703DB438}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{82F0BD60-B6B4-414C-9742-0C5D703DB438}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{82F0BD60-B6B4-414C-9742-0C5D703DB438}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{82F0BD60-B6B4-414C-9742-0C5D703DB438}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
