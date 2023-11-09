@@ -20,7 +20,7 @@ namespace ColonelPanic.Services
 		public AnimalCrossingService()
 		{
 			OptionsBuilder = new DbContextOptionsBuilder<AnimalCrossingContext>();
-			OptionsBuilder.UseSqlServer("data source=db.cacheblasters.com;initial catalog=MotherBrain;User Id=sa;Password=ASecureP4ssw0rd!");
+			OptionsBuilder.UseSqlServer(ConnectionStrings.ConnectionString);
         }
 
         public string GetFruitList(List<IGuildUser> users)
